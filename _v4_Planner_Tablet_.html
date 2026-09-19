@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Dental Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --surface:#ffffff; --soft:#f7f8fc; --line:#e6e8f0; --line2:#f0f1f7;
+  --ink:#2a2a6e; --ink2:#4a4a86; --tx:#1f2140; --tx2:#8a8fa8; --hl:#2a2a6e; --onhl:#ffffff;
+  --am:#e0a30b; --pm:#6b6ec9; --ev:#8b5cf6;
+  --dngBg:#fdecee; --dngLn:#f6d2d8; --dng:#c2344a;
+  --okBg:#e8f6ee; --okLn:#c9e9d8; --ok:#137a4c;
+  --wrnBg:#fffaed; --wrnLn:#f0e3bd; --wrn:#84640c;
+  --infBg:#eef0fb; --infLn:#d8dcf3; --inf:#3d3f92;
+  --r:2px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Thai',system-ui,sans-serif;font-size:13.5px;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+button,input,select,textarea{font-family:inherit;font-size:13.5px;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.mono{font-family:'IBM Plex Mono',monospace}
+.app{max-width:1240px;margin:0 auto;padding:0 clamp(12px,2vw,28px) 80px}
+
+/* header */
+header{border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:30}
+.hd{max-width:1240px;margin:0 auto;padding:12px clamp(12px,2vw,28px);display:flex;align-items:center;gap:clamp(8px,1.4vw,20px);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .ic{width:40px;height:40px;background:var(--hl);color:var(--onhl);display:grid;place-items:center;font-weight:800;font-size:15px;border-radius:var(--r)}
+.brand h1{font-size:clamp(15px,1.5vw,19px);font-weight:800;color:var(--ink);line-height:1.15}
+.brand p{font-size:10.5px;color:var(--tx2);font-weight:500}
+nav{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+nav button{padding:9px clamp(10px,1.3vw,20px);color:var(--ink2);font-weight:600;border-right:1px solid var(--line);white-space:nowrap}
+nav button:last-child{border-right:0}
+nav button.on{background:var(--hl);color:var(--onhl)}
+.search{margin-left:auto;display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:var(--r);padding:8px 11px;flex:1;max-width:280px;min-width:150px;background:var(--soft)}
+.search input{background:none;border:0;outline:none;width:100%}
+.ico{width:36px;height:36px;border:1px solid var(--line);border-radius:var(--r);color:var(--ink2);display:grid;place-items:center;background:var(--soft);font-size:15px}
+.ico:hover{border-color:var(--ink);color:var(--ink)}
+
+/* theme panel */
+.tpanel{position:fixed;top:64px;right:clamp(10px,2vw,26px);width:300px;max-height:78vh;overflow:auto;background:var(--surface);
+  border:1px solid var(--line);border-radius:6px;box-shadow:0 22px 50px rgba(0,0,0,.25);padding:14px;z-index:50;display:none}
+.tpanel.on{display:block}
+.tpanel .lb{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:4px 0 9px}
+.th{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:4px;margin-bottom:6px;background:var(--soft);
+  border:1px solid transparent;font-weight:700;font-size:13px;width:100%}
+.th:hover{border-color:var(--line)}
+.th.on{border-color:var(--ink);color:var(--ink)}
+.th .sws{margin-left:auto;display:flex;gap:5px}
+.th .sw{width:13px;height:13px;border-radius:50%;border:1px solid rgba(128,128,128,.35)}
+.hr{height:1px;background:var(--line);margin:12px 0}
+
+/* common */
+.row{display:flex;align-items:center;gap:10px}.sp{justify-content:space-between}
+h2{font-size:clamp(16px,1.8vw,19px);font-weight:800;color:var(--ink);margin:22px 0 13px}
+h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.btn{background:var(--surface);border:1px solid var(--line);padding:9px 15px;border-radius:var(--r);font-weight:600;color:var(--ink2)}
+.btn:hover{border-color:var(--ink);color:var(--ink)}
+.btn.pri{background:var(--hl);border-color:var(--hl);color:var(--onhl)}
+.btn.pri:hover{filter:brightness(1.12);color:var(--onhl)}
+.btn.sm{padding:6px 11px;font-size:12px}
+.btn.dg{color:var(--dng)}.btn.dg:hover{border-color:var(--dng)}
+.btn.blk{width:100%;justify-content:center;display:flex}
+.card{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--surface)}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:var(--r);font-size:10.5px;font-weight:700;border:1px solid}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 8px}
+.sq{width:9px;height:9px;display:inline-block;flex:0 0 9px}
+.muted{color:var(--tx2)}
+.empty{color:var(--tx2);text-align:center;padding:40px;border:1px dashed var(--line);border-radius:var(--r);background:var(--soft)}
+.note{background:var(--wrnBg);border:1px solid var(--wrnLn);color:var(--wrn);padding:8px 11px;border-radius:var(--r);font-size:12px;font-weight:600}
+.warn{background:var(--dngBg);border:1px solid var(--dngLn);color:var(--dng);padding:8px 11px;font-size:12px;font-weight:600;border-radius:var(--r);margin-bottom:10px}
+.ok{background:var(--okBg);border:1px solid var(--okLn);color:var(--ok);padding:8px 11px;font-size:12px;font-weight:600;border-radius:var(--r)}
+
+/* month hero */
+.hero{display:flex;align-items:flex-end;justify-content:space-between;padding:clamp(14px,2.6vw,34px) 0 clamp(12px,1.8vw,22px);gap:16px;flex-wrap:wrap}
+.hero .num{font-size:clamp(48px,8vw,96px);font-weight:700;line-height:.85;color:transparent;-webkit-text-stroke:2.2px var(--ink2)}
+.hero .rt{text-align:right;margin-left:auto}
+.hero .mn{font-size:clamp(22px,3.4vw,40px);font-weight:800;color:var(--ink);line-height:1}
+.hero .yr{font-size:clamp(14px,1.6vw,19px);font-weight:700;color:var(--pm);margin-top:2px}
+.nav2{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+.nav2 button{width:32px;height:32px;border:1px solid var(--line);border-radius:50%;color:var(--ink2);display:grid;place-items:center}
+.nav2 button:hover{border-color:var(--ink);color:var(--ink)}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.seg{display:flex;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.seg button{padding:8px 14px;color:var(--tx2);font-weight:600;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--hl);color:var(--onhl)}
+
+/* calendar — responsive by clamp */
+.cal{border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.gh{padding:clamp(7px,.9vw,11px) 0;text-align:center;font-size:clamp(10.5px,1vw,12px);font-weight:700;color:var(--ink2);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.cell{position:relative;min-height:clamp(62px,8.4vw,112px);padding:clamp(5px,.7vw,9px) clamp(6px,.8vw,10px);
+  border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface);text-align:left;display:flex;flex-direction:column;overflow:hidden}
+.cell:hover{background:var(--soft)}
+.cell.out{background:var(--soft);opacity:.55}
+.cell.tdy{background:var(--hl)}
+.cell.tdy .cn,.cell.tdy .rl,.cell.tdy .cnt{color:var(--onhl)!important}
+.cell.mark{box-shadow:inset 0 0 0 2px var(--mk)}
+.ctop{display:flex;align-items:flex-start;justify-content:space-between}
+.cn{font-size:clamp(12px,1.25vw,16px);font-weight:700;color:var(--ink);margin-left:auto}
+.cn.sun{color:var(--dng)}
+.rl{font-size:clamp(9px,.85vw,10.5px);font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cbot{margin-top:auto;display:flex;align-items:center;gap:6px}
+.cbot u{flex:1;height:4px;background:var(--line2);text-decoration:none;display:block}
+.cbot u b{display:block;height:100%}
+.cnt{font-size:clamp(9px,.85vw,11px);font-weight:700;color:var(--ink2);white-space:nowrap}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.fl{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;background:var(--soft);border:1px solid var(--line);font-weight:600;font-size:12px;color:var(--ink2)}
+.fl.on{background:var(--hl);color:var(--onhl);border-color:var(--hl)}
+@media(max-width:1024px){.rl.sub{display:none}}
+@media(max-width:760px){.cbot u{display:none}}
+
+/* planner */
+.plan{display:grid;grid-template-columns:1fr 330px;gap:20px;align-items:start}
+.plab{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--pm)}
+.ptitle{font-size:clamp(22px,3vw,34px);font-weight:700;color:var(--ink);letter-spacing:-.5px}
+.side{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--surface);position:sticky;top:78px}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tabs button{flex:1;padding:9px 6px;border:1px solid var(--line);border-radius:var(--r);font-weight:700;font-size:12px;color:var(--ink2);background:var(--soft)}
+.tabs button.on{background:var(--hl);color:var(--onhl);border-color:var(--hl)}
+.dows{display:flex;gap:5px;flex-wrap:wrap}
+.dows button{flex:1;min-width:34px;padding:7px 0;border:1px solid var(--line);border-radius:var(--r);font-size:11.5px;font-weight:700;color:var(--ink2);background:var(--surface)}
+.dows button.on{background:var(--hl);color:var(--onhl);border-color:var(--hl)}
+.cell.pk{box-shadow:inset 0 0 0 2px var(--pm);background:var(--soft)}
+@media(max-width:900px){.plan{grid-template-columns:1fr}.side{position:static}}
+
+/* day list */
+.day{display:flex;border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px;background:var(--surface)}
+.rail{width:clamp(84px,10vw,120px);flex:0 0 auto;border-right:1px solid var(--line);padding:12px 10px;text-align:center;background:var(--soft)}
+.rail .dw{font-size:11px;color:var(--tx2);font-weight:700}
+.rail .dn{font-size:clamp(24px,3vw,34px);font-weight:800;color:var(--ink);line-height:1.05}
+.rail .dm{font-size:10.5px;color:var(--tx2);margin-bottom:8px}
+.rail.today{background:var(--hl)}
+.rail.today .dw,.rail.today .dn,.rail.today .dm{color:var(--onhl)}
+.rail.today .btn{background:transparent;color:var(--onhl);border-color:rgba(255,255,255,.4)}
+.rl2{font-size:11px;font-weight:700;padding:4px 6px;border-radius:var(--r);display:block;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slots{flex:1;min-width:0;padding:12px;display:flex;flex-direction:column;gap:10px}
+.slot{border:1px solid var(--line);border-left:3px solid;border-radius:var(--r);padding:10px 12px}
+.slot.am{border-left-color:var(--am)}.slot.pm{border-left-color:var(--pm)}.slot.ev{border-left-color:var(--ev)}
+.slot h4{font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pt{display:flex;align-items:center;gap:10px;padding:9px 10px;border:1px solid var(--line2);border-radius:var(--r);margin-top:8px;background:var(--surface)}
+.pt:hover{border-color:var(--line);background:var(--soft)}
+.pt .nm{font-weight:700}.pt .hn{font-size:11.5px;color:var(--tx2);margin-top:1px}
+.pt .ac{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.avatar{width:34px;height:34px;border-radius:var(--r);display:grid;place-items:center;font-weight:700;font-size:12.5px;background:var(--soft);color:var(--ink);border:1px solid var(--line);flex:0 0 34px}
+.st{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:var(--r);border:1px solid}
+.st.scheduled{background:var(--infBg);color:var(--inf);border-color:var(--infLn)}
+.st.done{background:var(--okBg);color:var(--ok);border-color:var(--okLn)}
+.st.cancelled{background:var(--dngBg);color:var(--dng);border-color:var(--dngLn)}
+.st.noshow{background:var(--wrnBg);color:var(--wrn);border-color:var(--wrnLn)}
+
+/* tables */
+table{width:100%;border-collapse:collapse}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--line2)}
+th{color:var(--tx2);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--ink)}
+.split{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start}
+@media(max-width:900px){.split{grid-template-columns:1fr}}
+.tl{border-left:1px solid var(--line);padding-left:16px;margin-left:5px}
+.tl .it{position:relative;margin-bottom:14px}
+.tl .it:before{content:'';position:absolute;left:-20px;top:6px;width:9px;height:9px;background:var(--ink);box-shadow:0 0 0 3px var(--surface)}
+
+/* modal */
+.mask{position:fixed;inset:0;background:rgba(20,20,40,.5);display:none;align-items:flex-start;justify-content:center;z-index:60;padding:36px 14px;overflow:auto}
+.mask.on{display:flex}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);width:100%;max-width:560px;padding:20px;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.mtitle{font-size:17px;font-weight:800;color:var(--ink);margin-bottom:3px}
+.f{margin-bottom:12px}
+.f label{display:block;font-size:11px;color:var(--tx2);font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.f input,.f select,.f textarea{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 11px;outline:none}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--ink)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:560px){.g3,.g2{grid-template-columns:1fr}}
+.pick{display:flex;gap:8px;flex-wrap:wrap}
+.pick label{display:flex;align-items:center;gap:7px;border:1px solid var(--line);padding:9px 12px;border-radius:var(--r);cursor:pointer;font-weight:600;font-size:12.5px}
+.pick label.on{border-color:var(--ink);background:var(--soft);color:var(--ink)}
+.ac-wrap{position:relative}
+.ac-list{position:absolute;left:0;right:0;top:calc(100% + 3px);background:var(--surface);border:1px solid var(--line);max-height:240px;overflow:auto;z-index:5;display:none;box-shadow:0 12px 26px rgba(0,0,0,.18)}
+.ac-list .opt{padding:9px 11px;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line2)}
+.ac-list .opt:hover{background:var(--soft)}
+.ac-list .opt.dis{opacity:.5;cursor:not-allowed}
+.ac-list .opt.new{color:var(--ink);font-weight:700;background:var(--soft)}
+.ac-list .opt b{font-size:13px}.ac-list .opt small{color:var(--tx2);display:block;font-size:11px}
+.ac-list .tag{margin-left:auto;font-size:10.5px;font-weight:700;color:var(--dng);border:1px solid var(--dngLn);background:var(--dngBg);padding:2px 7px}
+</style>
+</head>
+<body>
+<header><div class="hd">
+  <div class="brand"><div class="ic">DT</div>
+    <div><h1>DENTAL TRACKER</h1><p>ระบบนัดหมายและประวัติคนไข้ทันตกรรม</p></div></div>
+  <nav id="nav">
+    <button data-act="nav" data-v="schedule" class="on">ปฏิทิน</button>
+    <button data-act="nav" data-v="planner">วางแผน</button>
+    <button data-act="nav" data-v="upcoming">นัดที่จะถึง</button>
+    <button data-act="nav" data-v="archive">ทะเบียนคนไข้</button>
+    <button data-act="nav" data-v="settings">ตั้งค่า</button>
+  </nav>
+  <div class="search">🔍<input id="q" placeholder="ค้นหา HN / ชื่อ / เบอร์โทร"/></div>
+  <button class="ico" data-act="themeBtn">⚙</button>
+</div></header>
+<div class="tpanel" id="tpanel"></div>
+<div class="app" id="app"></div>
+<div class="mask" id="mask"><div class="modal" id="modal"></div></div>
+<input type="file" id="fileIn" accept="application/json" style="display:none">
+
+<script>
+/* ============ 0) THEMES ============ */
+const LA={dngBg:'#fdecee',dngLn:'#f6d2d8',dng:'#c2344a',okBg:'#e8f6ee',okLn:'#c9e9d8',ok:'#137a4c',
+  wrnBg:'#fffaed',wrnLn:'#f0e3bd',wrn:'#84640c',infBg:'#eef0fb',infLn:'#d8dcf3',inf:'#3d3f92'};
+const DA={dngBg:'rgba(244,63,94,.14)',dngLn:'rgba(244,63,94,.38)',dng:'#fb7185',
+  okBg:'rgba(16,185,129,.14)',okLn:'rgba(16,185,129,.35)',ok:'#34d399',
+  wrnBg:'rgba(245,158,11,.14)',wrnLn:'rgba(245,158,11,.35)',wrn:'#fbbf24',
+  infBg:'rgba(129,140,248,.16)',infLn:'rgba(129,140,248,.35)',inf:'#a5b4fc'};
+const THEMES=[
+ {id:'light',name:'Daylight',sw:['#2a2a6e','#6b6ec9','#ffffff'],v:{...LA,bg:'#ffffff',surface:'#ffffff',soft:'#f7f8fc',line:'#e6e8f0',line2:'#f0f1f7',
+   ink:'#2a2a6e',ink2:'#4a4a86',tx:'#1f2140',tx2:'#8a8fa8',hl:'#2a2a6e',onhl:'#ffffff',am:'#e0a30b',pm:'#6b6ec9',ev:'#8b5cf6'}},
+ {id:'sakura',name:'Sakura',sw:['#d6336c','#f7a8c4','#fff5f8'],v:{...LA,bg:'#fffafc',surface:'#ffffff',soft:'#fdf1f5',line:'#f5dde5',line2:'#fbeaf0',
+   ink:'#a61e4d',ink2:'#c2185b',tx:'#3f2230',tx2:'#a67c8c',hl:'#d6336c',onhl:'#ffffff',am:'#e08d0b',pm:'#e0568e',ev:'#b06ab3'}},
+ {id:'oblivion',name:'Oblivion',sw:['#d0d0d0','#8f8f8f','#1c1c1c'],v:{...DA,bg:'#161616',surface:'#1f1f1f',soft:'#272727',line:'#3a3a3a',line2:'#2e2e2e',
+   ink:'#e2e2e2',ink2:'#b4b4b4',tx:'#e8e8e8',tx2:'#8f8f8f',hl:'#4a4a4a',onhl:'#ffffff',am:'#d9a441',pm:'#9aa7c7',ev:'#b79ce0'}},
+ {id:'evileye',name:'Evil Eye',sw:['#f8fafc','#1d4ed8','#22d3ee'],v:{...DA,bg:'#0b1b2b',surface:'#102438',soft:'#153049',line:'#1f4260',line2:'#17334c',
+   ink:'#67e8f9',ink2:'#7dd3fc',tx:'#e2f2ff',tx2:'#7d9dc0',hl:'#0ea5e9',onhl:'#04121f',am:'#fbbf24',pm:'#38bdf8',ev:'#818cf8'}},
+ {id:'ezmode',name:'EZ Mode',sw:['#f472b6','#60a5fa','#e0f2fe'],v:{...DA,bg:'#0e1626',surface:'#152036',soft:'#1b2a46',line:'#2a3c5e',line2:'#20314f',
+   ink:'#93c5fd',ink2:'#f9a8d4',tx:'#e8f0ff',tx2:'#8fa3c8',hl:'#3b82f6',onhl:'#ffffff',am:'#fbbf24',pm:'#60a5fa',ev:'#f472b6'}},
+ {id:'nebula',name:'Nebula',sw:['#f472b6','#34d399','#e879f9'],v:{...DA,bg:'#221a35',surface:'#2a2142',soft:'#332a50',line:'#ff2d78',line2:'#3d3260',
+   ink:'#f472b6',ink2:'#c4b5fd',tx:'#ece6fb',tx2:'#a894c7',hl:'#ec4899',onhl:'#ffffff',am:'#fbbf24',pm:'#a78bfa',ev:'#22d3ee'}},
+ {id:'catppuccin',name:'Catppuccin',sw:['#cba6f7','#9399b2','#cdd6f4'],v:{...DA,bg:'#1e1e2e',surface:'#242438',soft:'#2b2b40',line:'#3d3f55',line2:'#31324a',
+   ink:'#cba6f7',ink2:'#89b4fa',tx:'#cdd6f4',tx2:'#9399b2',hl:'#cba6f7',onhl:'#1e1e2e',am:'#f9e2af',pm:'#89b4fa',ev:'#f5c2e7'}},
+ {id:'gruvbox',name:'Gruvbox',sw:['#fabd2f','#b8bb26','#ebdbb2'],v:{...DA,bg:'#282828',surface:'#32302f',soft:'#3c3836',line:'#504945',line2:'#423d3a',
+   ink:'#fabd2f',ink2:'#d5c4a1',tx:'#ebdbb2',tx2:'#a89984',hl:'#d79921',onhl:'#282828',am:'#fabd2f',pm:'#83a598',ev:'#d3869b'}},
+ {id:'solarized',name:'Solarized Dark',sw:['#b58900',"#268bd2",'#eee8d5'],v:{...DA,bg:'#002b36',surface:'#073642',soft:'#0b3f4c',line:'#12525f',line2:'#0e4854',
+   ink:'#b58900',ink2:'#93a1a1',tx:'#eee8d5',tx2:'#93a1a1',hl:'#268bd2',onhl:'#ffffff',am:'#b58900',pm:'#268bd2',ev:'#6c71c4'}}];
+
+/* ============ 1) DATA MODEL ============ */
+const KEY='dental_tracker_v4';
+const SESSIONS=[{id:'am',name:'เช้า',time:'09:00–12:00',c:'var(--am)'},
+                {id:'pm',name:'บ่าย',time:'13:00–16:00',c:'var(--pm)'},
+                {id:'ev',name:'เย็น',time:'16:00–20:00',c:'var(--ev)'}];
+const DEF_WT=[
+ {id:'dm'  ,name:'DM'           ,short:'DM' ,room:'DM'    ,color:'#3d3f92',group:'DM'},
+ {id:'fung',name:'ฟุ้ง'         ,short:'ฟุ้ง',room:'ฟุ้ง'  ,color:'#e0a30b',group:'ฟุ้ง / ปกส 1/1'},
+ {id:'pks' ,name:'ปกส 1/1'      ,short:'1/1',room:'1/1'   ,color:'#c89407',group:'ฟุ้ง / ปกส 1/1'},
+ {id:'scr' ,name:'Screen'       ,short:'SCR',room:'Screen',color:'#e5115f',group:'Screen / รพ.สต.'},
+ {id:'rpst',name:'รพ.สต.'       ,short:'สต.',room:'รพ.สต.',color:'#0f9b8e',group:'Screen / รพ.สต.'},
+ {id:'off' ,name:'OFF (วันหยุด)',short:'OFF',room:'วันหยุด',color:'#9aa0b5',group:'OFF'}];
+const PROCS=['ตรวจ / ปรึกษา','ขูดหินปูน','อุดฟัน','ถอนฟัน','ผ่าฟันคุด','รักษารากฟัน',
+             'ครอบฟัน / สะพานฟัน','ฟันปลอม','เคลือบฟลูออไรด์ / Sealant','ฟอกสีฟัน','X-ray','Follow up'];
+
+const uid=p=>p+Math.random().toString(36).slice(2,9);
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const parseD=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const TH_M=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const TH_MF=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const DOW=['อา','จ','อ','พ','พฤ','ศ','ส'],DOWF=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสฯ','ศุกร์','เสาร์'];
+const thDate=s=>{const d=parseD(s);return `${d.getDate()} ${TH_M[d.getMonth()]} ${d.getFullYear()+543}`};
+const TODAY=iso(new Date());
+const esc=s=>(s??'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const digits=s=>(s||'').replace(/\D/g,'');
+
+let DB=load();
+function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.patients)return r}catch(e){}return seed()}
+function save(){localStorage.setItem(KEY,JSON.stringify(DB))}
+const wt=id=>DB.workTypes.find(w=>w.id===id)||DB.workTypes[0];
+const pt=id=>DB.patients.find(p=>p.id===id);
+const daySch=d=>DB.daySchedules[d]||null;
+const isOff=d=>{const s=daySch(d);return !!s&&s.typeId==='off'};
+
+function seed(){
+  const n=new Date(),Y=n.getFullYear(),M=n.getMonth(),day=x=>iso(new Date(Y,M,x));
+  const P=(hn,name,age,sex,phone,tags,note)=>({id:uid('p_'),hn,name,age,sex,phone,tags,note,createdAt:TODAY});
+  const ps=[P('HN00121','สมชาย ใจดี',62,'ช','081-111-2222',['DM','แพ้ Penicillin'],'พรีเมดก่อนถอนฟัน'),
+            P('HN00234','มาลี ศรีสุข',54,'ญ','082-222-3333',['HT'],''),
+            P('HN00311','วิรัช พงษ์ทอง',47,'ช','083-333-4444',[],''),
+            P('HN00408','กนกพร แสงจันทร์',35,'ญ','084-444-5555',['ตั้งครรภ์ 5 เดือน'],'เลี่ยง X-ray'),
+            P('HN00512','ธีรศักดิ์ มั่นคง',68,'ช','085-555-6666',['DM','CKD'],''),
+            P('HN00677','อารีย์ บุญมา',59,'ญ','086-666-7777',[],'')];
+  const ds={};
+  ds[day(2)]={typeId:'dm',room:'DM',note:''};
+  ds[day(4)]={typeId:'scr',room:'Screen',note:'ตรวจฟันเด็ก ป.1'};
+  ds[day(7)]={typeId:'off',room:'วันหยุด',note:''};
+  ds[day(9)]={typeId:'pks',room:'ปกส 1/1',note:''};
+  ds[day(12)]={typeId:'fung',room:'ฟุ้ง',note:''};
+  ds[day(15)]={typeId:'rpst',room:'รพ.สต.',note:'ออกหน่วย'};
+  const mk=(i,dd,se,proc,tooth)=>{const k=day(dd),s=ds[k]||{typeId:'dm',room:'DM'};
+    return{id:uid('a_'),patientId:ps[i].id,date:k,session:se,typeId:s.typeId,room:s.room,proc,tooth,status:'scheduled',note:'',visitId:null}};
+  const ap=[mk(0,2,'am','ถอนฟัน','#36'),mk(1,2,'am','ขูดหินปูน',''),mk(2,2,'pm','อุดฟัน','#16, #17'),
+            mk(3,9,'am','ตรวจ / ปรึกษา',''),mk(4,9,'pm','รักษารากฟัน','#11'),
+            mk(5,4,'am','เคลือบฟลูออไรด์ / Sealant',''),mk(0,15,'am','Follow up','#36'),mk(1,12,'ev','อุดฟัน','#46')];
+  const vs=[{id:uid('v_'),patientId:ps[0].id,apptId:null,date:day(1),session:'am',typeId:'dm',
+    proc:'ตรวจ / ปรึกษา',tooth:'#36',dx:'Chronic apical periodontitis #36',tx:'นัดถอนฟัน #36',note:'BP 132/80'}];
+  const db={patients:ps,appointments:ap,visits:vs,daySchedules:ds,workTypes:DEF_WT.slice(),theme:'light'};
+  localStorage.setItem(KEY,JSON.stringify(db));return db;
+}
+
+/* ============ 2) STATE ============ */
+const now=new Date();
+let S={view:'schedule',mode:'cal',cur:new Date(now.getFullYear(),now.getMonth(),1),q:'',sel:null,onlyBusy:true,filter:'all',
+  plan:{sel:new Set(),mode:'room',typeId:DEF_WT[0].id,session:'am',note:'',dows:new Set(),every:'all'}};
+
+function applyTheme(id){
+  const t=THEMES.find(x=>x.id===id)||THEMES[0];
+  Object.entries(t.v).forEach(([k,v])=>document.documentElement.style.setProperty('--'+k,v));
+  DB.theme=t.id;save();
+}
+applyTheme(DB.theme||'light');
+
+/* ============ 3) QUERIES + DUP GUARD ============ */
+const apptsOn=d=>DB.appointments.filter(a=>a.date===d)
+  .sort((x,y)=>SESSIONS.findIndex(s=>s.id===x.session)-SESSIONS.findIndex(s=>s.id===y.session));
+const match=(p,q)=>!q||(p.hn+' '+p.name+' '+(p.tags||[]).join(' ')+' '+(p.phone||'')+' '+digits(p.phone)).toLowerCase().includes(q.toLowerCase());
+const filterAppts=l=>!S.q?l:l.filter(a=>{const p=pt(a.patientId);return p&&match(p,S.q)});
+const initials=n=>n.trim().split(/\s+/).map(x=>x[0]).slice(0,2).join('');
+const busyOn=(date,ex)=>new Set(DB.appointments.filter(a=>a.date===date&&a.status!=='cancelled'&&a.id!==ex).map(a=>a.patientId));
+function dupPatients(){const g={},out=[];
+  DB.patients.forEach(p=>{const k1='hn:'+(p.hn||'').trim().toLowerCase(),k2='ph:'+digits(p.phone);
+    if(p.hn)(g[k1]=g[k1]||[]).push(p);if(digits(p.phone).length>=9)(g[k2]=g[k2]||[]).push(p)});
+  Object.entries(g).forEach(([k,v])=>{if(v.length>1)out.push({k,v})});return out}
+
+/* ============ 4) RENDER ============ */
+const app=document.getElementById('app'),$=x=>document.getElementById(x);
+function render(){
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.view));
+  app.innerHTML=S.view==='schedule'?vSchedule():S.view==='planner'?vPlanner():S.view==='upcoming'?vUpcoming()
+    :S.view==='archive'?vArchive():vSettings();
+}
+function vSchedule(){
+  const y=S.cur.getFullYear(),m=S.cur.getMonth();
+  return `<div class="hero"><div class="num mono">${String(m+1).padStart(2,'0')}</div>
+    <div class="rt"><div class="mn">${TH_MF[m]}</div><div class="yr">${y+543}</div>
+    <div class="nav2"><button data-act="mv" data-n="-1">‹</button><button data-act="mv" data-n="1">›</button></div></div></div>
+  <div class="tools">
+    <div class="seg"><button data-act="mode" data-m="cal" class="${S.mode==='cal'?'on':''}">ภาพรวม</button>
+      <button data-act="mode" data-m="list" class="${S.mode==='list'?'on':''}">รายวัน</button></div>
+    <button class="btn sm" data-act="today">วันนี้</button>
+    <button class="btn pri sm" style="margin-left:auto" data-act="addAppt" data-d="${TODAY}">＋ เพิ่มนัดคนไข้</button></div>`
+  +(S.mode==='cal'?calendar(y,m):dayList(y,m));
+}
+function calendar(y,m){
+  const start=new Date(y,m,1-new Date(y,m,1).getDay());
+  let max=1;for(let i=0;i<42;i++){const k=iso(new Date(start.getFullYear(),start.getMonth(),start.getDate()+i));max=Math.max(max,apptsOn(k).length)}
+  let cells='';
+  for(let i=0;i<42;i++){
+    const dt=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),k=iso(dt);
+    const out=dt.getMonth()!==m,s=daySch(k),w=s?wt(s.typeId):null;
+    if(S.filter!=='all'&&(!w||w.id!==S.filter)){
+      cells+=`<button class="cell ${out?'out':''}" data-act="openDay" data-d="${k}" style="opacity:.3">
+        <div class="ctop"><span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div></button>`;continue}
+    const n=apptsOn(k).length,tdy=k===TODAY,mk=w&&(w.id==='off'||w.id==='scr');
+    cells+=`<button class="cell ${out?'out':''} ${tdy?'tdy':''} ${mk&&!tdy?'mark':''}" ${mk?`style="--mk:${w.color}"`:''} data-act="openDay" data-d="${k}">
+      <div class="ctop">${w?`<i class="sq" style="background:${w.color}"></i>`:'<i></i>'}
+        <span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div>
+      ${w?`<div class="rl" style="color:${w.color}">${esc(s.room||w.room)}</div>`:''}
+      ${s&&s.note?`<div class="rl sub" style="color:var(--tx2);font-weight:500">${esc(s.note)}</div>`:''}
+      <div class="cbot">${n?`<u><b style="width:${Math.round(n/max*100)}%;background:${tdy?'var(--onhl)':(w?w.color:'var(--ink)')}"></b></u><span class="cnt">${n} คน</span>`:''}</div>
+    </button>`}
+  return `<div class="cal"><div class="grid">${DOW.map(d=>`<div class="gh">${d}</div>`).join('')}</div>
+    <div class="grid">${cells}</div></div>
+    <div class="filters"><button class="fl ${S.filter==='all'?'on':''}" data-act="filt" data-f="all">ทั้งหมด</button>
+    ${DB.workTypes.map(w=>`<button class="fl ${S.filter===w.id?'on':''}" data-act="filt" data-f="${w.id}">
+      <i class="dot" style="background:${w.color}"></i>${esc(w.name)}</button>`).join('')}</div>`;
+}
+
+/* ---- 4.2 PLANNER ---- */
+function vPlanner(){
+  const y=S.cur.getFullYear(),m=S.cur.getMonth(),P=S.plan;
+  const start=new Date(y,m,1-new Date(y,m,1).getDay());
+  let cells='';
+  for(let i=0;i<42;i++){
+    const dt=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),k=iso(dt),out=dt.getMonth()!==m;
+    const s=daySch(k),w=s?wt(s.typeId):null;
+    cells+=`<button class="cell ${out?'out':''} ${P.sel.has(k)?'pk':''}" data-act="pickDay" data-d="${k}" ${out?'disabled':''}>
+      <div class="ctop">${w?`<i class="sq" style="background:${w.color}"></i>`:'<i></i>'}
+        <span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div>
+      ${w?`<div class="rl" style="color:${w.color}">${esc(s.room||w.room)}</div>`:''}</button>`}
+  const roomOpts=DB.workTypes.filter(w=>w.id!=='off').map(w=>`<option value="${w.id}" ${P.typeId===w.id?'selected':''}>${esc(w.name)} — ${esc(w.room)}</option>`).join('');
+  return `<div class="row sp" style="margin:22px 0 6px;flex-wrap:wrap;gap:14px">
+      <div><div class="plab">CLINIC PLANNER</div>
+        <div class="ptitle mono">Plan clinic days</div>
+        <div class="muted">เลือกหลายวัน แล้วตั้งห้องพร้อมกันทีเดียว</div></div>
+      <div class="row"><button class="btn sm" data-act="mv" data-n="-1">‹</button>
+        <b style="min-width:120px;text-align:center">${TH_MF[m]} ${y+543}</b>
+        <button class="btn sm" data-act="mv" data-n="1">›</button></div></div>
+    <div class="row" style="gap:16px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--line);margin-bottom:16px">
+      ${DB.workTypes.map(w=>`<span class="row" style="gap:6px;font-size:12px;font-weight:600;color:var(--tx2)">
+        <i class="dot" style="background:${w.color}"></i>${esc(w.name)}</span>`).join('')}</div>
+    <div class="plan">
+      <div><div class="cal"><div class="grid">${DOW.map(d=>`<div class="gh">${d}</div>`).join('')}</div>
+        <div class="grid">${cells}</div></div></div>
+      <div class="side">
+        <div class="plab">NEW PLAN</div>
+        <div style="font-size:17px;font-weight:800;color:var(--ink);margin:2px 0 14px">ลงตารางหลายวัน</div>
+        <div class="tabs">
+          <button data-act="planMode" data-m="room" class="${P.mode==='room'?'on':''}">🏥 ลงห้อง</button>
+          <button data-act="planMode" data-m="off" class="${P.mode==='off'?'on':''}">🗓 วันหยุด</button>
+          <button data-act="planMode" data-m="clear" class="${P.mode==='clear'?'on':''}">🧹 ล้างวัน</button></div>
+        ${P.mode==='room'?`<div class="f"><label>ห้อง / ประเภทงาน</label><select data-plan="typeId">${roomOpts}</select></div>
+        <div class="f"><label>ช่วงเวลาหลัก</label><select data-plan="session">
+          ${SESSIONS.map(s=>`<option value="${s.id}" ${P.session===s.id?'selected':''}>${s.name} (${s.time})</option>`).join('')}</select></div>`:''}
+        ${P.mode!=='clear'?`<div class="f"><label>หมายเหตุ</label><textarea rows="2" data-plan="note" placeholder="เช่น ออกหน่วย / ตรวจฟันเด็ก">${esc(P.note)}</textarea></div>`:''}
+        <div class="f"><div class="row sp"><label style="margin:0">เลือกวันซ้ำ</label>
+          <span class="muted" style="font-size:11px">เดือนที่เปิดอยู่</span></div>
+          <div class="dows" style="margin:6px 0 8px">${DOW.map((d,i)=>`<button data-act="dow" data-i="${i}" class="${P.dows.has(i)?'on':''}">${d}</button>`).join('')}</div>
+          <div class="row"><select data-plan="every" style="flex:1;border:1px solid var(--line);padding:9px 10px;border-radius:var(--r);background:var(--surface)">
+            <option value="all" ${P.every==='all'?'selected':''}>ทุกสัปดาห์</option>
+            <option value="w13" ${P.every==='w13'?'selected':''}>สัปดาห์ที่ 1 และ 3</option>
+            <option value="w24" ${P.every==='w24'?'selected':''}>สัปดาห์ที่ 2 และ 4</option></select>
+          <button class="btn pri sm" data-act="applyDow">เลือกวัน</button></div></div>
+        <div id="planWarn">${planWarnHTML()}</div>
+        <div class="row sp" style="margin:12px 0"><b id="planCount">เลือกแล้ว ${P.sel.size} วัน</b>
+          <button class="btn sm dg" data-act="clearSel">ล้างทั้งหมด</button></div>
+        <button class="btn pri blk" data-act="savePlan">บันทึกทั้งหมด</button></div></div>`;
+}
+function planWarnHTML(){
+  const P=S.plan,d=[...P.sel];if(!d.length)return'';
+  if(P.mode==='off'){const c=d.filter(x=>apptsOn(x).length);
+    return c.length?`<div class="warn">⚠ มี ${c.length} วันที่เลือกไว้ยังมีนัดคนไข้อยู่ (${c.slice(0,3).map(thDate).join(', ')}${c.length>3?' …':''})</div>`:''}
+  if(P.mode==='clear')return `<div class="warn">⚠ จะลบการตั้งค่าห้องของ ${d.length} วัน (ไม่ลบนัดคนไข้)</div>`;
+  const c=d.filter(x=>{const s=daySch(x);return s&&s.typeId!==P.typeId});
+  return c.length?`<div class="warn">⚠ ${c.length} วันมีห้องเดิมอยู่แล้ว — บันทึกจะเขียนทับ</div>`:'';
+}
+function refreshPlan(){const c=$('planCount'),w=$('planWarn');
+  if(c)c.textContent=`เลือกแล้ว ${S.plan.sel.size} วัน`;if(w)w.innerHTML=planWarnHTML()}
+
+/* ---- 4.3 day list / upcoming / archive / settings ---- */
+function dayList(y,m){
+  const last=new Date(y,m+1,0).getDate();let out='',any=false;
+  out+=`<label class="row muted" style="gap:7px;font-weight:600;cursor:pointer;margin-bottom:12px">
+    <input type="checkbox" ${S.onlyBusy?'checked':''} data-act="onlyBusy"> แสดงเฉพาะวันที่มีงาน/มีนัด</label>`;
+  for(let i=1;i<=last;i++){
+    const k=iso(new Date(y,m,i)),s=daySch(k),ap=filterAppts(apptsOn(k));
+    if(S.onlyBusy&&!s&&!ap.length)continue;any=true;
+    const dt=parseD(k),w=s?wt(s.typeId):null,off=s&&s.typeId==='off';
+    out+=`<div class="day" id="d-${k}">
+      <div class="rail ${k===TODAY?'today':''}">
+        <div class="dw">${DOWF[dt.getDay()]}</div><div class="dn">${i}</div><div class="dm">${TH_M[m]} ${y+543}</div>
+        ${w?`<span class="rl2" style="background:${w.color}1a;color:${w.color};border:1px solid ${w.color}40">${esc(s.room||w.room)}</span>`
+           :`<span class="rl2" style="background:var(--soft);color:var(--tx2)">ยังไม่ตั้งห้อง</span>`}
+        <button class="btn sm blk" data-act="daySet" data-d="${k}">ตั้งค่าห้อง</button></div>
+      <div class="slots">
+        ${s&&s.note?`<div class="note">📌 ${esc(s.note)}</div>`:''}
+        ${off?`<div class="slot" style="border-left-color:#9aa0b5"><h4>🚫 วันหยุด (OFF) — ไม่รับนัด</h4></div>`:
+        SESSIONS.map(se=>{const l=ap.filter(a=>a.session===se.id);
+          return `<div class="slot ${se.id}"><div class="row sp">
+            <h4><i class="dot" style="background:${se.c}"></i> ${se.name}
+              <span class="muted" style="font-weight:400">${se.time}</span><span class="muted">· ${l.length} คน</span></h4>
+            <button class="btn sm" data-act="addAppt" data-d="${k}" data-s="${se.id}">＋ เพิ่ม</button></div>
+            ${l.map(ptRow).join('')||'<div class="muted" style="padding:8px 2px;font-size:12px">— ว่าง —</div>'}</div>`}).join('')}
+      </div></div>`}
+  return out+(any?'':`<div class="empty">ไม่มีงานในเดือนนี้ — กด “เพิ่มนัดคนไข้” เพื่อเริ่ม</div>`);
+}
+function ptRow(a){
+  const p=pt(a.patientId);if(!p)return'';const w=wt(a.typeId);
+  const al=(p.tags||[]).length?`<span class="chip" style="border-color:var(--dngLn);color:var(--dng);background:var(--dngBg)">⚠ ${esc(p.tags[0])}</span>`:'';
+  return `<div class="pt"><div class="avatar">${esc(initials(p.name))}</div>
+    <div style="min-width:0"><div class="nm">${esc(p.name)}
+      <span class="chip" style="border-color:${w.color}45;color:${w.color};background:${w.color}12">${esc(a.room||w.room)}</span> ${al}</div>
+      <div class="hn">${esc(p.hn)} · ${esc(p.phone||'-')} · 🦷 ${esc(a.proc||'ไม่ระบุ')}${a.tooth?' · ซี่ '+esc(a.tooth):''}</div></div>
+    <div class="ac"><span class="st ${a.status}">${({scheduled:'นัดไว้',done:'มาแล้ว',cancelled:'ยกเลิก',noshow:'ไม่มา'})[a.status]}</span>
+      <button class="btn sm" data-act="editAppt" data-id="${a.id}">แก้ไข</button>
+      <button class="btn sm dg" data-act="delAppt" data-id="${a.id}">ลบ</button></div></div>`;
+}
+function vUpcoming(){
+  const list=filterAppts(DB.appointments.filter(a=>a.date>=TODAY&&a.status!=='cancelled'))
+    .sort((a,b)=>a.date.localeCompare(b.date)||SESSIONS.findIndex(s=>s.id===a.session)-SESSIONS.findIndex(s=>s.id===b.session));
+  if(!list.length)return `<h2>นัดที่จะถึง</h2><div class="empty">ยังไม่มีนัดล่วงหน้า</div>`;
+  const by={};list.forEach(a=>(by[a.date]=by[a.date]||[]).push(a));
+  return `<h2>นัดที่จะถึง <span class="muted" style="font-size:13px;font-weight:600">· ${list.length} นัด</span></h2>`+
+    Object.entries(by).map(([d,as])=>{const dt=parseD(d),diff=Math.round((dt-parseD(TODAY))/864e5),s=daySch(d),w=s?wt(s.typeId):null;
+      return `<div class="day"><div class="rail ${d===TODAY?'today':''}">
+        <div class="dw">${DOWF[dt.getDay()]}</div><div class="dn">${dt.getDate()}</div>
+        <div class="dm">${TH_M[dt.getMonth()]} ${dt.getFullYear()+543}</div>
+        ${w?`<span class="rl2" style="background:${w.color}1a;color:${w.color};border:1px solid ${w.color}40">${esc(s.room||w.room)}</span>`:''}
+        <span class="rl2" style="background:var(--infBg);color:var(--inf)">${diff===0?'วันนี้':diff===1?'พรุ่งนี้':'อีก '+diff+' วัน'}</span></div>
+        <div class="slots">${SESSIONS.map(se=>{const l=as.filter(a=>a.session===se.id);
+          return l.length?`<div class="slot ${se.id}"><h4><i class="dot" style="background:${se.c}"></i> ${se.name}</h4>${l.map(ptRow).join('')}</div>`:''}).join('')}
+        </div></div>`}).join('');
+}
+function vArchive(){
+  const res=DB.patients.filter(p=>match(p,S.q));
+  const left=`<div class="card"><div class="row sp"><h3 style="margin:0">คนไข้ (${res.length})</h3>
+    <button class="btn sm pri" data-act="addPatient">＋ ใหม่</button></div>
+    <table style="margin-top:10px"><tbody>${res.map(p=>`<tr class="${S.sel===p.id?'sel':''}" style="cursor:pointer" data-act="selP" data-id="${p.id}">
+      <td><b>${esc(p.hn)}</b><div class="hn muted">${esc(p.name)} · ${esc(p.phone||'-')}</div></td>
+      <td style="text-align:right" class="muted">${DB.visits.filter(v=>v.patientId===p.id).length} visit</td></tr>`).join('')
+      ||'<tr><td class="muted">ไม่พบคนไข้</td></tr>'}</tbody></table></div>`;
+  let right=`<div class="empty">เลือกคนไข้จากรายการซ้าย หรือค้นหาด้วย HN / ชื่อ / เบอร์</div>`;
+  const p=pt(S.sel);
+  if(p){
+    const vs=DB.visits.filter(v=>v.patientId===p.id).sort((a,b)=>b.date.localeCompare(a.date));
+    const ap=DB.appointments.filter(a=>a.patientId===p.id&&a.date>=TODAY).sort((a,b)=>a.date.localeCompare(b.date));
+    right=`<div class="card">
+      <div class="row sp" style="flex-wrap:wrap"><div class="row">
+        <div class="avatar" style="width:46px;height:46px;flex:0 0 46px;font-size:16px">${esc(initials(p.name))}</div>
+        <div><div style="font-size:18px;font-weight:800;color:var(--ink)">${esc(p.name)}</div>
+        <div class="muted">${esc(p.hn)} · ${esc(p.sex||'-')} · ${p.age||'-'} ปี · ${esc(p.phone||'ไม่มีเบอร์')}</div></div></div>
+        <div class="row"><button class="btn sm" data-act="editPatient" data-id="${p.id}">แก้ไข</button>
+        <button class="btn sm pri" data-act="addAppt" data-p="${p.id}" data-d="${TODAY}">＋ นัดใหม่</button></div></div>
+      ${(p.tags||[]).length?`<div class="row" style="gap:6px;margin-top:11px;flex-wrap:wrap">${p.tags.map(t=>`<span class="chip" style="border-color:var(--dngLn);color:var(--dng);background:var(--dngBg)">⚠ ${esc(t)}</span>`).join('')}</div>`:''}
+      ${p.note?`<div class="note" style="margin-top:11px">📝 ${esc(p.note)}</div>`:''}
+      <h3>นัดหมายที่จะถึง (${ap.length})</h3>
+      ${ap.map(a=>{const w=wt(a.typeId);return`<div class="pt">
+        <div class="avatar" style="background:${w.color}12;color:${w.color};border-color:${w.color}40">${esc(w.short)}</div>
+        <div><div class="nm">${thDate(a.date)} · ${SESSIONS.find(s=>s.id===a.session).name}</div>
+        <div class="hn">${esc(a.room)} · 🦷 ${esc(a.proc||'-')}${a.tooth?' ซี่ '+esc(a.tooth):''}</div></div>
+        <div class="ac"><button class="btn sm" data-act="editAppt" data-id="${a.id}">แก้ไข</button>
+        <button class="btn sm pri" data-act="checkin" data-id="${a.id}">เช็คอิน → Visit</button></div></div>`}).join('')||'<div class="muted">ไม่มีนัดล่วงหน้า</div>'}
+      <h3>Case History · Visits (${vs.length})</h3>
+      <div class="tl">${vs.map(v=>{const w=wt(v.typeId);return`<div class="it">
+        <div class="row sp" style="flex-wrap:wrap"><b>${thDate(v.date)}
+          <span class="chip" style="border-color:${w.color}45;color:${w.color};background:${w.color}12">${esc(w.name)}</span>
+          <span class="chip" style="border-color:var(--line);color:var(--tx2)">🦷 ${esc(v.proc||'-')}${v.tooth?' · '+esc(v.tooth):''}</span></b>
+        <button class="btn sm" data-act="editVisit" data-id="${v.id}">บันทึก/แก้ไข</button></div>
+        <div class="muted" style="margin-top:4px"><b>Dx:</b> ${esc(v.dx||'-')}</div>
+        ${v.tx?`<div class="muted"><b>Tx plan:</b> ${esc(v.tx)}</div>`:''}
+        ${v.note?`<div class="muted">${esc(v.note)}</div>`:''}</div>`}).join('')||'<div class="muted">ยังไม่มีประวัติการรักษา</div>'}</div></div>`}
+  return `<h2>ทะเบียนคนไข้</h2><div class="split">${left}${right}</div>`;
+}
+function vSettings(){
+  const dups=dupPatients();
+  return `<h2>ตั้งค่าห้อง / ประเภทงาน</h2>
+  <div class="card"><div class="muted" style="margin-bottom:12px">สีคือจุดบนปฏิทิน — <b>หนึ่งวันเลือกได้ห้องเดียว</b></div>
+  <div style="overflow:auto"><table><thead><tr><th>สี</th><th>ชื่อ</th><th>ย่อ</th><th>ห้อง</th><th>กลุ่ม</th><th></th></tr></thead>
+  <tbody>${DB.workTypes.map(w=>`<tr>
+    <td><input type="color" value="${w.color}" data-wt="${w.id}" data-f="color" style="width:42px;height:28px;border:1px solid var(--line);background:none;padding:2px"></td>
+    <td><input value="${esc(w.name)}" data-wt="${w.id}" data-f="name" style="width:115px;border:1px solid var(--line);padding:6px 9px;background:var(--surface)"></td>
+    <td><input value="${esc(w.short)}" data-wt="${w.id}" data-f="short" style="width:58px;border:1px solid var(--line);padding:6px 9px;background:var(--surface)"></td>
+    <td><input value="${esc(w.room)}" data-wt="${w.id}" data-f="room" style="width:100px;border:1px solid var(--line);padding:6px 9px;background:var(--surface)"></td>
+    <td><input value="${esc(w.group)}" data-wt="${w.id}" data-f="group" style="width:120px;border:1px solid var(--line);padding:6px 9px;background:var(--surface)"></td>
+    <td><button class="btn sm dg" data-act="delWT" data-id="${w.id}">ลบ</button></td></tr>`).join('')}</tbody></table></div>
+  <div class="row" style="margin-top:14px"><button class="btn pri" data-act="addWT">＋ เพิ่มห้อง</button>
+  <button class="btn dg" data-act="reset" style="margin-left:auto">ล้างข้อมูลทั้งหมด</button></div></div>
+  <h2>ตรวจสอบคนไข้ซ้ำ</h2>
+  <div class="card">${dups.length?dups.map(g=>`<div style="margin-bottom:12px">
+      <div class="warn">พบข้อมูลซ้ำ (${g.k.startsWith('hn')?'HN':'เบอร์โทร'}เดียวกัน)</div>
+      ${g.v.map(p=>`<div class="pt"><div class="avatar">${esc(initials(p.name))}</div>
+        <div><div class="nm">${esc(p.name)}</div><div class="hn">${esc(p.hn)} · ${esc(p.phone||'-')} · ${DB.appointments.filter(a=>a.patientId===p.id).length} นัด / ${DB.visits.filter(v=>v.patientId===p.id).length} visit</div></div>
+        <div class="ac"><button class="btn sm" data-act="editPatient" data-id="${p.id}">แก้ไข</button>
+        <button class="btn sm dg" data-act="delPatient" data-id="${p.id}">ลบรายการนี้</button></div></div>`).join('')}</div>`).join('')
+    :`<div class="ok">✓ ไม่พบคนไข้ซ้ำในระบบ</div>`}</div>`;
+}
+
+/* ============ 5) THEME PANEL ============ */
+function renderThemePanel(){
+  $('tpanel').innerHTML=`<div class="lb">เลือกธีมสี</div>
+   ${THEMES.map(t=>`<button class="th ${DB.theme===t.id?'on':''}" data-act="setTheme" data-id="${t.id}">${t.name}
+     <span class="sws">${t.sw.map(c=>`<i class="sw" style="background:${c}"></i>`).join('')}</span></button>`).join('')}
+   <div class="hr"></div><div class="lb">ข้อมูล</div>
+   <div class="row" style="gap:8px"><button class="btn sm" style="flex:1" data-act="export">⬇ สำรอง</button>
+   <button class="btn sm" style="flex:1" data-act="import">⬆ นำเข้า</button></div>
+   <div class="muted" style="font-size:11px;margin-top:8px">ข้อมูลเก็บในเครื่องนี้เท่านั้น (localStorage) แนะนำสำรองเป็นไฟล์เป็นระยะ</div>`;
+}
+
+/* ============ 6) MODALS ============ */
+const mask=$('mask'),modal=$('modal');
+const open=h=>{modal.innerHTML=h;mask.classList.add('on')};
+const close=()=>{mask.classList.remove('on');modal.innerHTML=''};
+mask.addEventListener('click',e=>{if(e.target===mask)close()});
+
+function mDaySet(d){
+  const c=daySch(d);
+  open(`<div class="mtitle">ตั้งค่าห้อง · ${thDate(d)}</div>
+   <div class="muted" style="margin-bottom:14px">หนึ่งวันเลือกได้ <b>ห้องเดียว</b></div>
+   <div class="pick" id="wtPick">${DB.workTypes.map(w=>`
+     <label class="${c&&c.typeId===w.id?'on':''}"><input type="radio" name="wtr" value="${w.id}" ${c&&c.typeId===w.id?'checked':''}>
+     <i class="sq" style="background:${w.color}"></i>${esc(w.name)}</label>`).join('')}</div>
+   <div class="g2" style="margin-top:16px">
+     <div class="f"><label>ชื่อห้องที่แสดง</label><input id="rm" value="${esc(c?c.room:'')}" placeholder="เว้นว่าง = ค่าเริ่มต้น"></div>
+     <div class="f"><label>โน้ตประจำวัน</label><input id="dn" value="${esc(c?c.note:'')}"></div></div>
+   <div class="row sp"><button class="btn dg" data-act="clearDay" data-d="${d}">ล้างการตั้งค่า</button>
+   <div class="row"><button class="btn" data-act="close">ยกเลิก</button>
+   <button class="btn pri" data-act="saveDay" data-d="${d}">บันทึก</button></div></div>`);
+  $('wtPick').addEventListener('change',e=>{
+    document.querySelectorAll('#wtPick label').forEach(l=>l.classList.toggle('on',l.querySelector('input').checked));
+    const w=wt(e.target.value),r=$('rm');if(!r.value.trim())r.value=w.room});
+}
+function mAppt(id,pre={}){
+  const a=id?DB.appointments.find(x=>x.id===id):{id:'',patientId:pre.p||'',date:pre.d||TODAY,session:pre.s||'am',
+    typeId:'',room:'',proc:PROCS[0],tooth:'',status:'scheduled',note:''};
+  const s=daySch(a.date),w=s?wt(s.typeId):null,cp=pt(a.patientId);
+  open(`<div class="mtitle">${id?'แก้ไขนัด':'เพิ่มนัดคนไข้'}</div>
+   <div class="muted" style="margin-bottom:14px">พิมพ์ HN / ชื่อ / เบอร์โทร เพื่อค้นหาคนไข้</div>
+   <div class="f ac-wrap"><label>คนไข้</label>
+     <input id="fpq" autocomplete="off" placeholder="เช่น HN00121, สมชาย, 0811112222" value="${cp?esc(cp.hn+' — '+cp.name):''}">
+     <input type="hidden" id="fpid" value="${a.patientId}"><div class="ac-list" id="fplist"></div>
+     <div id="fpmsg" class="muted" style="font-size:11.5px;margin-top:5px"></div></div>
+   <div id="np" style="display:none;border:1px dashed var(--line);padding:12px;margin-bottom:12px">
+     <div class="g3"><div class="f"><label>HN</label><input id="nhn"></div>
+     <div class="f" style="grid-column:span 2"><label>ชื่อ-สกุล</label><input id="nnm"></div></div>
+     <div class="g3"><div class="f"><label>อายุ</label><input id="nag" type="number"></div>
+     <div class="f"><label>เพศ</label><select id="nsx"><option>ช</option><option>ญ</option></select></div>
+     <div class="f"><label>เบอร์โทร</label><input id="nph"></div></div><div id="nwarn"></div></div>
+   <div class="g2"><div class="f"><label>วันที่</label><input type="date" id="fd" value="${a.date}"></div>
+   <div class="f"><label>ช่วงเวลา</label><select id="fs">${SESSIONS.map(x=>`<option value="${x.id}" ${a.session===x.id?'selected':''}>${x.name} (${x.time})</option>`).join('')}</select></div></div>
+   <div class="f"><label>ห้องของวันนี้ (1 วัน = 1 ห้อง)</label>
+     <select id="ft">${DB.workTypes.map(x=>`<option value="${x.id}" ${(s?s.typeId:a.typeId)===x.id?'selected':''}>${esc(x.name)} — ${esc(x.room)}</option>`).join('')}</select>
+     <div class="muted" id="ftmsg" style="font-size:11.5px;margin-top:5px">${s?`วันนี้ตั้งไว้เป็น <b style="color:${w.color}">${esc(s.room||w.room)}</b>`:'ยังไม่ตั้งห้อง — บันทึกแล้วจะตั้งให้ทั้งวัน'}</div></div>
+   <div class="g2"><div class="f"><label>หัตถการ</label><select id="fpr">${PROCS.map(x=>`<option ${a.proc===x?'selected':''}>${x}</option>`).join('')}</select></div>
+   <div class="f"><label>ซี่ฟัน</label><input id="fto" value="${esc(a.tooth)}" placeholder="#36, #46"></div></div>
+   <div class="g2"><div class="f"><label>สถานะ</label><select id="fst">
+     ${[['scheduled','นัดไว้'],['done','มาแล้ว'],['cancelled','ยกเลิก'],['noshow','ไม่มา']].map(([v,t])=>`<option value="${v}" ${a.status===v?'selected':''}>${t}</option>`).join('')}</select></div>
+   <div class="f"><label>หมายเหตุ</label><input id="fnt" value="${esc(a.note)}"></div></div>
+   <div class="row sp"><button class="btn" data-act="close">ยกเลิก</button>
+   <div class="row">${id?`<button class="btn" data-act="checkin" data-id="${id}">เช็คอิน → Visit</button>`:''}
+   <button class="btn pri" data-act="saveAppt" data-id="${id}">บันทึก</button></div></div>`);
+  initPtSearch(id);
+  $('fd').addEventListener('change',e=>{const n=daySch(e.target.value);
+    if(n){$('ft').value=n.typeId;$('ftmsg').innerHTML=`วันนี้ตั้งไว้เป็น <b>${esc(n.room)}</b>`}
+    else $('ftmsg').textContent='ยังไม่ตั้งห้อง — บันทึกแล้วจะตั้งให้ทั้งวัน';checkDup()});
+  $('fs').addEventListener('change',checkDup);
+}
+function initPtSearch(editId){
+  const inp=$('fpq'),box=$('fplist'),hid=$('fpid');
+  const draw=()=>{const q=inp.value.trim().toLowerCase(),date=$('fd').value,busy=busyOn(date,editId);
+    const list=DB.patients.filter(p=>!q||(p.hn+' '+p.name+' '+(p.phone||'')+' '+digits(p.phone)).toLowerCase().includes(q)).slice(0,8);
+    box.innerHTML=list.map(p=>{const b=busy.has(p.id);
+      return `<div class="opt ${b?'dis':''}" data-p="${p.id}" data-b="${b?1:0}">
+        <div style="min-width:0"><b>${esc(p.name)}</b><small>${esc(p.hn)} · ${esc(p.phone||'ไม่มีเบอร์')} · ${p.age||'-'} ปี</small></div>
+        ${b?'<span class="tag">มีนัดวันนี้แล้ว</span>':''}</div>`}).join('')
+      +`<div class="opt new" data-p="__new">＋ สร้างคนไข้ใหม่${q?' “'+esc(inp.value.trim())+'”':''}</div>`;
+    box.style.display='block'};
+  inp.addEventListener('input',()=>{hid.value='';$('np').style.display='none';draw();checkDup()});
+  inp.addEventListener('focus',draw);
+  box.addEventListener('mousedown',e=>{const o=e.target.closest('.opt');if(!o)return;e.preventDefault();
+    if(o.dataset.p==='__new'){hid.value='__new';$('np').style.display='block';box.style.display='none';
+      const raw=inp.value.trim();
+      if(/^\d[\d\-\s]*$/.test(raw))$('nph').value=raw;else if(/^hn/i.test(raw))$('nhn').value=raw;else $('nnm').value=raw;
+      inp.value='＋ คนไข้ใหม่';checkNewDup();return}
+    if(o.dataset.b==='1'){alert('คนไข้รายนี้มีนัดในวันที่เลือกอยู่แล้ว');return}
+    const p=pt(o.dataset.p);hid.value=p.id;inp.value=p.hn+' — '+p.name;box.style.display='none';$('np').style.display='none';checkDup()});
+  document.addEventListener('mousedown',e=>{if(!e.target.closest('.ac-wrap')&&box)box.style.display='none'});
+  ['nhn','nph','nnm'].forEach(k=>$(k).addEventListener('input',checkNewDup));
+  checkDup();
+}
+function checkDup(){const hid=$('fpid'),msg=$('fpmsg');if(!hid||!msg)return;
+  if(!hid.value||hid.value==='__new'){msg.textContent='';return}
+  const date=$('fd').value,ex=DB.appointments.find(a=>a.patientId===hid.value&&a.date===date&&a.status!=='cancelled');
+  msg.innerHTML=ex?`<span style="color:var(--dng);font-weight:700">⚠ มีนัดวันที่ ${thDate(date)} แล้ว (${SESSIONS.find(s=>s.id===ex.session).name})</span>`:''}
+function checkNewDup(){const w=$('nwarn');if(!w)return;
+  const hn=$('nhn').value.trim().toLowerCase(),ph=digits($('nph').value);
+  const d=(hn&&DB.patients.find(p=>(p.hn||'').trim().toLowerCase()===hn))||(ph.length>=9&&DB.patients.find(p=>digits(p.phone)===ph));
+  w.innerHTML=d?`<div class="warn">⚠ มีคนไข้นี้อยู่แล้ว: <b>${esc(d.hn)} — ${esc(d.name)}</b><br>
+    <button class="btn sm" style="margin-top:6px" data-act="usePt" data-id="${d.id}">ใช้ข้อมูลคนไข้เดิม</button></div>`:''}
+function mPatient(id){
+  const p=id?pt(id):{id:'',hn:'',name:'',age:'',sex:'ช',phone:'',tags:[],note:''};
+  open(`<div class="mtitle">${id?'แก้ไขข้อมูลคนไข้':'เพิ่มคนไข้ใหม่'}</div><div style="height:12px"></div>
+   <div class="g2"><div class="f"><label>HN</label><input id="phn" value="${esc(p.hn)}"></div>
+   <div class="f"><label>ชื่อ-สกุล</label><input id="pnm" value="${esc(p.name)}"></div></div>
+   <div class="g3"><div class="f"><label>อายุ</label><input id="pag" type="number" value="${p.age||''}"></div>
+   <div class="f"><label>เพศ</label><select id="psx"><option ${p.sex==='ช'?'selected':''}>ช</option><option ${p.sex==='ญ'?'selected':''}>ญ</option></select></div>
+   <div class="f"><label>เบอร์โทร</label><input id="pph" value="${esc(p.phone)}"></div></div>
+   <div class="f"><label>โรคประจำตัว / แพ้ยา (คั่นด้วย ,)</label><input id="ptg" value="${esc((p.tags||[]).join(', '))}"></div>
+   <div class="f"><label>หมายเหตุทางคลินิก</label><textarea id="pnt" rows="3">${esc(p.note)}</textarea></div>
+   <div class="row sp"><button class="btn" data-act="close">ยกเลิก</button>
+   <button class="btn pri" data-act="savePatient" data-id="${id||''}">บันทึก</button></div>`);
+}
+function mVisit(id){
+  const v=DB.visits.find(x=>x.id===id),p=pt(v.patientId);
+  open(`<div class="mtitle">บันทึกการรักษา</div>
+   <div class="muted" style="margin-bottom:13px">${esc(p.hn)} — ${esc(p.name)} · ${thDate(v.date)}</div>
+   ${(p.tags||[]).length?`<div class="warn">⚠ ${esc(p.tags.join(' · '))}</div>`:''}
+   <div class="g2"><div class="f"><label>หัตถการ</label><select id="vpr">${PROCS.map(x=>`<option ${v.proc===x?'selected':''}>${x}</option>`).join('')}</select></div>
+   <div class="f"><label>ซี่ฟัน</label><input id="vto" value="${esc(v.tooth)}"></div></div>
+   <div class="f"><label>Diagnosis</label><input id="vd" value="${esc(v.dx)}"></div>
+   <div class="f"><label>Treatment plan / นัดครั้งถัดไป</label><input id="vt" value="${esc(v.tx)}"></div>
+   <div class="f"><label>บันทึกเพิ่มเติม</label><textarea id="vn" rows="4">${esc(v.note)}</textarea></div>
+   <div class="row sp"><button class="btn dg" data-act="delVisit" data-id="${id}">ลบ Visit</button>
+   <div class="row"><button class="btn" data-act="close">ปิด</button>
+   <button class="btn pri" data-act="saveVisit" data-id="${id}">บันทึก</button></div></div>`);
+}
+
+/* ============ 7) ACTIONS ============ */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-act]');
+  if(!t){if(!e.target.closest('#tpanel'))$('tpanel').classList.remove('on');return}
+  const a=t.dataset.act,id=t.dataset.id,d=t.dataset.d,P=S.plan;
+  if(a!=='themeBtn'&&a!=='setTheme'&&a!=='export'&&a!=='import')$('tpanel').classList.remove('on');
+  switch(a){
+    case'themeBtn':renderThemePanel();$('tpanel').classList.toggle('on');break;
+    case'setTheme':applyTheme(id);renderThemePanel();break;
+    case'export':{const b=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+      const u=URL.createObjectURL(b),el=document.createElement('a');
+      el.href=u;el.download=`dental-tracker-${TODAY}.json`;el.click();URL.revokeObjectURL(u);break}
+    case'import':$('fileIn').click();break;
+    case'nav':S.view=t.dataset.v;render();break;
+    case'mode':S.mode=t.dataset.m;render();break;
+    case'filt':S.filter=t.dataset.f;render();break;
+    case'mv':S.cur=new Date(S.cur.getFullYear(),S.cur.getMonth()+ +t.dataset.n,1);render();break;
+    case'today':S.cur=new Date(now.getFullYear(),now.getMonth(),1);render();break;
+    case'onlyBusy':S.onlyBusy=t.checked;render();break;
+    case'openDay':S.view='schedule';S.mode='list';render();setTimeout(()=>$('d-'+d)?.scrollIntoView({behavior:'smooth',block:'center'}),60);break;
+    /* planner */
+    case'pickDay':P.sel.has(d)?P.sel.delete(d):P.sel.add(d);t.classList.toggle('pk');refreshPlan();break;
+    case'planMode':P.mode=t.dataset.m;render();break;
+    case'dow':{const i=+t.dataset.i;P.dows.has(i)?P.dows.delete(i):P.dows.add(i);t.classList.toggle('on');break}
+    case'applyDow':{
+      if(!P.dows.size){alert('เลือกวันในสัปดาห์ก่อน');return}
+      const y=S.cur.getFullYear(),m=S.cur.getMonth(),last=new Date(y,m+1,0).getDate();
+      for(let i=1;i<=last;i++){const dt=new Date(y,m,i);if(!P.dows.has(dt.getDay()))continue;
+        const occ=Math.floor((i-1)/7);
+        if(P.every==='w13'&&!(occ===0||occ===2))continue;
+        if(P.every==='w24'&&!(occ===1||occ===3))continue;
+        P.sel.add(iso(dt))}
+      render();break}
+    case'clearSel':P.sel=new Set();render();break;
+    case'savePlan':{
+      const ds=[...P.sel];if(!ds.length){alert('ยังไม่ได้เลือกวัน');return}
+      if(P.mode==='clear'){if(!confirm(`ล้างการตั้งค่าห้อง ${ds.length} วัน?`))return;ds.forEach(x=>delete DB.daySchedules[x])}
+      else{const ty=P.mode==='off'?'off':P.typeId,w=wt(ty);
+        ds.forEach(x=>{DB.daySchedules[x]={typeId:ty,room:w.room,note:P.note};
+          DB.appointments.filter(ap=>ap.date===x).forEach(ap=>{ap.typeId=ty;ap.room=w.room})})}
+      P.sel=new Set();save();alert(`บันทึก ${ds.length} วันเรียบร้อย`);render();break}
+    /* วัน/นัด */
+    case'daySet':mDaySet(d);break;
+    case'saveDay':{const r=document.querySelector('input[name=wtr]:checked');if(!r){alert('เลือกห้องก่อน');return}
+      const w=wt(r.value),room=$('rm').value.trim()||w.room;
+      DB.daySchedules[d]={typeId:w.id,room,note:$('dn').value.trim()};
+      DB.appointments.filter(x=>x.date===d).forEach(x=>{x.typeId=w.id;x.room=room});
+      save();close();render();break}
+    case'clearDay':delete DB.daySchedules[d];save();close();render();break;
+    case'addAppt':{if(isOff(d||TODAY)&&!confirm('วันนี้ตั้งเป็น OFF (วันหยุด) — ยืนยันลงนัด?'))return;
+      mAppt(null,{d:d||TODAY,s:t.dataset.s,p:t.dataset.p});break}
+    case'editAppt':mAppt(id);break;
+    case'delAppt':if(confirm('ลบนัดนี้?')){DB.appointments=DB.appointments.filter(x=>x.id!==id);save();render()}break;
+    case'usePt':{const p=pt(id);$('fpid').value=p.id;$('fpq').value=p.hn+' — '+p.name;
+      $('np').style.display='none';$('nwarn').innerHTML='';checkDup();break}
+    case'saveAppt':{
+      let pid=$('fpid').value;
+      if(pid==='__new'){
+        const hn=$('nhn').value.trim(),ph=$('nph').value.trim(),nm=$('nnm').value.trim();
+        if(!nm){alert('กรอกชื่อคนไข้');return}
+        const dup=DB.patients.find(p=>(hn&&(p.hn||'').trim().toLowerCase()===hn.toLowerCase())||(digits(ph).length>=9&&digits(p.phone)===digits(ph)));
+        if(dup){alert(`มีคนไข้นี้อยู่แล้ว: ${dup.hn} — ${dup.name}\nกด “ใช้ข้อมูลคนไข้เดิม” แทน`);return}
+        const np={id:uid('p_'),hn:hn||('HN'+Date.now().toString().slice(-5)),name:nm,age:$('nag').value,
+          sex:$('nsx').value,phone:ph,tags:[],note:'',createdAt:TODAY};
+        DB.patients.push(np);pid=np.id}
+      if(!pid){alert('กรุณาค้นหาและเลือกคนไข้ก่อน');return}
+      const date=$('fd').value,ses=$('fs').value;
+      const clash=DB.appointments.find(x=>x.patientId===pid&&x.date===date&&x.status!=='cancelled'&&x.id!==id);
+      if(clash){if(clash.session===ses){alert('คนไข้มีนัดช่วงเวลาเดียวกันของวันนี้แล้ว');return}
+        if(!confirm(`คนไข้มีนัดวันนี้แล้วช่วง${SESSIONS.find(s=>s.id===clash.session).name} — เพิ่มอีกนัด?`))return}
+      const ty=$('ft').value,w=wt(ty),cur=daySch(date),room=cur&&cur.typeId===ty?cur.room:w.room;
+      DB.daySchedules[date]={typeId:ty,room,note:cur?cur.note:''};
+      DB.appointments.filter(x=>x.date===date).forEach(x=>{x.typeId=ty;x.room=room});
+      const o={patientId:pid,date,session:ses,typeId:ty,room,proc:$('fpr').value,
+        tooth:$('fto').value.trim(),status:$('fst').value,note:$('fnt').value};
+      if(id)Object.assign(DB.appointments.find(x=>x.id===id),o);else DB.appointments.push({id:uid('a_'),visitId:null,...o});
+      save();close();render();break}
+    case'checkin':{const ap=DB.appointments.find(x=>x.id===id);
+      if(ap.visitId){close();mVisit(ap.visitId);break}
+      const v={id:uid('v_'),patientId:ap.patientId,apptId:ap.id,date:ap.date,session:ap.session,typeId:ap.typeId,
+        proc:ap.proc||PROCS[0],tooth:ap.tooth||'',dx:'',tx:'',note:ap.note||''};
+      DB.visits.push(v);ap.visitId=v.id;ap.status='done';save();close();mVisit(v.id);break}
+    case'editVisit':mVisit(id);break;
+    case'saveVisit':{const v=DB.visits.find(x=>x.id===id);
+      v.proc=$('vpr').value;v.tooth=$('vto').value.trim();v.dx=$('vd').value;v.tx=$('vt').value;v.note=$('vn').value;
+      save();close();render();break}
+    case'delVisit':if(confirm('ลบ Visit นี้?')){const ap=DB.appointments.find(x=>x.visitId===id);
+      if(ap){ap.visitId=null;ap.status='scheduled'}
+      DB.visits=DB.visits.filter(x=>x.id!==id);save();close();render()}break;
+    case'selP':S.sel=id;render();break;
+    case'addPatient':mPatient(null);break;
+    case'editPatient':mPatient(id);break;
+    case'delPatient':if(confirm('ลบคนไข้รายนี้ พร้อมนัดและ visit ทั้งหมด?')){
+      DB.patients=DB.patients.filter(p=>p.id!==id);DB.appointments=DB.appointments.filter(a=>a.patientId!==id);
+      DB.visits=DB.visits.filter(v=>v.patientId!==id);if(S.sel===id)S.sel=null;save();render()}break;
+    case'savePatient':{
+      const o={hn:$('phn').value.trim(),name:$('pnm').value.trim(),age:$('pag').value,sex:$('psx').value,
+        phone:$('pph').value.trim(),tags:$('ptg').value.split(',').map(s=>s.trim()).filter(Boolean),note:$('pnt').value};
+      if(!o.name){alert('กรอกชื่อคนไข้');return}
+      const dup=DB.patients.find(p=>p.id!==id&&((o.hn&&(p.hn||'').toLowerCase()===o.hn.toLowerCase())||(digits(o.phone).length>=9&&digits(p.phone)===digits(o.phone))));
+      if(dup&&!confirm(`ข้อมูลซ้ำกับ ${dup.hn} — ${dup.name}\nยืนยันบันทึกต่อ?`))return;
+      if(id)Object.assign(pt(id),o);else{const np={id:uid('p_'),createdAt:TODAY,...o};DB.patients.push(np);S.sel=np.id;S.view='archive'}
+      save();close();render();break}
+    case'addWT':DB.workTypes.push({id:uid('w_'),name:'ห้องใหม่',short:'NEW',room:'ห้องใหม่',color:'#0f9b8e',group:'อื่น ๆ'});save();render();break;
+    case'delWT':if(confirm('ลบประเภทงานนี้?')){DB.workTypes=DB.workTypes.filter(w=>w.id!==id);save();render()}break;
+    case'reset':if(confirm('ล้างข้อมูลทั้งหมดและเริ่มใหม่?')){const th=DB.theme;localStorage.removeItem(KEY);DB=seed();DB.theme=th;save();S.sel=null;render()}break;
+    case'close':close();break;
+  }
+});
+document.addEventListener('change',e=>{const i=e.target;
+  if(i.dataset.wt){const w=wt(i.dataset.wt);w[i.dataset.f]=i.value;save();if(i.dataset.f!=='name')render();return}
+  if(i.dataset.plan){S.plan[i.dataset.plan]=i.value;refreshPlan()}});
+document.addEventListener('input',e=>{const i=e.target;if(i.dataset.plan==='note')S.plan.note=i.value});
+$('fileIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);
+    if(!j.patients)throw 0;DB=j;save();applyTheme(DB.theme||'light');S.sel=null;render();alert('นำเข้าข้อมูลสำเร็จ')}
+    catch(x){alert('ไฟล์ไม่ถูกต้อง')}};r.readAsText(f);e.target.value=''});
+$('q').addEventListener('input',e=>{S.q=e.target.value;render()});
+render();
+</script>
+</body>
+</html>
