@@ -1,0 +1,10 @@
+<!DOCTYPE html><meta charset="utf-8"><body style="font-family:sans-serif;padding:40px">
+<button onclick="gen()" style="padding:14px 22px;font-size:16px">สร้างไอคอน 3 ไฟล์</button>
+<script>
+function draw(size,pad){const c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d');
+  x.fillStyle='#2a2a6e';x.fillRect(0,0,size,size);const s=size*(1-pad*2);
+  x.fillStyle='#fff';x.font=`800 ${s*0.4}px system-ui,sans-serif`;x.textAlign='center';x.textBaseline='middle';
+  x.fillText('DT',size/2,size/2);return c}
+function dl(c,n){const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download=n;a.click()}
+function gen(){dl(draw(192,0),'icon-192.png');dl(draw(512,0),'icon-512.png');dl(draw(512,0.2),'icon-maskable.png')}
+</script>

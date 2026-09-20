@@ -1,0 +1,24 @@
+{
+  "id": "/",
+  "name": "Dental Tracker — ระบบนัดหมายทันตกรรม",
+  "short_name": "Dental",
+  "description": "ระบบจัดตารางห้อง นัดหมาย และประวัติคนไข้ทันตกรรม",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#2a2a6e",
+  "lang": "th",
+  "categories": ["medical", "productivity"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "ปฏิทิน", "url": "./index.html#schedule" },
+    { "name": "นัดที่จะถึง", "url": "./index.html#upcoming" },
+    { "name": "ทะเบียนคนไข้", "url": "./index.html#archive" }
+  ]
+}
