@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="Dental Tracker">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -23,25 +23,33 @@
   --wrnBg:#fffaed;--wrnLn:#f0e3bd;--wrn:#8a6410;--infBg:#eef0fb;--infLn:#d8dcf3;--inf:#2a2a6e;--r:2px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Thai',system-ui,sans-serif;font-size:13.5px;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom);transition:background .2s,color .2s}
-button,input,select,textarea{font-family:inherit;font-size:13.5px;color:inherit}
+body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Thai Looped',system-ui,sans-serif;font-size:12.5px;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom);transition:background .2s,color .2s}
+button,input,select,textarea{font-family:inherit;font-size:12.5px;color:inherit}
 button{cursor:pointer;border:0;background:none}
 .mono{font-family:'IBM Plex Mono',monospace}
-.app{max-width:1240px;margin:0 auto;padding:0 clamp(12px,2vw,28px) 90px}
+.app{max-width:1160px;margin:0 auto;padding:0 clamp(12px,2vw,24px) 70px}
 header{border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:30;padding-top:env(safe-area-inset-top)}
-.hd{max-width:1240px;margin:0 auto;padding:12px clamp(12px,2vw,28px);display:flex;align-items:center;gap:clamp(8px,1.4vw,18px);flex-wrap:wrap}
+.hd{max-width:1160px;margin:0 auto;padding:9px clamp(12px,2vw,24px);display:flex;align-items:center;gap:clamp(8px,1.2vw,16px);flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px}
-.brand .ic{width:40px;height:40px;background:var(--hl);color:var(--onhl);display:grid;place-items:center;font-weight:800;font-size:15px;border-radius:var(--r)}
-.brand h1{font-size:clamp(15px,1.5vw,19px);font-weight:800;color:var(--ink);line-height:1.15}
-.brand p{font-size:10.5px;color:var(--tx2);font-weight:500}
-nav{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:var(--r);overflow:auto}
-nav button{padding:9px clamp(10px,1.3vw,20px);color:var(--tx2);font-weight:600;border-right:1px solid var(--line);white-space:nowrap}
-nav button:last-child{border-right:0}
-nav button.on{background:var(--hl);color:var(--onhl)}
-.search{margin-left:auto;display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:var(--r);padding:8px 11px;flex:1;max-width:260px;min-width:140px;background:var(--soft)}
-.search input{background:none;border:0;outline:none;width:100%}
-.ico{width:36px;height:36px;border:1px solid var(--line);border-radius:var(--r);color:var(--ink);display:grid;place-items:center;background:var(--soft);font-size:15px}
-#syncBadge{font-size:11px;font-weight:700;white-space:nowrap;color:var(--tx2)}
+.brand .ic{width:34px;height:34px;background:var(--hl);color:var(--onhl);display:grid;place-items:center;font-weight:800;font-size:13px;border-radius:8px}
+.brand h1{font-size:clamp(13px,1.3vw,16px);font-weight:800;color:var(--ink);line-height:1.15}
+.brand p{font-size:9.5px;color:var(--tx2);font-weight:500}
+nav{display:flex;gap:2px;background:var(--soft);border-radius:999px;padding:3px;overflow:auto}
+nav button{padding:7px clamp(10px,1.1vw,16px);border-radius:999px;color:var(--tx2);font-weight:700;font-size:12px;white-space:nowrap}
+nav button:hover{color:var(--ink)}
+nav button.on{background:var(--hl);color:var(--onhl);box-shadow:0 2px 6px rgba(0,0,0,.14)}
+.hright{margin-left:auto;display:flex;align-items:center;gap:6px}
+.ico{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;color:var(--ink);display:grid;place-items:center;background:var(--soft);flex:none}
+.ico:hover{border-color:var(--hl);color:var(--hl)}
+.ico svg{width:16px;height:16px}
+.search-wrap{position:relative}
+.search{position:absolute;right:0;top:calc(100% + 8px);display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:7px 13px;width:240px;background:var(--surface);box-shadow:0 14px 30px rgba(0,0,0,.16);opacity:0;pointer-events:none;transform:translateY(-4px);transition:opacity .15s,transform .15s;z-index:40}
+.search.on{opacity:1;pointer-events:auto;transform:none}
+.search svg{flex:none;color:var(--tx2)}
+.search input{background:none;border:0;outline:none;width:100%;font-size:12.5px}
+#syncBadge{font-size:10.5px;font-weight:700;white-space:nowrap;color:var(--tx2);background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:5px 11px;display:flex;align-items:center;gap:5px}
+#syncBadge b{width:6px;height:6px;border-radius:50%;background:var(--tx2);display:inline-block}
+#syncBadge.ok b{background:var(--ok)}#syncBadge.wrn b{background:var(--wrn)}#syncBadge.dng b{background:var(--dng)}
 .tpanel{position:fixed;top:64px;right:clamp(10px,2vw,26px);width:300px;max-height:78vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 22px 50px rgba(0,0,0,.3);padding:14px;z-index:50;display:none}
 .tpanel.on{display:block}
 .tpanel .lb{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:10px 0 8px}
@@ -68,21 +76,21 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .note{background:var(--wrnBg);border:1px solid var(--wrnLn);color:var(--wrn);padding:8px 11px;border-radius:var(--r);font-size:12px;font-weight:600}
 .warn{background:var(--dngBg);border:1px solid var(--dngLn);color:var(--dng);padding:8px 11px;font-size:12px;font-weight:600;border-radius:var(--r);margin-bottom:10px}
 .ok{background:var(--okBg);border:1px solid var(--okLn);color:var(--ok);padding:8px 11px;font-size:12px;font-weight:600;border-radius:var(--r)}
-.hero{display:flex;align-items:flex-end;justify-content:space-between;padding:clamp(14px,2.6vw,34px) 0 clamp(12px,1.8vw,22px);gap:16px;flex-wrap:wrap}
-.hero .num{font-size:clamp(48px,8vw,96px);font-weight:700;line-height:.85;color:transparent;-webkit-text-stroke:2.2px var(--ink)}
+.hero{display:flex;align-items:flex-end;justify-content:space-between;padding:clamp(10px,1.8vw,22px) 0 clamp(10px,1.3vw,16px);gap:14px;flex-wrap:wrap}
+.hero .num{font-size:clamp(36px,5.6vw,66px);font-weight:700;line-height:.85;color:transparent;-webkit-text-stroke:1.8px var(--ink)}
 .hero .rt{text-align:right;margin-left:auto}
-.hero .mn{font-size:clamp(22px,3.4vw,40px);font-weight:800;color:var(--ink);line-height:1}
-.hero .yr{font-size:clamp(14px,1.6vw,19px);font-weight:700;color:var(--pm);margin-top:2px}
+.hero .mn{font-size:clamp(18px,2.4vw,28px);font-weight:800;color:var(--ink);line-height:1}
+.hero .yr{font-size:clamp(12px,1.2vw,15px);font-weight:700;color:var(--pm);margin-top:1px}
 .nav2{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
-.nav2 button{width:32px;height:32px;border:1px solid var(--line);border-radius:50%;color:var(--ink);display:grid;place-items:center}
+.nav2 button{width:28px;height:28px;border:1px solid var(--line);border-radius:50%;color:var(--ink);display:grid;place-items:center;font-size:13px}
 .tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .seg{display:flex;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
 .seg button{padding:8px 14px;color:var(--tx2);font-weight:600;border-right:1px solid var(--line)}
 .seg button:last-child{border-right:0}.seg button.on{background:var(--hl);color:var(--onhl)}
 .cal{border-top:1px solid var(--line);border-left:1px solid var(--line)}
 .grid{display:grid;grid-template-columns:repeat(7,1fr)}
-.gh{padding:clamp(7px,.9vw,11px) 0;text-align:center;font-size:clamp(10.5px,1vw,12px);font-weight:700;color:var(--ink);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
-.cell{position:relative;min-height:clamp(62px,8.4vw,112px);padding:clamp(5px,.7vw,9px) clamp(6px,.8vw,10px);border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface);text-align:left;display:flex;flex-direction:column;overflow:hidden}
+.gh{padding:clamp(5px,.7vw,8px) 0;text-align:center;font-size:clamp(9.5px,.85vw,11px);font-weight:700;color:var(--ink);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.cell{position:relative;min-height:clamp(50px,6.6vw,86px);padding:clamp(4px,.6vw,7px) clamp(5px,.65vw,8px);border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface);text-align:left;display:flex;flex-direction:column;overflow:hidden}
 .cell:hover{background:var(--soft)}
 .cell.out{background:var(--soft);opacity:.5}
 .cell.tdy{background:var(--hl)}.cell.tdy .cn,.cell.tdy .rl,.cell.tdy .cnt{color:var(--onhl)!important}
@@ -181,9 +189,14 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
     <button data-act="nav" data-v="archive">ทะเบียนคนไข้</button>
     <button data-act="nav" data-v="settings">ตั้งค่า</button>
   </nav>
-  <div class="search">🔍<input id="q" placeholder="ค้นหา HN / ชื่อ / เบอร์โทร"/></div>
-  <span id="syncBadge">● เครื่องนี้</span>
-  <button class="ico" data-act="themeBtn">⚙</button>
+  <div class="hright">
+    <span id="syncBadge"><b></b>เครื่องนี้</span>
+    <div class="search-wrap">
+      <button class="ico" data-act="searchBtn" aria-label="ค้นหา"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg></button>
+      <div class="search" id="searchBox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg><input id="q" placeholder="ค้นหา HN / ชื่อ / เบอร์โทร"/></div>
+    </div>
+    <button class="ico" data-act="themeBtn" aria-label="ตั้งค่า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </div>
 </div></header>
 <div class="tpanel" id="tpanel"></div>
 <div class="app" id="app"></div>
@@ -195,9 +208,9 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
 /* ==================================================================
    ⚙️ CONFIG — ใส่คีย์ Supabase (เว้นว่าง = โหมดเครื่องเดียว)
    ================================================================== */
-const SUPA_URL = 'https://innczxdsoqryxksuloqw.supabase.co';          // ← วาง Project URL
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlubmN6eGRzb3FyeXhrc3Vsb3F3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA0MzE3MzEsImV4cCI6MjEwNjAwNzczMX0.QT_ppd1n0xfrCY7hFj2Xlgb6z1hZe_Nulo2BsmiJfqY';        // ← วาง anon public
-const ROW_ID   = 'clinic-main';                            // ไม่ต้องแก้
+const SUPA_URL = 'https://innczxdsoqryxksuloqw.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlubmN6eGRzb3FyeXhrc3Vsb3F3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA0MzE3MzEsImV4cCI6MjEwNjAwNzczMX0.QT_ppd1n0xfrCY7hFj2Xlgb6z1hZe_Nulo2BsmiJfqY';
+const ROW_ID   = 'clinic-main';
 /* ================================================================== */
 
 /* ---------- THEME ENGINE ---------- */
@@ -286,7 +299,7 @@ function seed(){
     categoryStyles:{'Oral exam':{bg:'#EDEAE0',text:'#5C6D68'},'RPD':{bg:'#EFE1EA',text:'#63405A'},
       'TP':{bg:'#EFE1EA',text:'#63405A'},'CD':{bg:'#EFE1EA',text:'#63405A'},'ENDO':{bg:'#F7E4DD',text:'#9C4530'},
       'SUR':{bg:'#FBDADA',text:'#A33636'},'Stitch off':{bg:'#FBDADA',text:'#A33636'},
-      'F/U':{bg:'#E3E7F3',text:'#3C4A75'},'อื่นๆ':{bg:'#F0EBDD',text:'#8A7F63'}},theme:'light'};
+      'F/U':{bg:'#E3E7F3',text:'#3C4A75'},'อื่นๆ':{bg:'#F0EBDD',text:'#8A7F63'}},theme:'cheesecake'};
   localStorage.setItem(KEY,JSON.stringify(db));return db;
 }
 /* ---------- AUTO BACKUP ---------- */
@@ -297,18 +310,18 @@ function autoBackup(){const k=BK+TODAY;
     while(keys.length>7)localStorage.removeItem(keys.shift())}catch(e){}}
 const backupList=()=>Object.keys(localStorage).filter(x=>x.startsWith(BK)).sort().reverse();
 function restoreBackup(k){try{const j=JSON.parse(localStorage.getItem(k));
-  if(!j?.data?.patients)throw 0;DB=j.data;localSave();applyTheme(DB.theme);render();
+  if(!j?.data?.patients)throw 0;DB=j.data;localSave();applyTheme(DB.theme||'cheesecake');render();
   alert('กู้คืนข้อมูลวันที่ '+k.replace(BK,'')+' เรียบร้อย')}catch(e){alert('ไฟล์สำรองเสียหาย')}}
 
 /* ---------- STATE ---------- */
 const now=new Date();
 let S={view:'schedule',mode:'cal',cur:new Date(now.getFullYear(),now.getMonth(),1),q:'',sel:null,onlyBusy:true,filter:'all',
   plan:{sel:new Set(),mode:'room',typeId:DEF_WT[0].id,session:'am',note:'',dows:new Set(),every:'all'}};
-function applyTheme(id){const t=THEMES.find(x=>x.id===id)||THEMES[0];
+function applyTheme(id){const t=THEMES.find(x=>x.id===id)||THEMES.find(x=>x.id==='cheesecake')||THEMES[0];
   Object.entries(t.v).forEach(([k,v])=>document.documentElement.style.setProperty('--'+k,v));
   const m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',t.v.hl);
   DB.theme=t.id;localSave()}
-applyTheme(DB.theme||'light');
+applyTheme(DB.theme||'cheesecake');
 
 /* ---------- QUERIES ---------- */
 const apptsOn=d=>DB.appointments.filter(a=>a.date===d).sort((x,y)=>(x.time||'99:99').localeCompare(y.time||'99:99'));
@@ -638,11 +651,13 @@ function mVisit(id){const v=DB.visits.find(x=>x.id===id),p=pt(v.patientId);
 /* ---------- ACTIONS ---------- */
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-act]');
-  if(!t){if(!e.target.closest('#tpanel'))$('tpanel').classList.remove('on');return}
+  if(!t){if(!e.target.closest('#tpanel'))$('tpanel').classList.remove('on');if(!e.target.closest('.search-wrap'))$('searchBox').classList.remove('on');return}
   const a=t.dataset.act,id=t.dataset.id,d=t.dataset.d,P=S.plan;
   if(!['themeBtn','setTheme','export','import','logout'].includes(a))$('tpanel').classList.remove('on');
+  if(!['searchBtn'].includes(a)&&!e.target.closest('.search-wrap'))$('searchBox').classList.remove('on');
   switch(a){
-    case'themeBtn':renderThemePanel();$('tpanel').classList.toggle('on');break;
+    case'themeBtn':$('searchBox').classList.remove('on');renderThemePanel();$('tpanel').classList.toggle('on');break;
+    case'searchBtn':{$('tpanel').classList.remove('on');const sb=$('searchBox');sb.classList.toggle('on');if(sb.classList.contains('on'))setTimeout(()=>$('q').focus(),10);break}
     case'setTheme':applyTheme(id);save();renderThemePanel();break;
     case'export':{const b=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
       const u=URL.createObjectURL(b),el=document.createElement('a');
@@ -746,14 +761,18 @@ document.addEventListener('change',e=>{const i=e.target;
 document.addEventListener('input',e=>{if(e.target.dataset.plan==='note')S.plan.note=e.target.value});
 $('fileIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;
   const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(!j.patients)throw 0;
-    DB=j;save();applyTheme(DB.theme||'light');S.sel=null;render();alert('นำเข้าข้อมูลสำเร็จ — '+DB.patients.length+' คนไข้')}
+    DB=j;save();applyTheme(DB.theme||'cheesecake');S.sel=null;render();alert('นำเข้าข้อมูลสำเร็จ — '+DB.patients.length+' คนไข้')}
     catch(x){alert('ไฟล์ไม่ถูกต้อง')}};r.readAsText(f);e.target.value=''});
 $('q').addEventListener('input',e=>{S.q=e.target.value;render()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('searchBox').classList.remove('on');$('tpanel').classList.remove('on')}});
 
 /* ---------- CLOUD SYNC ---------- */
 const SYNC={on:false,sb:null,dirty:false,t:null};
 const DEVICE=localStorage.getItem('dev_id')||(()=>{const v='d_'+Math.random().toString(36).slice(2,8);localStorage.setItem('dev_id',v);return v})();
-function setSync(txt,color){const b=$('syncBadge');if(b){b.textContent=txt;b.style.color=color||'var(--tx2)'}}
+function setSync(txt,color){const b=$('syncBadge');if(!b)return;
+  b.classList.remove('ok','wrn','dng');
+  if(color==='var(--ok)')b.classList.add('ok');else if(color==='var(--wrn)')b.classList.add('wrn');else if(color==='var(--dng)')b.classList.add('dng');
+  b.innerHTML='<b></b>'+esc(txt)}
 function queuePush(){SYNC.dirty=true;clearTimeout(SYNC.t);setSync('⏳ กำลังบันทึก…');SYNC.t=setTimeout(cloudPush,700)}
 async function cloudPush(){if(!navigator.onLine){setSync('⚠ ออฟไลน์','var(--wrn)');return}
   const {error}=await SYNC.sb.from('clinic_state').upsert({id:ROW_ID,data:DB,updated_at:new Date().toISOString(),updated_by:DEVICE});
@@ -764,7 +783,7 @@ async function cloudPull(){const {data,error}=await SYNC.sb.from('clinic_state')
 function subscribeRealtime(){SYNC.sb.channel('clinic-sync').on('postgres_changes',
   {event:'*',schema:'public',table:'clinic_state',filter:`id=eq.${ROW_ID}`},p=>{
     const n=p.new;if(!n||n.updated_by===DEVICE)return;
-    DB=n.data;localSave();applyTheme(DB.theme);render();setSync('✓ อัปเดตจากเครื่องอื่น','var(--ok)')}).subscribe()}
+    DB=n.data;localSave();applyTheme(DB.theme||'cheesecake');render();setSync('✓ อัปเดตจากเครื่องอื่น','var(--ok)')}).subscribe()}
 window.addEventListener('online',()=>{if(SYNC.dirty)cloudPush()});
 function loginUI(msg){
   app.innerHTML=`<div style="max-width:380px;margin:12vh auto"><div class="card">
@@ -784,7 +803,7 @@ async function boot(){
   const {data:{session}}=await SYNC.sb.auth.getSession();
   if(!session){setSync('🔒 ยังไม่เข้าสู่ระบบ');loginUI();return}
   SYNC.on=true;setSync('⏳ กำลังดึงข้อมูล…');
-  await cloudPull();applyTheme(DB.theme||'light');render();subscribeRealtime();setSync('✓ ซิงก์แล้ว','var(--ok)')}
+  await cloudPull();applyTheme(DB.theme||'cheesecake');render();subscribeRealtime();setSync('✓ ซิงก์แล้ว','var(--ok)')}
 boot();
 
 /* ---------- PWA ---------- */
