@@ -47,13 +47,17 @@ nav button.on{background:var(--hl);color:var(--onhl);box-shadow:0 2px 6px rgba(0
 .search.on{opacity:1;pointer-events:auto;transform:none}
 .search svg{flex:none;color:var(--tx2)}
 .search input{background:none;border:0;outline:none;width:100%;font-size:12.5px}
+.asearch{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:7px 13px;margin:10px 0;background:var(--soft)}
+.asearch svg{flex:none;color:var(--tx2)}
+.asearch input{background:none;border:0;outline:none;width:100%;font-size:12.5px;color:inherit}
 #syncBadge{font-size:10.5px;font-weight:700;white-space:nowrap;color:var(--tx2);background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:5px 11px;display:flex;align-items:center;gap:5px}
 #syncBadge b{width:6px;height:6px;border-radius:50%;background:var(--tx2);display:inline-block}
 #syncBadge.ok b{background:var(--ok)}#syncBadge.wrn b{background:var(--wrn)}#syncBadge.dng b{background:var(--dng)}
 .tpanel{position:fixed;top:64px;right:clamp(10px,2vw,26px);width:300px;max-height:78vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 22px 50px rgba(0,0,0,.3);padding:14px;z-index:50;display:none}
 .tpanel.on{display:block}
 .tpanel .lb{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:10px 0 8px}
-.th{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:4px;margin-bottom:5px;background:var(--soft);border:1px solid transparent;font-weight:700;font-size:12.5px;width:100%;color:var(--tx)}
+.thgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.th{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:4px;background:var(--soft);border:1px solid transparent;font-weight:700;font-size:12.5px;width:100%;color:var(--tx)}
 .th:hover{border-color:var(--line)}.th.on{border-color:var(--hl);color:var(--ink)}
 .th .sws{margin-left:auto;display:flex;gap:4px}
 .th .sw{width:13px;height:13px;border-radius:50%;border:1px solid rgba(128,128,128,.4)}
@@ -76,21 +80,22 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .note{background:var(--wrnBg);border:1px solid var(--wrnLn);color:var(--wrn);padding:8px 11px;border-radius:var(--r);font-size:12px;font-weight:600}
 .warn{background:var(--dngBg);border:1px solid var(--dngLn);color:var(--dng);padding:8px 11px;font-size:12px;font-weight:600;border-radius:var(--r);margin-bottom:10px}
 .ok{background:var(--okBg);border:1px solid var(--okLn);color:var(--ok);padding:8px 11px;font-size:12px;font-weight:600;border-radius:var(--r)}
-.hero{display:flex;align-items:flex-end;justify-content:space-between;padding:clamp(10px,1.8vw,22px) 0 clamp(10px,1.3vw,16px);gap:14px;flex-wrap:wrap}
+.hero{display:flex;align-items:flex-end;justify-content:space-between;padding:clamp(8px,1.4vw,18px) 0 clamp(8px,1vw,13px);gap:10px;flex-wrap:nowrap}
 .hero .num{font-size:clamp(36px,5.6vw,66px);font-weight:700;line-height:.85;color:transparent;-webkit-text-stroke:1.8px var(--ink)}
 .hero .rt{text-align:right;margin-left:auto}
 .hero .mn{font-size:clamp(18px,2.4vw,28px);font-weight:800;color:var(--ink);line-height:1}
 .hero .yr{font-size:clamp(12px,1.2vw,15px);font-weight:700;color:var(--pm);margin-top:1px}
 .nav2{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
 .nav2 button{width:28px;height:28px;border:1px solid var(--line);border-radius:50%;color:var(--ink);display:grid;place-items:center;font-size:13px}
-.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.tools .btn{font-size:11px;padding:6px 11px}
 .seg{display:flex;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.seg button{padding:8px 14px;color:var(--tx2);font-weight:600;border-right:1px solid var(--line)}
+.seg button{padding:6px 11px;font-size:11px;color:var(--tx2);font-weight:600;border-right:1px solid var(--line)}
 .seg button:last-child{border-right:0}.seg button.on{background:var(--hl);color:var(--onhl)}
 .cal{border-top:1px solid var(--line);border-left:1px solid var(--line)}
 .grid{display:grid;grid-template-columns:repeat(7,1fr)}
 .gh{padding:clamp(5px,.7vw,8px) 0;text-align:center;font-size:clamp(9.5px,.85vw,11px);font-weight:700;color:var(--ink);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
-.cell{position:relative;min-height:clamp(50px,6.6vw,86px);padding:clamp(4px,.6vw,7px) clamp(5px,.65vw,8px);border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface);text-align:left;display:flex;flex-direction:column;overflow:hidden}
+.cell{position:relative;min-height:clamp(50px,6.6vw,86px);padding:clamp(4px,.6vw,7px) clamp(5px,.65vw,8px);border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg);text-align:left;display:flex;flex-direction:column;overflow:hidden}
 .cell:hover{background:var(--soft)}
 .cell.out{background:var(--soft);opacity:.5}
 .cell.tdy{background:var(--hl)}.cell.tdy .cn,.cell.tdy .rl,.cell.tdy .cnt{color:var(--onhl)!important}
@@ -103,8 +108,11 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .cbot u{flex:1;height:4px;background:var(--line2);text-decoration:none;display:block}
 .cbot u b{display:block;height:100%}
 .cnt{font-size:clamp(9px,.85vw,11px);font-weight:700;color:var(--ink);white-space:nowrap}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-.fl{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;background:var(--soft);border:1px solid var(--line);font-weight:600;font-size:12px;color:var(--tx)}
+.cnt i{font-weight:500;font-style:normal;color:var(--tx2);margin-left:1px}
+.cell.tdy .cnt i{color:var(--onhl);opacity:.85}
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-top:11px}
+.fl{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;background:var(--soft);border:1px solid var(--line);font-weight:600;font-size:10.5px;color:var(--tx)}
+.fl .dot{width:6px;height:6px;flex:0 0 6px}
 .fl.on{background:var(--hl);color:var(--onhl);border-color:var(--hl)}
 @media(max-width:1024px){.rl.sub{display:none}}
 @media(max-width:760px){.cbot u{display:none}}
@@ -176,6 +184,16 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
 #pwaBar.on{display:flex}
 #pwaBtn{background:var(--onhl);color:var(--hl);padding:6px 13px;border-radius:2px;font-weight:700}
 #pwaX{color:var(--onhl);opacity:.7;font-size:16px}
+@media(max-width:640px){
+  body,button,input,select,textarea{font-size:11px}
+  .hd{gap:6px;padding:7px clamp(10px,3vw,16px)}
+  .brand{gap:7px}.brand .ic{width:28px;height:28px;font-size:11px;border-radius:7px}
+  .brand h1{font-size:11.5px}.brand p{display:none}
+  nav{padding:2px;gap:1px}nav button{padding:6px 8px;font-size:10px}
+  .ico{width:30px;height:30px}.ico svg{width:14px;height:14px}
+  #syncBadge{padding:4px 8px;font-size:9.5px}
+  .search{width:min(240px,calc(100vw - 24px))}
+}
 </style>
 </head>
 <body>
@@ -187,7 +205,6 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
     <button data-act="nav" data-v="planner">วางแผน</button>
     <button data-act="nav" data-v="upcoming">นัดที่จะถึง</button>
     <button data-act="nav" data-v="archive">ทะเบียนคนไข้</button>
-    <button data-act="nav" data-v="settings">ตั้งค่า</button>
   </nav>
   <div class="hright">
     <span id="syncBadge"><b></b>เครื่องนี้</span>
@@ -195,7 +212,7 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
       <button class="ico" data-act="searchBtn" aria-label="ค้นหา"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg></button>
       <div class="search" id="searchBox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg><input id="q" placeholder="ค้นหา HN / ชื่อ / เบอร์โทร"/></div>
     </div>
-    <button class="ico" data-act="themeBtn" aria-label="ตั้งค่า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    <button class="ico" data-act="nav" data-v="settings" aria-label="ตั้งค่า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
 </div></header>
 <div class="tpanel" id="tpanel"></div>
@@ -349,7 +366,7 @@ function vSchedule(){const y=S.cur.getFullYear(),m=S.cur.getMonth();
   <div class="tools"><div class="seg">
     <button data-act="mode" data-m="cal" class="${S.mode==='cal'?'on':''}">ภาพรวม</button>
     <button data-act="mode" data-m="list" class="${S.mode==='list'?'on':''}">รายวัน</button></div>
-    <button class="btn sm" data-act="today">📍 วันนี้</button>
+    <button class="btn sm" data-act="today" aria-label="วันนี้">📍</button>
     <button class="btn pri sm" style="margin-left:auto" data-act="addAppt" data-d="${TODAY}">＋ เพิ่มนัดคนไข้</button></div>`
   +(S.mode==='cal'?calendar(y,m):dayList(y,m))}
 function calendar(y,m){
@@ -365,7 +382,7 @@ function calendar(y,m){
       <div class="ctop">${w?`<i class="sq" style="background:${w.color}"></i>`:'<i></i>'}<span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div>
       ${w?`<div class="rl" style="color:${tdy?'var(--onhl)':w.color}">${esc(s.room||w.room)}</div>`:''}
       ${s&&s.note?`<div class="rl sub" style="color:var(--tx2);font-weight:500">${esc(s.note)}</div>`:''}
-      <div class="cbot">${n?`<u><b style="width:${Math.round(n/max*100)}%;background:${tdy?'var(--onhl)':(w?w.color:'var(--hl)')}"></b></u><span class="cnt">${n} คน</span>`:''}</div></button>`}
+      <div class="cbot">${n?`<u><b style="width:${Math.round(n/max*100)}%;background:${tdy?'var(--onhl)':(w?w.color:'var(--hl)')}"></b></u><span class="cnt">${n}<i> คน</i></span>`:''}</div></button>`}
   return `<div class="cal"><div class="grid">${DOW.map(d=>`<div class="gh">${d}</div>`).join('')}</div><div class="grid">${cells}</div></div>
     <div class="filters"><button class="fl ${S.filter==='all'?'on':''}" data-act="filt" data-f="all">ทั้งหมด</button>
     ${DB.workTypes.map(w=>`<button class="fl ${S.filter===w.id?'on':''}" data-act="filt" data-f="${w.id}"><i class="dot" style="background:${w.color}"></i>${esc(w.name)}</button>`).join('')}</div>`}
@@ -471,6 +488,8 @@ function vArchive(){
   const res=DB.patients.filter(p=>match(p,S.q)).sort((a,b)=>(a.hn||'').localeCompare(b.hn||''));
   const left=`<div class="card"><div class="row sp"><h3 style="margin:0">คนไข้ (${res.length})</h3>
     <button class="btn sm pri" data-act="addPatient">＋ ใหม่</button></div>
+    <div class="asearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg>
+    <input id="aq" data-q placeholder="ค้นหา HN / ชื่อ / เบอร์โทร" value="${esc(S.q)}"></div>
     <div style="max-height:70vh;overflow:auto"><table style="margin-top:10px"><tbody>${res.map(p=>`<tr class="${S.sel===p.id?'sel':''}" style="cursor:pointer" data-act="selP" data-id="${p.id}">
     <td><b>${esc(p.hn||'—')}</b> ${catChip(p.cat)}<div class="hn muted">${esc(p.name)}</div></td>
     <td style="text-align:right" class="muted">${DB.visits.filter(v=>v.patientId===p.id).length}</td></tr>`).join('')||'<tr><td class="muted">ไม่พบคนไข้</td></tr>'}</tbody></table></div></div>`;
@@ -503,7 +522,13 @@ function vArchive(){
   return `<h2>ทะเบียนคนไข้</h2><div class="split">${left}${right}</div>`}
 function vSettings(){
   const dups=dupPatients(),bks=backupList();
-  return `<h2>ตั้งค่าห้อง / ประเภทงาน</h2>
+  return `<h2>ธีมสี</h2>
+  <div class="card"><div class="thgrid">${THEMES.map(x=>`<button class="th ${DB.theme===x.id?'on':''}" data-act="setTheme" data-id="${x.id}">${x.name}
+     <span class="sws">${x.sw.map(c=>`<i class="sw" style="background:${c}"></i>`).join('')}</span></button>`).join('')}</div>
+  <div class="row" style="gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn sm" data-act="export">⬇ สำรองข้อมูล</button>
+  <button class="btn sm" data-act="import">⬆ นำเข้าไฟล์</button>
+  ${SYNC.on?`<button class="btn sm dg" data-act="logout" style="margin-left:auto">ออกจากระบบ</button>`:''}</div></div>
+  <h2>ตั้งค่าห้อง / ประเภทงาน</h2>
   <div class="card"><div class="muted" style="margin-bottom:12px">สีคือจุดบนปฏิทิน — <b>หนึ่งวันเลือกได้ห้องเดียว</b></div>
   <div style="overflow:auto"><table><thead><tr><th>สี</th><th>ชื่อ</th><th>ย่อ</th><th>ห้อง</th><th>กลุ่ม</th><th></th></tr></thead>
   <tbody>${DB.workTypes.map(w=>`<tr>
@@ -656,9 +681,8 @@ document.addEventListener('click',e=>{
   if(!['themeBtn','setTheme','export','import','logout'].includes(a))$('tpanel').classList.remove('on');
   if(!['searchBtn'].includes(a)&&!e.target.closest('.search-wrap'))$('searchBox').classList.remove('on');
   switch(a){
-    case'themeBtn':$('searchBox').classList.remove('on');renderThemePanel();$('tpanel').classList.toggle('on');break;
     case'searchBtn':{$('tpanel').classList.remove('on');const sb=$('searchBox');sb.classList.toggle('on');if(sb.classList.contains('on'))setTimeout(()=>$('q').focus(),10);break}
-    case'setTheme':applyTheme(id);save();renderThemePanel();break;
+    case'setTheme':applyTheme(id);save();render();break;
     case'export':{const b=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
       const u=URL.createObjectURL(b),el=document.createElement('a');
       el.href=u;el.download=`dental-tracker-${TODAY}.json`;el.click();URL.revokeObjectURL(u);break}
@@ -763,7 +787,13 @@ $('fileIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return
   const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(!j.patients)throw 0;
     DB=j;save();applyTheme(DB.theme||'cheesecake');S.sel=null;render();alert('นำเข้าข้อมูลสำเร็จ — '+DB.patients.length+' คนไข้')}
     catch(x){alert('ไฟล์ไม่ถูกต้อง')}};r.readAsText(f);e.target.value=''});
-$('q').addEventListener('input',e=>{S.q=e.target.value;render()});
+$('q').setAttribute('data-q','');
+document.addEventListener('input',e=>{
+  if(!e.target.matches('[data-q]'))return;
+  S.q=e.target.value;const id=e.target.id,pos=e.target.selectionStart;render();
+  const el=id&&$(id);if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(_){}}
+  document.querySelectorAll('[data-q]').forEach(i=>{if(i.id!==id)i.value=S.q})
+});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('searchBox').classList.remove('on');$('tpanel').classList.remove('on')}});
 
 /* ---------- CLOUD SYNC ---------- */
@@ -773,17 +803,17 @@ function setSync(txt,color){const b=$('syncBadge');if(!b)return;
   b.classList.remove('ok','wrn','dng');
   if(color==='var(--ok)')b.classList.add('ok');else if(color==='var(--wrn)')b.classList.add('wrn');else if(color==='var(--dng)')b.classList.add('dng');
   b.innerHTML='<b></b>'+esc(txt)}
-function queuePush(){SYNC.dirty=true;clearTimeout(SYNC.t);setSync('⏳ กำลังบันทึก…');SYNC.t=setTimeout(cloudPush,700)}
-async function cloudPush(){if(!navigator.onLine){setSync('⚠ ออฟไลน์','var(--wrn)');return}
+function queuePush(){SYNC.dirty=true;clearTimeout(SYNC.t);setSync('กำลังบันทึก…');SYNC.t=setTimeout(cloudPush,700)}
+async function cloudPush(){if(!navigator.onLine){setSync('ออฟไลน์','var(--wrn)');return}
   const {error}=await SYNC.sb.from('clinic_state').upsert({id:ROW_ID,data:DB,updated_at:new Date().toISOString(),updated_by:DEVICE});
-  if(error){setSync('⚠ ซิงก์ไม่สำเร็จ','var(--dng)');console.warn(error)}else{SYNC.dirty=false;setSync('✓ ซิงก์แล้ว','var(--ok)')}}
+  if(error){setSync('ซิงก์ไม่สำเร็จ','var(--dng)');console.warn(error)}else{SYNC.dirty=false;setSync('sync.','var(--ok)')}}
 async function cloudPull(){const {data,error}=await SYNC.sb.from('clinic_state').select('data').eq('id',ROW_ID).maybeSingle();
-  if(error){setSync('⚠ ดึงข้อมูลไม่ได้','var(--dng)');return}
+  if(error){setSync('ดึงข้อมูลไม่ได้','var(--dng)');return}
   if(data?.data?.patients){DB=data.data;localSave()}else await cloudPush()}
 function subscribeRealtime(){SYNC.sb.channel('clinic-sync').on('postgres_changes',
   {event:'*',schema:'public',table:'clinic_state',filter:`id=eq.${ROW_ID}`},p=>{
     const n=p.new;if(!n||n.updated_by===DEVICE)return;
-    DB=n.data;localSave();applyTheme(DB.theme||'cheesecake');render();setSync('✓ อัปเดตจากเครื่องอื่น','var(--ok)')}).subscribe()}
+    DB=n.data;localSave();applyTheme(DB.theme||'cheesecake');render();setSync('sync.','var(--ok)')}).subscribe()}
 window.addEventListener('online',()=>{if(SYNC.dirty)cloudPush()});
 function loginUI(msg){
   app.innerHTML=`<div style="max-width:380px;margin:12vh auto"><div class="card">
@@ -798,12 +828,12 @@ function loginUI(msg){
 async function boot(){
   const h=(location.hash||'').replace('#','');
   if(['schedule','planner','upcoming','archive','settings'].includes(h))S.view=h;
-  if(!SUPA_URL||!SUPA_KEY){setSync('● เครื่องนี้');render();return}
+  if(!SUPA_URL||!SUPA_KEY){setSync('เครื่องนี้');render();return}
   SYNC.sb=supabase.createClient(SUPA_URL,SUPA_KEY);
   const {data:{session}}=await SYNC.sb.auth.getSession();
-  if(!session){setSync('🔒 ยังไม่เข้าสู่ระบบ');loginUI();return}
-  SYNC.on=true;setSync('⏳ กำลังดึงข้อมูล…');
-  await cloudPull();applyTheme(DB.theme||'cheesecake');render();subscribeRealtime();setSync('✓ ซิงก์แล้ว','var(--ok)')}
+  if(!session){setSync('ยังไม่เข้าสู่ระบบ');loginUI();return}
+  SYNC.on=true;setSync('กำลังดึงข้อมูล…');
+  await cloudPull();applyTheme(DB.theme||'cheesecake');render();subscribeRealtime();setSync('sync.','var(--ok)')}
 boot();
 
 /* ---------- PWA ---------- */
