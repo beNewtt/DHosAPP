@@ -20,7 +20,7 @@
   --ink:#2a2a6e;--ink2:#8a8fa8;--tx:#1f2140;--tx2:#8a8fa8;--hl:#2a2a6e;--onhl:#fff;
   --am:#d99206;--pm:#6b6ec9;--ev:#8b5cf6;
   --dngBg:#fdecee;--dngLn:#f6d2d8;--dng:#c2344a;--okBg:#e8f6ee;--okLn:#c9e9d8;--ok:#0f7a4c;
-  --wrnBg:#fffaed;--wrnLn:#f0e3bd;--wrn:#8a6410;--infBg:#eef0fb;--infLn:#d8dcf3;--inf:#2a2a6e;--r:2px;
+  --wrnBg:#fffaed;--wrnLn:#f0e3bd;--wrn:#8a6410;--infBg:#eef0fb;--infLn:#d8dcf3;--inf:#2a2a6e;--r:9px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Thai Looped',system-ui,sans-serif;font-size:12.5px;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom);transition:background .2s,color .2s}
@@ -51,8 +51,21 @@ nav button.on{background:var(--hl);color:var(--onhl);box-shadow:0 2px 6px rgba(0
 .tpanel{position:fixed;top:64px;right:clamp(10px,2vw,26px);width:300px;max-height:78vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 22px 50px rgba(0,0,0,.3);padding:14px;z-index:50;display:none}
 .tpanel.on{display:block}
 .tpanel .lb{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:10px 0 8px}
-.thgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-.th{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:4px;background:var(--soft);border:1px solid transparent;font-weight:700;font-size:12.5px;width:100%;color:var(--tx)}
+.thgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px}
+.wtlist{display:flex;flex-direction:column;gap:8px}
+.wt{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px}
+.swatch{width:30px;height:30px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--c);flex:none;cursor:pointer;position:relative;overflow:hidden;margin-bottom:2px}
+.swatch input{position:absolute;inset:-6px;width:150%;height:150%;border:0;padding:0;background:none;cursor:pointer;opacity:0}
+.wtf{display:flex;flex-direction:column;gap:3px;flex:1 1 110px;min-width:0}
+.wtf.sm{flex:0 1 66px}
+.wtf span{font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--tx2)}
+.wtf input{width:100%;min-width:0;border:1px solid var(--line);background:var(--surface);color:var(--tx);border-radius:7px;padding:7px 9px;font-size:12px;outline:none}
+.wtf input:focus{border-color:var(--hl)}
+.wtdel{width:28px;height:28px;border-radius:50%;flex:none;border:1px solid var(--line);background:var(--surface);color:var(--tx2);display:grid;place-items:center;font-size:12px;margin-bottom:2px}
+.wtdel:hover{background:var(--dngBg);border-color:var(--dngLn);color:var(--dng)}
+@media(max-width:560px){.wt{gap:7px;padding:9px 10px}.wtf{flex:1 1 calc(50% - 4px)}}
+.th{display:flex;align-items:center;gap:8px;padding:9px 13px;border-radius:8px;background:var(--soft);border:1px solid transparent;font-weight:700;font-size:12px;width:100%;color:var(--tx);transition:transform .08s,border-color .12s}
+.th:hover{transform:translateY(-1px)}
 .th:hover{border-color:var(--line)}.th.on{border-color:var(--hl);color:var(--ink)}
 .th .sws{margin-left:auto;display:flex;gap:4px}
 .th .sw{width:13px;height:13px;border-radius:50%;border:1px solid rgba(128,128,128,.4)}
@@ -60,6 +73,7 @@ nav button.on{background:var(--hl);color:var(--onhl);box-shadow:0 2px 6px rgba(0
 .row{display:flex;align-items:center;gap:10px}.sp{justify-content:space-between}
 h2{font-size:clamp(16px,1.8vw,19px);font-weight:800;color:var(--ink);margin:22px 0 13px}
 h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.card h2:first-child{margin-top:0}
 .btn{background:var(--surface);border:1px solid var(--line);padding:9px 16px;border-radius:999px;font-weight:600;color:var(--tx)}
 .btn:hover{border-color:var(--hl);color:var(--ink)}
 .btn.pri{background:var(--hl);border-color:var(--hl);color:var(--onhl)}
@@ -94,7 +108,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .hero .yr{font-size:clamp(12px,1.2vw,15px);font-weight:700;color:var(--pm);margin-top:1px}
 .nav2{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
 .nav2 button{width:30px;height:30px;border:1px solid var(--line);border-radius:50%;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:0}
-.tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:14px 0 12px}
 .tools .btn{font-size:11px;padding:6px 11px}
 .seg{display:flex;gap:2px;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:2px}
 .seg button{padding:6px 13px;font-size:11px;color:var(--tx2);font-weight:700;border-radius:999px;white-space:nowrap}
@@ -153,12 +167,12 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .slot{border:1px solid var(--line);border-left:3px solid;border-radius:var(--r);padding:10px 12px}
 .slot.am{border-left-color:var(--am)}.slot.pm{border-left-color:var(--pm)}.slot.ev{border-left-color:var(--ev)}
 .slot h4{font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--tx)}
-.pt{display:flex;align-items:center;gap:10px;padding:9px 10px;border:1px solid var(--line2);border-radius:var(--r);margin-top:8px;background:var(--surface)}
+.pt{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--line2);border-radius:10px;margin-top:8px;background:var(--surface)}
 .pt .nm{font-weight:700}
 .pt.cx{opacity:.5}
 .pt.cx .nm,.pt.cx .hn{text-decoration:line-through}.pt .hn{font-size:11.5px;color:var(--tx2);margin-top:2px}
 .pt .ac{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-.avatar{width:42px;height:38px;border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:12.5px;background:var(--soft);color:var(--ink);border:1px solid var(--line);flex:0 0 42px;line-height:1.1}
+.avatar{width:42px;height:38px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:12.5px;background:var(--soft);color:var(--ink);border:1px solid var(--line);flex:0 0 42px;line-height:1.1}
 .st{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:var(--r);border:1px solid}
 .st.scheduled{background:var(--infBg);color:var(--inf);border-color:var(--infLn)}
 .st.done{background:var(--okBg);color:var(--ok);border-color:var(--okLn)}
@@ -304,7 +318,8 @@ const THEMES=[
  T('gruvbox','Gruvbox',{bg:'#282828',surface:'#3C3836',surface2:'#504945',text:'#EBDBB2',subtext:'#A89984',accent:'#FABD2F',accentHover:'#D79921',secondary:'#8EC07C',border:'#665C54',danger:'#FB4934'}),
  T('solardark','Solarized Dark',{bg:'#002B36',surface:'#073642',surface2:'#124552',text:'#EEE8D5',subtext:'#93A1A1',accent:'#B58900',accentHover:'#A17900',secondary:'#268BD2',border:'#1C4C59',danger:'#DC322F'}),
  T('redvelvet','Red Velvet',{bg:'#2A1016',surface:'#3A1720',surface2:'#4A1D29',text:'#F4D7D7',subtext:'#C4858E',accent:'#D94F5C',accentHover:'#B93E49',secondary:'#8F2634',border:'#5B2830',danger:'#FF6B72'}),
- T('mintchoco','Mint Choco',{bg:'#16211D',surface:'#20312B',surface2:'#2C443B',text:'#D7F3EA',subtext:'#8CB6A8',accent:'#64D6AC',accentHover:'#4EBC94',secondary:'#7B5E4B',border:'#355248',danger:'#E36C6C'})];
+ T('mintchoco','Mint Choco',{bg:'#16211D',surface:'#20312B',surface2:'#2C443B',text:'#D7F3EA',subtext:'#8CB6A8',accent:'#64D6AC',accentHover:'#4EBC94',secondary:'#7B5E4B',border:'#355248',danger:'#E36C6C'}),
+ T('spiderman','Spiderman',{bg:'#0D1426',surface:'#151E36',surface2:'#1E2A47',text:'#EDF1FA',subtext:'#3D7FE0',accent:'#E1232C',accentHover:'#BB1A22',secondary:'#2F6FE4',border:'#24314F',danger:'#FF5560'})];
 
 /* ---------- MODEL ---------- */
 const KEY='dental_tracker_v5';
@@ -603,16 +618,15 @@ function vSettings(){
       ${SUPA_URL?`<button class="btn sm pri" data-act="login">เข้าสู่ระบบ</button>`:''}`}</div></div>
   <h2>ตั้งค่าห้อง / ประเภทงาน</h2>
   <div class="card"><div class="muted" style="margin-bottom:12px">สีคือจุดบนปฏิทิน — <b>หนึ่งวันเลือกได้ห้องเดียว</b></div>
-  <div style="overflow:auto"><table><thead><tr><th>สี</th><th>ชื่อ</th><th>ย่อ</th><th>ห้อง</th><th>กลุ่ม</th><th></th></tr></thead>
-  <tbody>${DB.workTypes.map(w=>`<tr>
-    <td><input type="color" value="${w.color}" data-wt="${w.id}" data-f="color" style="width:42px;height:28px;border:1px solid var(--line);background:none;padding:2px"></td>
-    <td><input value="${esc(w.name)}" data-wt="${w.id}" data-f="name" style="width:110px;border:1px solid var(--line);padding:6px 9px;background:var(--surface)"></td>
-    <td><input value="${esc(w.short)}" data-wt="${w.id}" data-f="short" style="width:56px;border:1px solid var(--line);padding:6px 9px;background:var(--surface)"></td>
-    <td><input value="${esc(w.room)}" data-wt="${w.id}" data-f="room" style="width:96px;border:1px solid var(--line);padding:6px 9px;background:var(--surface)"></td>
-    <td><input value="${esc(w.group)}" data-wt="${w.id}" data-f="group" style="width:110px;border:1px solid var(--line);padding:6px 9px;background:var(--surface)"></td>
-    <td><button class="btn sm dg" data-act="delWT" data-id="${w.id}">ลบ</button></td></tr>`).join('')}</tbody></table></div>
-  <div class="row" style="margin-top:14px"><button class="btn pri" data-act="addWT">＋ เพิ่มห้อง</button>
-  <button class="btn dg" data-act="reset" style="margin-left:auto">ล้างข้อมูลทั้งหมด</button></div></div>
+  <div class="wtlist">${DB.workTypes.map(w=>`<div class="wt">
+    <label class="swatch" style="--c:${w.color}" title="เลือกสี"><input type="color" value="${w.color}" data-wt="${w.id}" data-f="color"></label>
+    <div class="wtf"><span>ชื่อที่แสดง</span><input value="${esc(w.name)}" data-wt="${w.id}" data-f="name"></div>
+    <div class="wtf sm"><span>ย่อ</span><input value="${esc(w.short)}" data-wt="${w.id}" data-f="short"></div>
+    <div class="wtf"><span>ห้อง</span><input value="${esc(w.room)}" data-wt="${w.id}" data-f="room"></div>
+    <div class="wtf"><span>กลุ่ม</span><input value="${esc(w.group)}" data-wt="${w.id}" data-f="group"></div>
+    <button class="wtdel" data-act="delWT" data-id="${w.id}" title="ลบห้องนี้" aria-label="ลบ">✕</button></div>`).join('')}</div>
+  <div class="row" style="margin-top:14px"><button class="btn pri sm" data-act="addWT">＋ เพิ่มห้อง</button>
+  <button class="btn dg sm" data-act="reset" style="margin-left:auto">ล้างข้อมูลทั้งหมด</button></div></div>
   <h2>ข้อมูลสำรองบนคลาวด์ <span class="muted" style="font-size:12px;font-weight:600">· เก็บวันละ 1 ชุด ย้อนหลัง 60 วัน</span></h2>
   <div class="card"><div class="muted" style="margin-bottom:10px">กันกรณีข้อมูลหลักเสียหายหรือเผลอนำเข้าไฟล์ผิด — ต้องสร้างตาราง <b>clinic_backups</b> ใน Supabase ก่อน (ดู SQL ที่ท้ายหน้านี้)</div>
   <div class="row" style="margin-bottom:10px"><button class="btn sm" data-act="loadSnaps">โหลดรายการสำรอง</button></div>
