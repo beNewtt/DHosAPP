@@ -42,6 +42,11 @@ nav button.on{background:var(--hl);color:var(--onhl);box-shadow:0 2px 6px rgba(0
 .ico{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;color:var(--ink);display:grid;place-items:center;background:var(--soft);flex:none}
 .ico:hover{border-color:var(--hl);color:var(--hl)}
 .ico svg{width:16px;height:16px}
+.cfil{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.cf{border:0;background:var(--soft);color:var(--tx2);border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:700}
+.cf b{opacity:.55;font-weight:700}
+.cf:hover{color:var(--ink)}
+.cf.on{background:var(--hl);color:var(--onhl)}.cf.on b{opacity:.8}
 .asearch{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:7px 13px;margin:10px 0;background:var(--soft)}
 .asearch svg{flex:none;width:16px;height:16px;color:var(--tx2)}
 .asearch input{background:none;border:0;outline:none;width:100%;font-size:12.5px;color:inherit}
@@ -53,22 +58,41 @@ nav button.on{background:var(--hl);color:var(--onhl);box-shadow:0 2px 6px rgba(0
 .tpanel .lb{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:10px 0 8px}
 .thgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px}
 .wtlist{display:flex;flex-direction:column;gap:8px}
-.wt{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px}
-.swatch{width:30px;height:30px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--c);flex:none;cursor:pointer;position:relative;overflow:hidden;margin-bottom:2px}
+.wt{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;background:var(--soft);border:0;border-radius:var(--r);padding:10px 12px}
+.swatch{width:20px;height:20px;border-radius:50%;background:var(--c);flex:none;cursor:pointer;position:relative;overflow:hidden;margin-bottom:7px}
 .swatch input{position:absolute;inset:-6px;width:150%;height:150%;border:0;padding:0;background:none;cursor:pointer;opacity:0}
 .wtf{display:flex;flex-direction:column;gap:3px;flex:1 1 110px;min-width:0}
 .wtf.sm{flex:0 1 66px}
 .wtf span{font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--tx2)}
-.wtf input{width:100%;min-width:0;border:1px solid var(--line);background:var(--surface);color:var(--tx);border-radius:7px;padding:7px 9px;font-size:12px;outline:none}
-.wtf input:focus{border-color:var(--hl)}
-.wtdel{width:28px;height:28px;border-radius:50%;flex:none;border:1px solid var(--line);background:var(--surface);color:var(--tx2);display:grid;place-items:center;font-size:12px;margin-bottom:2px}
+.wtf input{width:100%;min-width:0;border:0;background:var(--surface);color:var(--tx);border-radius:7px;padding:7px 9px;font-size:12px;outline:none}
+.wtf input:focus{box-shadow:inset 0 0 0 1.5px var(--hl)}
+.wtdel{width:26px;height:26px;border-radius:50%;flex:none;border:0;background:var(--surface);color:var(--tx2);display:grid;place-items:center;font-size:12px;margin-bottom:2px}
 .wtdel:hover{background:var(--dngBg);border-color:var(--dngLn);color:var(--dng)}
 @media(max-width:560px){.wt{gap:7px;padding:9px 10px}.wtf{flex:1 1 calc(50% - 4px)}}
-.th{display:flex;align-items:center;gap:8px;padding:9px 13px;border-radius:8px;background:var(--soft);border:1px solid transparent;font-weight:700;font-size:12px;width:100%;color:var(--tx);transition:transform .08s,border-color .12s}
+.sthead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:20px 0 4px}
+.stmn{font-size:clamp(22px,3vw,32px);font-weight:800;color:var(--ink);line-height:1}
+.styr{font-size:13px;font-weight:700;color:var(--pm);margin-top:2px}
+.stbig{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px;margin:22px 0 6px}
+.stbig div{display:flex;flex-direction:column;gap:2px}
+.stbig b{font-size:clamp(30px,5vw,44px);font-weight:800;color:var(--ink);line-height:1;font-variant-numeric:tabular-nums}
+.stbig span{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tx2)}
+.stsec{margin-top:30px}
+.stlab{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin-bottom:10px}
+.strow{display:grid;grid-template-columns:minmax(72px,110px) 1fr 34px;align-items:center;gap:10px;padding:4px 0}
+.stk{font-size:12px;font-weight:600;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stbar{height:6px;border-radius:999px;background:var(--soft);overflow:hidden}
+.stbar i{display:block;height:100%;border-radius:999px}
+.stn{font-size:13px;font-weight:800;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.thlab{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:14px 0 7px}
+.thlab:first-child{margin-top:0}
+.th{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 13px;border-radius:8px;border:0;box-shadow:none;font-weight:700;font-size:12px;width:100%;transition:transform .08s,box-shadow .12s;position:relative}
 .th:hover{transform:translateY(-1px)}
+.th.on{box-shadow:0 0 0 2px currentColor}
+.th .sws{position:absolute;right:11px;opacity:0;transition:opacity .12s}
+.th:hover .sws,.th.on .sws{opacity:1}
 .th:hover{border-color:var(--line)}.th.on{border-color:var(--hl);color:var(--ink)}
-.th .sws{margin-left:auto;display:flex;gap:4px}
-.th .sw{width:13px;height:13px;border-radius:50%;border:1px solid rgba(128,128,128,.4)}
+.th .sws{display:flex;gap:4px}
+.th .sw{width:11px;height:11px;border-radius:50%;border:0}
 .hr{height:1px;background:var(--line);margin:12px 0}
 .row{display:flex;align-items:center;gap:10px}.sp{justify-content:space-between}
 h2{font-size:clamp(16px,1.8vw,19px);font-weight:800;color:var(--ink);margin:22px 0 13px}
@@ -164,7 +188,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .rl2{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;display:inline-block;max-width:100%;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .slots{flex:1;min-width:0;padding:12px;display:flex;flex-direction:column;gap:10px}
 .addrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:11.5px;color:var(--tx2);font-weight:600}
-.slot{border:1px solid var(--line);border-left:3px solid;border-radius:var(--r);padding:10px 12px}
+.slot{border:0;border-left:2px solid;border-radius:0;padding:2px 0 2px 11px}
 .slot.am{border-left-color:var(--am)}.slot.pm{border-left-color:var(--pm)}.slot.ev{border-left-color:var(--ev)}
 .slot h4{font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--tx)}
 .pt{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--line2);border-radius:10px;margin-top:8px;background:var(--surface)}
@@ -250,6 +274,7 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
   <nav id="nav">
     <button data-act="nav" data-v="schedule" class="on">Calendar</button>
     <button data-act="nav" data-v="planner">Planner</button>
+    <button data-act="nav" data-v="stats">Summary</button>
     <button data-act="nav" data-v="archive" title="ทะเบียนคนไข้ / ค้นหาคนไข้" aria-label="ทะเบียนคนไข้"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg></button>
   </nav>
   <div class="hright">
@@ -406,7 +431,7 @@ const catChip=c=>{const cs=(DB.categoryStyles||{})[c];
 const app=document.getElementById('app'),$=x=>document.getElementById(x);
 function render(){
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.view));
-  app.innerHTML=S.view==='schedule'?vSchedule():S.view==='planner'?vPlanner():S.view==='upcoming'?vUpcoming():S.view==='archive'?vArchive():vSettings();
+  app.innerHTML=S.view==='schedule'?vSchedule():S.view==='planner'?vPlanner():S.view==='stats'?vStats():S.view==='upcoming'?vUpcoming():S.view==='archive'?vArchive():vSettings();
 }
 function vSchedule(){const y=S.cur.getFullYear(),m=S.cur.getMonth(),od=overdueAppts().length;
   const hero=S.mode==='up'?'':`<div class="hero"><div class="num mono">${String(m+1).padStart(2,'0')}</div>
@@ -474,10 +499,22 @@ function ptRow(a){
   return `<div class="pt ${a.status==='cancelled'?'cx':''}">
     <div class="avatar">${a.time?`<b style="font-size:11.5px">${esc(a.time)}</b><small style="font-size:8.5px;opacity:.7">${a.duration||30} น.</small>`:esc(initials(p.name))}</div>
     <div style="min-width:0"><div class="nm">${esc(p.name)} ${catChip(p.cat)} ${al}</div>
-    <div class="hn">${esc(p.hn||'ไม่มี HN')}${p.phone?' · '+esc(p.phone):''} · 🦷 ${esc(a.proc||'ไม่ระบุ')}${a.tooth?' · ซี่ '+esc(a.tooth):''}</div></div>
+    <div class="hn">${esc(p.hn||'ไม่มี HN')}${p.phone?' · '+esc(p.phone):''} · 🦷 ${esc(a.proc||'ไม่ระบุ')}${a.tooth?' · ซี่ '+esc(a.tooth):''}${(a.moves||[]).length?` · <span style="color:var(--wrn)">เลื่อน ${a.moves.length}×</span>`:''}</div></div>
     <div class="ac"><span class="st ${a.status}">${({scheduled:'นัดไว้',done:'มาแล้ว',cancelled:'ยกเลิก',noshow:'ไม่มา'})[a.status]}</span>
+    ${a.status==='scheduled'?`<button class="btn sm" data-act="resched" data-id="${a.id}">เลื่อน</button>`:''}
     <button class="btn sm" data-act="editAppt" data-id="${a.id}">แก้ไข</button>
     <button class="btn sm dg" data-act="delAppt" data-id="${a.id}">ลบ</button></div></div>`}
+function mResched(id){const a=DB.appointments.find(x=>x.id===id);if(!a)return;const p=pt(a.patientId);
+  open(`<div class="mtitle">เลื่อนนัด</div>
+   <div class="muted" style="margin-bottom:13px">${esc(p?p.name:'')} · เดิม ${thDate(a.date)}${a.time?' '+esc(a.time):''}</div>
+   ${(a.moves||[]).length?`<div class="note" style="margin-bottom:12px">เคยเลื่อนมาแล้ว ${a.moves.length} ครั้ง — ครั้งแรกนัดไว้ ${thDate(a.moves[0].from)}</div>`:''}
+   <div class="g2m"><div class="f"><label>วันที่ใหม่</label><input type="date" id="rsd" value="${a.date}"></div>
+   <div class="f"><label>เวลา</label><input type="time" id="rst" value="${esc(a.time||'')}"></div></div>
+   <div class="quick">เลื่อนไป:${[['1 สัปดาห์',7],['2 สัปดาห์',14],['1 เดือน',30],['3 เดือน',90]]
+     .map(([t,n])=>`<button type="button" class="qbtn" data-act="rplus" data-n="${n}">+${t}</button>`).join('')}</div>
+   <div class="f"><label>เหตุผล (ไม่ใส่ก็ได้)</label><input id="rsr" placeholder="เช่น คนไข้ติดธุระ, หมอติดประชุม"></div>
+   <div class="mfoot"><button class="btn" data-act="close">ยกเลิก</button>
+   <button class="btn pri" data-act="saveResched" data-id="${id}">บันทึกการเลื่อน</button></div>`)}
 function vPlanner(){
   const y=S.cur.getFullYear(),m=S.cur.getMonth(),P=S.plan;
   const start=new Date(y,m,1-new Date(y,m,1).getDay());let cells='';
@@ -535,11 +572,12 @@ function overdueHTML(){
         <button class="btn sm" data-act="setSt" data-id="${a.id}" data-s="noshow">ไม่มา</button>
         <button class="btn sm dg" data-act="setSt" data-id="${a.id}" data-s="cancelled">ยกเลิก</button></div></div>`}).join('')}
     ${od.length>12?`<div class="muted" style="font-size:11.5px;margin-top:8px">และอีก ${od.length-12} นัด</div>`:''}</div>`}
+const CASE_ST={dc:'จบเคสแล้ว',lost:'ไม่มาต่อ'};
 function openCases(){
   const future=new Set(DB.appointments.filter(a=>a.date>=TODAY&&a.status==='scheduled').map(a=>a.patientId));
   const last={};
   DB.visits.forEach(v=>{if(!last[v.patientId]||v.date>last[v.patientId].date)last[v.patientId]=v});
-  return Object.values(last).filter(v=>!future.has(v.patientId)&&pt(v.patientId))
+  return Object.values(last).filter(v=>{const p=pt(v.patientId);return p&&!p.caseSt&&!future.has(v.patientId)})
     .sort((a,b)=>b.date.localeCompare(a.date))}
 function openCasesHTML(){
   const oc=openCases();if(!oc.length)return '';
@@ -549,7 +587,8 @@ function openCasesHTML(){
       return `<div class="pt"><div class="avatar">${esc(initials(p.name))}</div>
       <div style="min-width:0"><div class="nm">${esc(p.name)} ${catChip(p.cat)}</div>
       <div class="hn">รักษาล่าสุด ${thDate(v.date)}${v.proc?' · '+esc(v.proc):''}${v.tx?' · แผน: '+esc(v.tx):''}</div></div>
-      <div class="ac"><button class="btn sm" data-act="selP" data-id="${p.id}">ดูประวัติ</button>
+      <div class="ac"><button class="btn sm" data-act="caseSt" data-id="${p.id}" data-s="dc" title="รักษาครบแล้ว ไม่ต้องนัดต่อ">จบเคส</button>
+      <button class="btn sm dg" data-act="caseSt" data-id="${p.id}" data-s="lost" title="คนไข้หายไป ไม่มาต่อ">ไม่มาต่อ</button>
       <button class="btn sm pri" data-act="addAppt" data-p="${p.id}" data-d="${TODAY}">＋ นัด</button></div></div>`}).join('')}
       ${oc.length>25?`<div class="muted" style="margin-top:8px;font-size:11.5px">และอีก ${oc.length-25} ราย</div>`:''}</div>`}
 function vUpcoming(){
@@ -566,12 +605,57 @@ function vUpcoming(){
         <span class="rl2" style="background:var(--infBg);color:var(--inf)">${diff===0?'วันนี้':diff===1?'พรุ่งนี้':'อีก '+diff+' วัน'}</span></div>
         <div class="slots">${shown.map(se=>{const l=as.filter(a=>a.session===se.id);
           return `<div class="slot ${se.id}"><h4><i class="dot" style="background:${se.c}"></i> ${se.name}</h4>${l.map(ptRow).join('')}</div>`}).join('')}</div></div>`}).join('')+openCasesHTML()}
+function monthStats(y,m){
+  const pre=`${y}-${String(m+1).padStart(2,'0')}`;
+  const inM=DB.appointments.filter(a=>a.date.startsWith(pre));
+  const done=inM.filter(a=>a.status==='done');
+  const byRoom={},byCat={};
+  done.forEach(a=>{const w=wt(a.typeId);if(w&&w.id!=='off')byRoom[w.id]=(byRoom[w.id]||0)+1;
+    const p=pt(a.patientId),c=(p&&p.cat)||'ไม่ระบุ';byCat[c]=(byCat[c]||0)+1});
+  const rank=o=>Object.entries(o).sort((a,b)=>b[1]-a[1]);
+  return {done:done.length,noshow:inM.filter(a=>a.status==='noshow').length,
+    cancel:inM.filter(a=>a.status==='cancelled').length,
+    pending:inM.filter(a=>a.status==='scheduled').length,
+    rooms:rank(byRoom),cats:rank(byCat)};
+}
+function bars(rows,label){
+  if(!rows.length)return '';
+  const max=rows[0][1];
+  return `<div class="stsec"><div class="stlab">${label}</div>${rows.map(([k,n])=>{
+    const w=wt(k),nm=w&&w.id===k?w.name:k, col=w&&w.id===k?w.color:'var(--hl)';
+    return `<div class="strow"><span class="stk">${esc(nm)}</span>
+      <span class="stbar"><i style="width:${Math.round(n/max*100)}%;background:${col}"></i></span>
+      <b class="stn">${n}</b></div>`}).join('')}</div>`}
+function vStats(){
+  const y=S.cur.getFullYear(),m=S.cur.getMonth(),s=monthStats(y,m);
+  return `<div class="sthead"><div><div class="stmn">${TH_MF[m]}</div><div class="styr">${y+543}</div></div>
+    <div class="nav2" style="margin:0"><button data-act="mv" data-n="-1" aria-label="เดือนก่อน"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button data-act="mv" data-n="1" aria-label="เดือนถัดไป"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div></div>
+  <div class="stbig">
+    <div><b>${s.done}</b><span>มาแล้ว</span></div>
+    <div><b>${s.noshow}</b><span>ไม่มา</span></div>
+    <div><b>${s.cancel}</b><span>ยกเลิก</span></div>
+    ${s.pending?`<div><b>${s.pending}</b><span>ยังไม่ปิดสถานะ</span></div>`:''}
+  </div>
+  ${s.done?bars(s.rooms,'แยกตามห้อง')+bars(s.cats,'แยกตามประเภทเคส')
+    :`<div class="empty" style="margin-top:20px">เดือนนี้ยังไม่มีคนไข้ที่บันทึกว่า “มาแล้ว”</div>`}
+  <div class="row" style="margin-top:22px"><button class="btn sm" data-act="copyStats">คัดลอกเป็นข้อความ</button></div>`}
+function statsText(){
+  const y=S.cur.getFullYear(),m=S.cur.getMonth(),s=monthStats(y,m);
+  const L=[`สรุปงาน ${TH_MF[m]} ${y+543}`,`มาแล้ว ${s.done} · ไม่มา ${s.noshow} · ยกเลิก ${s.cancel}`];
+  if(s.rooms.length){L.push('','แยกตามห้อง');s.rooms.forEach(([k,n])=>{const w=wt(k);L.push(`  ${w&&w.id===k?w.name:k}  ${n}`)})}
+  if(s.cats.length){L.push('','แยกตามประเภทเคส');s.cats.forEach(([k,n])=>L.push(`  ${k}  ${n}`))}
+  return L.join('\n')}
 function vArchive(){
-  const res=DB.patients.filter(p=>match(p,S.q)).sort((a,b)=>(a.hn||'').localeCompare(b.hn||''));
+  const cf=S.cat||'all';
+  const res=DB.patients.filter(p=>match(p,S.q)&&(cf==='all'||p.cat===cf)).sort((a,b)=>(a.hn||'').localeCompare(b.hn||''));
   const left=`<div class="card"><div class="row sp"><h3 style="margin:0">คนไข้ (${res.length})</h3>
     <button class="btn sm pri" data-act="addPatient">＋ ใหม่</button></div>
     <div class="asearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg>
     <input id="aq" data-q placeholder="ค้นหา HN / ชื่อ / เบอร์โทร" value="${esc(S.q)}"></div>
+    <div class="cfil"><button class="cf ${cf==='all'?'on':''}" data-act="catFil" data-c="all">ทั้งหมด</button>
+    ${(DB.categories||[]).map(c=>{const n=DB.patients.filter(p=>p.cat===c).length;if(!n)return '';
+      return `<button class="cf ${cf===c?'on':''}" data-act="catFil" data-c="${esc(c)}">${esc(c)} <b>${n}</b></button>`}).join('')}</div>
     <div style="max-height:70vh;overflow:auto"><table style="margin-top:10px"><tbody>${res.map(p=>`<tr class="${S.sel===p.id?'sel':''}" style="cursor:pointer" data-act="selP" data-id="${p.id}">
     <td><b>${esc(p.hn||'—')}</b> ${catChip(p.cat)}<div class="hn muted">${esc(p.name)}</div></td>
     <td style="text-align:right" class="muted">${DB.visits.filter(v=>v.patientId===p.id).length}</td></tr>`).join('')||'<tr><td class="muted">ไม่พบคนไข้</td></tr>'}</tbody></table></div></div>`;
@@ -583,7 +667,8 @@ function vArchive(){
       <div class="avatar" style="width:46px;height:46px;flex:0 0 46px;font-size:16px">${esc(initials(p.name))}</div>
       <div><div style="font-size:18px;font-weight:800;color:var(--ink)">${esc(p.name)} ${catChip(p.cat)}</div>
       <div class="muted">${esc(p.hn||'ไม่มี HN')} · ${esc(p.sex||'-')} · ${p.age||'-'} ปี · ${esc(p.phone||'ไม่มีเบอร์')}</div></div></div>
-      <div class="row"><button class="btn sm dg" data-act="delPatient" data-id="${p.id}">ลบ</button>
+      <div class="row">${p.caseSt?`<button class="btn sm" data-act="caseSt" data-id="${p.id}" data-s="${p.caseSt}" title="กดเพื่อเปิดเคสอีกครั้ง">${CASE_ST[p.caseSt]} ✕</button>`:''}
+      <button class="btn sm dg" data-act="delPatient" data-id="${p.id}">ลบ</button>
       <button class="btn sm" data-act="editPatient" data-id="${p.id}">แก้ไข</button>
       <button class="btn sm pri" data-act="addAppt" data-p="${p.id}" data-d="${TODAY}">＋ นัดใหม่</button></div></div>
       ${(p.tags||[]).length?`<div class="row" style="gap:6px;margin-top:11px;flex-wrap:wrap">${p.tags.map(t=>`<span class="chip" style="border-color:var(--dngLn);color:var(--dng);background:var(--dngBg)">⚠ ${esc(t)}</span>`).join('')}</div>`:''}
@@ -606,8 +691,11 @@ function vArchive(){
 function vSettings(){
   const dups=dupPatients(),bks=backupList();
   return `<h2>ธีมสี</h2>
-  <div class="card"><div class="thgrid">${THEMES.map(x=>`<button class="th ${DB.theme===x.id?'on':''}" data-act="setTheme" data-id="${x.id}">${x.name}
-     <span class="sws">${x.sw.map(c=>`<i class="sw" style="background:${c}"></i>`).join('')}</span></button>`).join('')}</div>
+  <div class="card">${[[false,'สว่าง'],[true,'มืด']].map(([dk,lbl])=>`
+    <div class="thlab">${lbl}</div>
+    <div class="thgrid">${THEMES.filter(x=>x.dark===dk).map(x=>`<button class="th ${DB.theme===x.id?'on':''}" data-act="setTheme" data-id="${x.id}"
+      style="background:${x.v.bg};color:${x.v.hl}">${x.name}
+      <span class="sws">${x.sw.map(c=>`<i class="sw" style="background:${c}"></i>`).join('')}</span></button>`).join('')}</div>`).join('')}
   <div class="row" style="gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn sm" data-act="export">⬇ สำรองข้อมูล</button>
   <button class="btn sm" data-act="import">⬆ นำเข้าไฟล์</button>
   </div>
@@ -903,6 +991,18 @@ document.addEventListener('click',e=>{
       (t.visits||[]).forEach(v=>{if(!DB.visits.find(x=>x.id===v.id))DB.visits.push(v)});
       DB.trash=DB.trash.filter(x=>x.tid!==id);save();render();alert('กู้คืนเรียบร้อย');break}
     case'dropTrash':if(confirm('ลบรายการนี้ถาวร? ย้อนกลับไม่ได้')){DB.trash=DB.trash.filter(x=>x.tid!==id);save();render()}break;
+    case'resched':mResched(id);break;
+    case'rplus':{const f=$('rsd');if(!f)break;const b=f.value?parseD(f.value):new Date();
+      b.setDate(b.getDate()+ +t.dataset.n);f.value=iso(b);break}
+    case'saveResched':{const a=DB.appointments.find(x=>x.id===id);if(!a)break;
+      const nd=$('rsd').value;if(!nd){alert('เลือกวันที่ใหม่ก่อน');return}
+      if(nd===a.date&&$('rst').value===(a.time||'')){close();break}
+      const why=$('rsr').value.trim();
+      a.moves=a.moves||[];a.moves.push({from:a.date,to:nd,at:new Date().toISOString(),why});
+      a.note=(`เลื่อนจาก ${thDate(a.date)}${why?' ('+why+')':''}`+(a.note?' · '+a.note:''));
+      a.date=nd;a.time=$('rst').value;
+      const s=daySch(nd);if(s){a.typeId=s.typeId;a.room=s.room}
+      save();close();render();break}
     case'dplus':{const f=$('fd');if(!f)break;const base=f.value?parseD(f.value):new Date();
       base.setDate(base.getDate()+ +t.dataset.n);f.value=iso(base);
       f.dispatchEvent(new Event('change',{bubbles:true}));break}
@@ -915,6 +1015,11 @@ document.addEventListener('click',e=>{
     case'emptyTrash':if(confirm('ล้างถังขยะทั้งหมดถาวร? ย้อนกลับไม่ได้')){DB.trash=[];save();render()}break;
     case'setSt':{const a=DB.appointments.find(x=>x.id===id);if(a){a.status=t.dataset.s;save();render()}break}
     case'nextAppt':{const pid=t.dataset.pid;close();mAppt(null,{p:pid});break}
+    case'catFil':S.cat=t.dataset.c;render();break;
+    case'copyStats':{const txt=statsText();
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(()=>alert('คัดลอกแล้ว'),()=>prompt('คัดลอกข้อความนี้',txt));
+      else prompt('คัดลอกข้อความนี้',txt);break}
+    case'caseSt':{const p=pt(id);if(!p)break;p.caseSt=p.caseSt===t.dataset.s?'':t.dataset.s;save();render();break}
     case'savePatient':{const o={hn:$('phn').value.trim(),name:$('pnm').value.trim(),age:$('pag').value,sex:$('psx').value,
       phone:$('pph').value.trim(),cat:$('pcat').value,tags:$('ptg').value.split(',').map(s=>s.trim()).filter(Boolean),note:$('pnt').value};
       if(!o.name){alert('กรอกชื่อคนไข้');return}
@@ -1016,7 +1121,7 @@ function loginUI(msg){
 async function boot(){
   const h=(location.hash||'').replace('#','');
   if(h==='upcoming'){S.view='schedule';S.mode='up'}
-  else if(['schedule','planner','archive','settings'].includes(h))S.view=h;
+  else if(['schedule','planner','stats','archive','settings'].includes(h))S.view=h;
   if(!SUPA_URL||!SUPA_KEY){setSync('เครื่องนี้');render();return}
   SYNC.sb=supabase.createClient(SUPA_URL,SUPA_KEY);
   const {data:{session}}=await SYNC.sb.auth.getSession();
