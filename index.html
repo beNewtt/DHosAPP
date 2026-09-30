@@ -42,13 +42,8 @@ nav button.on{background:var(--hl);color:var(--onhl);box-shadow:0 2px 6px rgba(0
 .ico{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;color:var(--ink);display:grid;place-items:center;background:var(--soft);flex:none}
 .ico:hover{border-color:var(--hl);color:var(--hl)}
 .ico svg{width:16px;height:16px}
-.search-wrap{position:relative}
-.search{position:absolute;right:0;top:calc(100% + 8px);display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:7px 13px;width:240px;background:var(--surface);box-shadow:0 14px 30px rgba(0,0,0,.16);opacity:0;pointer-events:none;transform:translateY(-4px);transition:opacity .15s,transform .15s;z-index:40}
-.search.on{opacity:1;pointer-events:auto;transform:none}
-.search svg{flex:none;color:var(--tx2)}
-.search input{background:none;border:0;outline:none;width:100%;font-size:12.5px}
 .asearch{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:7px 13px;margin:10px 0;background:var(--soft)}
-.asearch svg{flex:none;color:var(--tx2)}
+.asearch svg{flex:none;width:16px;height:16px;color:var(--tx2)}
 .asearch input{background:none;border:0;outline:none;width:100%;font-size:12.5px;color:inherit}
 #syncBadge{font-size:10.5px;font-weight:700;white-space:nowrap;color:var(--tx2);background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:5px 11px;display:flex;align-items:center;gap:5px}
 #syncBadge b{width:6px;height:6px;border-radius:50%;background:var(--tx2);display:inline-block}
@@ -71,7 +66,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .btn.pri:hover{filter:brightness(1.12);color:var(--onhl)}
 .btn.sm{padding:6px 11px;font-size:12px}.btn.dg{color:var(--dng)}.btn.dg:hover{border-color:var(--dng)}
 .btn.blk{width:100%;justify-content:center;display:flex}
-.card{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--surface)}
+.card{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--bg)}
 .chip{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:var(--r);font-size:10.5px;font-weight:700;border:1px solid}
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 8px}
 .sq{width:9px;height:9px;display:inline-block;flex:0 0 9px}
@@ -99,7 +94,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .cell:hover{background:var(--soft)}
 .cell.out{background:var(--soft);opacity:.5}
 .cell.tdy{background:var(--hl)}.cell.tdy .cn,.cell.tdy .rl,.cell.tdy .cnt{color:var(--onhl)!important}
-.cell.mark{box-shadow:inset 0 0 0 2px var(--mk)}
+.cell.mark{box-shadow:inset 0 0 0 1.3px var(--mk)}
 .ctop{display:flex;align-items:flex-start;justify-content:space-between}
 .cn{font-size:clamp(12px,1.25vw,16px);font-weight:700;color:var(--ink);margin-left:auto}
 .cn.sun{color:var(--dng)}
@@ -128,8 +123,9 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .dows button.on{background:var(--hl);color:var(--onhl);border-color:var(--hl)}
 .cell.pk{box-shadow:inset 0 0 0 2px var(--pm);background:var(--soft)}
 @media(max-width:900px){.plan{grid-template-columns:1fr}.side{position:static}}
-.day{display:flex;border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px;background:var(--surface)}
-.rail{width:clamp(84px,10vw,120px);flex:0 0 auto;border-right:1px solid var(--line);padding:12px 10px;text-align:center;background:var(--soft)}
+.day{display:flex;border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+.day:first-child{border-top:0;padding-top:0;margin-top:0}
+.rail{width:clamp(84px,10vw,120px);flex:0 0 auto;border-right:1px solid var(--line);padding:0 10px 12px 0;text-align:center;background:none}
 .rail .dw{font-size:11px;color:var(--tx2);font-weight:700}
 .rail .dn{font-size:clamp(24px,3vw,34px);font-weight:800;color:var(--ink);line-height:1.05}
 .rail .dm{font-size:10.5px;color:var(--tx2);margin-bottom:8px}
@@ -192,7 +188,9 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
   nav{padding:2px;gap:1px}nav button{padding:6px 8px;font-size:10px}
   .ico{width:30px;height:30px}.ico svg{width:14px;height:14px}
   #syncBadge{padding:4px 8px;font-size:9.5px}
-  .search{width:min(240px,calc(100vw - 24px))}
+  .hd{flex-wrap:wrap}
+  .brand{order:1}.hright{order:2}
+  nav{order:3;flex:1 1 100%;justify-content:center;margin-top:2px}
 }
 </style>
 </head>
@@ -204,14 +202,10 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
     <button data-act="nav" data-v="schedule" class="on">ปฏิทิน</button>
     <button data-act="nav" data-v="planner">วางแผน</button>
     <button data-act="nav" data-v="upcoming">นัดที่จะถึง</button>
-    <button data-act="nav" data-v="archive">ทะเบียนคนไข้</button>
+    <button data-act="nav" data-v="archive" title="ทะเบียนคนไข้ / ค้นหาคนไข้" aria-label="ทะเบียนคนไข้"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg></button>
   </nav>
   <div class="hright">
     <span id="syncBadge"><b></b>เครื่องนี้</span>
-    <div class="search-wrap">
-      <button class="ico" data-act="searchBtn" aria-label="ค้นหา"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg></button>
-      <div class="search" id="searchBox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg><input id="q" placeholder="ค้นหา HN / ชื่อ / เบอร์โทร"/></div>
-    </div>
     <button class="ico" data-act="nav" data-v="settings" aria-label="ตั้งค่า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
 </div></header>
@@ -676,12 +670,10 @@ function mVisit(id){const v=DB.visits.find(x=>x.id===id),p=pt(v.patientId);
 /* ---------- ACTIONS ---------- */
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-act]');
-  if(!t){if(!e.target.closest('#tpanel'))$('tpanel').classList.remove('on');if(!e.target.closest('.search-wrap'))$('searchBox').classList.remove('on');return}
+  if(!t){if(!e.target.closest('#tpanel'))$('tpanel').classList.remove('on');return}
   const a=t.dataset.act,id=t.dataset.id,d=t.dataset.d,P=S.plan;
   if(!['themeBtn','setTheme','export','import','logout'].includes(a))$('tpanel').classList.remove('on');
-  if(!['searchBtn'].includes(a)&&!e.target.closest('.search-wrap'))$('searchBox').classList.remove('on');
   switch(a){
-    case'searchBtn':{$('tpanel').classList.remove('on');const sb=$('searchBox');sb.classList.toggle('on');if(sb.classList.contains('on'))setTimeout(()=>$('q').focus(),10);break}
     case'setTheme':applyTheme(id);save();render();break;
     case'export':{const b=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
       const u=URL.createObjectURL(b),el=document.createElement('a');
@@ -787,14 +779,13 @@ $('fileIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return
   const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(!j.patients)throw 0;
     DB=j;save();applyTheme(DB.theme||'cheesecake');S.sel=null;render();alert('นำเข้าข้อมูลสำเร็จ — '+DB.patients.length+' คนไข้')}
     catch(x){alert('ไฟล์ไม่ถูกต้อง')}};r.readAsText(f);e.target.value=''});
-$('q').setAttribute('data-q','');
 document.addEventListener('input',e=>{
   if(!e.target.matches('[data-q]'))return;
   S.q=e.target.value;const id=e.target.id,pos=e.target.selectionStart;render();
   const el=id&&$(id);if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(_){}}
   document.querySelectorAll('[data-q]').forEach(i=>{if(i.id!==id)i.value=S.q})
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('searchBox').classList.remove('on');$('tpanel').classList.remove('on')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('tpanel').classList.remove('on')});
 
 /* ---------- CLOUD SYNC ---------- */
 const SYNC={on:false,sb:null,dirty:false,t:null};
