@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="Dental Tracker">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -23,10 +23,10 @@
   --wrnBg:#fffaed;--wrnLn:#f0e3bd;--wrn:#8a6410;--infBg:#eef0fb;--infLn:#d8dcf3;--inf:#2a2a6e;--r:9px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Thai Looped',system-ui,sans-serif;font-size:12.5px;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom);transition:background .2s,color .2s}
+body{background:var(--bg);color:var(--tx);font-family:'Roboto Mono','Noto Sans Thai Looped',system-ui,sans-serif;font-size:12.5px;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom);transition:background .2s,color .2s}
 button,input,select,textarea{font-family:inherit;font-size:12.5px;color:inherit}
 button{cursor:pointer;border:0;background:none}
-.mono{font-family:'IBM Plex Mono',monospace}
+.mono{font-family:'Roboto Mono',monospace}
 .app{max-width:1000px;margin:0 auto;padding:0 clamp(12px,2vw,24px) 70px}
 header{border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:30;padding-top:env(safe-area-inset-top)}
 .hd{max-width:1000px;margin:0 auto;padding:9px clamp(12px,2vw,24px);display:flex;align-items:center;gap:clamp(8px,1.2vw,16px);flex-wrap:wrap}
@@ -69,13 +69,39 @@ nav button.on{background:var(--hl);color:var(--onhl);box-shadow:0 2px 6px rgba(0
 .wtdel{width:26px;height:26px;border-radius:50%;flex:none;border:0;background:var(--surface);color:var(--tx2);display:grid;place-items:center;font-size:12px;margin-bottom:2px}
 .wtdel:hover{background:var(--dngBg);border-color:var(--dngLn);color:var(--dng)}
 @media(max-width:560px){.wt{gap:7px;padding:9px 10px}.wtf{flex:1 1 calc(50% - 4px)}}
-.sthead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:20px 0 4px}
-.stmn{font-size:clamp(22px,3vw,32px);font-weight:800;color:var(--ink);line-height:1}
-.styr{font-size:13px;font-weight:700;color:var(--pm);margin-top:2px}
-.stbig{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px;margin:22px 0 6px}
-.stbig div{display:flex;flex-direction:column;gap:2px}
-.stbig b{font-size:clamp(30px,5vw,44px);font-weight:800;color:var(--ink);line-height:1;font-variant-numeric:tabular-nums}
-.stbig span{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tx2)}
+.sthead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:18px 0 2px;flex-wrap:wrap}
+.eyebrow{font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--pm)}
+.ptitle2{font-size:clamp(20px,3vw,30px);font-weight:700;color:var(--ink);line-height:1.15;margin-top:5px;letter-spacing:-.3px}
+.ynav{display:flex;align-items:center;gap:4px}
+.ynav button{width:28px;height:28px;border-radius:8px;background:var(--soft);color:var(--ink);font-size:15px;line-height:1;display:grid;place-items:center}
+.ynav button:hover{background:var(--hl);color:var(--onhl)}
+.ynav span{font-size:12px;font-weight:700;color:var(--tx2);min-width:34px;text-align:center}
+.stgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(122px,1fr));gap:2px;margin:24px 0 8px;background:var(--line2);border-radius:var(--r);overflow:hidden}
+.stcell{background:var(--bg);padding:14px 15px;display:flex;flex-direction:column;gap:3px}
+.stcell b{font-size:clamp(24px,3.6vw,32px);font-weight:700;color:var(--ink);line-height:1.05;font-variant-numeric:tabular-nums}
+.stcell small{font-size:10px;color:var(--tx2);font-weight:500}
+.stcell.hi{background:var(--soft)}
+.sechead{display:flex;align-items:center;gap:9px;margin:34px 0 12px;flex-wrap:wrap}
+.pill{background:var(--hl);color:var(--onhl);border-radius:999px;padding:3px 10px;font-size:9px;font-weight:700;letter-spacing:.1em}
+.sect{font-size:14px;font-weight:700;color:var(--ink)}
+.secr{margin-left:auto;font-size:11px;color:var(--tx2);font-weight:500}
+.secr b{color:var(--ink);font-weight:700}
+.chart{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(3px,.7vw,8px);align-items:end;height:170px;padding:6px 0 0}
+.cb{height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:7px;min-width:0}
+.cb i{display:block;width:100%;background:var(--soft);border-radius:3px 3px 0 0;transition:background .15s}
+.cb:hover i{background:var(--pm)}
+.cb.on i{background:var(--hl)}
+.cb span{font-size:8.5px;font-weight:700;letter-spacing:.06em;color:var(--tx2);text-align:center}
+.cb.on span{color:var(--ink)}
+.foot3{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line2)}
+.foot3 b{font-size:13px;font-weight:700;color:var(--ink);display:block;margin-top:3px}
+table.dt{width:100%;border-collapse:collapse}
+table.dt th{font-size:9px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--tx2);padding:7px 11px;border-bottom:1px solid var(--line2);text-align:left}
+table.dt td{padding:10px 11px;font-size:12.5px;border-bottom:0}
+table.dt tbody tr:nth-child(odd){background:var(--soft)}
+table.dt tbody tr:first-child td:first-child{border-radius:8px 0 0 0}
+table.dt .n{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+table.dt td.muted{font-weight:500}
 .stsec{margin-top:30px}
 .stlab{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin-bottom:10px}
 .strow{display:grid;grid-template-columns:minmax(72px,110px) 1fr 34px;align-items:center;gap:10px;padding:4px 0}
@@ -88,6 +114,7 @@ nav button.on{background:var(--hl);color:var(--onhl);box-shadow:0 2px 6px rgba(0
 .th{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 13px;border-radius:8px;border:0;box-shadow:none;font-weight:700;font-size:12px;width:100%;transition:transform .08s,box-shadow .12s;position:relative}
 .th:hover{transform:translateY(-1px)}
 .th.on{box-shadow:0 0 0 2px currentColor}
+.th .sw{box-shadow:0 0 0 1px rgba(128,128,128,.25)}
 .th .sws{position:absolute;right:11px;opacity:0;transition:opacity .12s}
 .th:hover .sws,.th.on .sws{opacity:1}
 .th:hover{border-color:var(--line)}.th.on{border-color:var(--hl);color:var(--ink)}
@@ -105,7 +132,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .btn.sm{padding:6px 11px;font-size:12px}.btn.dg{color:var(--dng)}.btn.dg:hover{border-color:var(--dng)}
 .btn.blk{width:100%;justify-content:center;display:flex}
 .card{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--bg)}
-.sql{background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.6;overflow:auto;white-space:pre;color:var(--tx)}
+.sql{background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;font-family:'Roboto Mono',monospace;font-size:11px;line-height:1.6;overflow:auto;white-space:pre;color:var(--tx)}
 .acct{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
 .acct .muted{font-size:11px;margin-top:2px}
 .chip{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:var(--r);font-size:10.5px;font-weight:700;border:1px solid}
@@ -204,6 +231,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .st.noshow{background:var(--wrnBg);color:var(--wrn);border-color:var(--wrnLn)}
 table{width:100%;border-collapse:collapse}
 th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--line2)}
+table.dt td{border-bottom:0}
 th{color:var(--tx2);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
 tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
 .split{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start}
@@ -308,7 +336,7 @@ const onC=h=>lum(h)>.62?'#141414':'#ffffff';
 function T(id,name,c){
   const dark=lum(c.bg)<.5;
   const okc=dark?'#34d399':'#0f7a4c', wrc=dark?'#fbbf24':'#8a6410';
-  return {id,name,dark,sw:[c.accent,c.secondary,c.bg],v:{
+  return {id,name,dark,sw:[c.accent,c.secondary,c.text],v:{
     bg:c.bg, surface:c.surface, soft:c.surface2,
     line:c.border, line2:mixc(c.border,c.surface,.55),
     ink:c.accent, ink2:c.subtext, tx:c.text, tx2:c.subtext,
@@ -321,30 +349,30 @@ function T(id,name,c){
 }
 const THEMES=[
  T('light','Daylight',{bg:'#FFFFFF',surface:'#FFFFFF',surface2:'#F5F7FB',text:'#1F2140',subtext:'#8A8FA8',accent:'#2A2A6E',accentHover:'#1E1E55',secondary:'#6B6EC9',border:'#E6E8F0',danger:'#C2344A'}),
- T('sakura','Sakura',{bg:'#FFFAFC',surface:'#FFFFFF',surface2:'#FDF1F5',text:'#3F2230',subtext:'#A67C8C',accent:'#D6336C',accentHover:'#A61E4D',secondary:'#E0568E',border:'#F5DDE5',danger:'#C2185B'}),
+ T('sakura','Sakura',{bg:'#FFFAFC',surface:'#FFFFFF',surface2:'#FDF1F5',text:'#3F2230',subtext:'#A67C8C',accent:'#B81F55',accentHover:'#951642',secondary:'#E0568E',border:'#F5DDE5',danger:'#C2185B'}),
  T('iceberg','Iceberg',{bg:'#E8EAF0',surface:'#D5DAE6',surface2:'#C3CADB',text:'#1F365C',subtext:'#6E7F9E',accent:'#2F5DAA',accentHover:'#264C8C',secondary:'#A7B1CA',border:'#CBD1DD',danger:'#B75A68'}),
- T('macroblank','Macroblank',{bg:'#B8D8CF',surface:'#9FC7BC',surface2:'#8AB7AB',text:'#3B2420',subtext:'#5C6A63',accent:'#D73A25',accentHover:'#B92F1F',secondary:'#7B8780',border:'#A7C8BF',danger:'#B12D25'}),
- T('pastel','Pastel',{bg:'#E8B5C4',surface:'#F6C7D2',surface2:'#FFD3DA',text:'#5E5363',subtext:'#7E96A0',accent:'#FFF3A7',accentHover:'#F7E780',secondary:'#A9E4EE',border:'#FFF0B8',danger:'#C65C79'}),
+ T('macroblank','Macroblank',{bg:'#B8D8CF',surface:'#9FC7BC',surface2:'#8AB7AB',text:'#3B2420',subtext:'#5C6A63',accent:'#8F2414',accentHover:'#75190C',secondary:'#7B8780',border:'#A7C8BF',danger:'#B12D25'}),
+ T('pastel','Pastel',{bg:'#F7DDE4',surface:'#FCEAEF',surface2:'#FFD3DA',text:'#5E5363',subtext:'#7E96A0',accent:'#A8365C',accentHover:'#8C2A4A',secondary:'#4FA9BC',border:'#FFF0B8',danger:'#C65C79'}),
  T('sewingtin','Sewing Tin Light',{bg:'#FFFFFF',surface:'#C8CEDF',surface2:'#B5BFD8',text:'#2D2076',subtext:'#385ECA',accent:'#2D2076',accentHover:'#241966',secondary:'#385ECA',border:'#C8CEDF',danger:'#A9445A'}),
  T('milkshake','Milkshake',{bg:'#FFFFFF',surface:'#DDEFF3',surface2:'#C9E6ED',text:'#212B43',subtext:'#3E9FB3',accent:'#212B43',accentHover:'#141B2C',secondary:'#62CFE6',border:'#C9E6ED',danger:'#C45E72'}),
  T('cheesecake','Cheesecake',{bg:'#FDF0D5',surface:'#F3E2BF',surface2:'#EAD4A8',text:'#302A1D',subtext:'#B01568',accent:'#8E2949',accentHover:'#76203C',secondary:'#D91C81',border:'#E3CFA4',danger:'#8E2949'}),
- T('solarlight','Solarized Light',{bg:'#FDF6E3',surface:'#EEE8D5',surface2:'#E5DDC8',text:'#586E75',subtext:'#839496',accent:'#B58900',accentHover:'#9A7600',secondary:'#268BD2',border:'#D8CFB7',danger:'#DC322F'}),
- T('discord','Discord',{bg:'#313338',surface:'#2B2D31',surface2:'#3F4147',text:'#F2F3F5',subtext:'#8E9297',accent:'#5865F2',accentHover:'#4752C4',secondary:'#6D7280',border:'#4E5058',danger:'#ED4245'}),
+ T('solarlight','Solarized Light',{bg:'#FDF6E3',surface:'#EEE8D5',surface2:'#E5DDC8',text:'#586E75',subtext:'#839496',accent:'#1E72B0',accentHover:'#165A8C',secondary:'#9A7600',border:'#D8CFB7',danger:'#DC322F'}),
+ T('discord','Discord',{bg:'#313338',surface:'#2B2D31',surface2:'#3F4147',text:'#F2F3F5',subtext:'#8E9297',accent:'#8B95FF',accentHover:'#6F7BF0',secondary:'#6D7280',border:'#4E5058',danger:'#ED4245'}),
  T('incognito','Incognito',{bg:'#0B0B0B',surface:'#1A1A1A',surface2:'#2B2B2B',text:'#F4F1E8',subtext:'#8A8A8A',accent:'#FF9D00',accentHover:'#D98200',secondary:'#5C5C5C',border:'#333333',danger:'#D9514E'}),
- T('redsamurai','Red Samurai',{bg:'#942532',surface:'#7D1D29',surface2:'#651722',text:'#F2D49B',subtext:'#C99C68',accent:'#DDB36D',accentHover:'#C69A55',secondary:'#6E151D',border:'#B0505C',danger:'#FF8080'}),
+ T('redsamurai','Red Samurai',{bg:'#942532',surface:'#7D1D29',surface2:'#651722',text:'#F2D49B',subtext:'#C99C68',accent:'#F2CD8C',accentHover:'#DDB36D',secondary:'#6E151D',border:'#B0505C',danger:'#FF8080'}),
  T('trance','Trance',{bg:'#0B102E',surface:'#151B3D',surface2:'#202A55',text:'#FF2F92',subtext:'#6F83B8',accent:'#F72585',accentHover:'#D81B72',secondary:'#4F5F9A',border:'#3A2A55',danger:'#FF5C8A'}),
  T('dots','Dots',{bg:'#121520',surface:'#1B1E2C',surface2:'#25293A',text:'#FFFFFF',subtext:'#676E8A',accent:'#FFFFFF',accentHover:'#E6E6E8',secondary:'#676E8A',border:'#2B3042',danger:'#F94348'}),
  T('rosepine','Rose Pine',{bg:'#1F1D27',surface:'#282533',surface2:'#353140',text:'#E0DEF4',subtext:'#C4A7E7',accent:'#9CCFD8',accentHover:'#83BAC5',secondary:'#C4A7E7',border:'#35313F',danger:'#EB6F92'}),
  T('oblivion','Oblivion',{bg:'#313231',surface:'#3A3B3B',surface2:'#484949',text:'#F7F5F1',subtext:'#9AA0A0',accent:'#A5A096',accentHover:'#8F8A81',secondary:'#9A90B4',border:'#4B4C4C',danger:'#DD452E'}),
- T('evileye','Evil Eye',{bg:'#0D8CBF',surface:'#077BAA',surface2:'#066A92',text:'#F4EFE7',subtext:'#BEE3F2',accent:'#F4EFE7',accentHover:'#DDD7CF',secondary:'#005B8A',border:'#0A6C93',danger:'#FF7A7A'}),
- T('ezmode','EZ Mode',{bg:'#1478CC',surface:'#0F6BB8',surface2:'#0B5FA3',text:'#FFFFFF',subtext:'#A8DAF7',accent:'#FF4FC3',accentHover:'#E83EB0',secondary:'#2AA7E8',border:'#2D7FC4',danger:'#FF6B6B'}),
- T('nebula','Nebula',{bg:'#25233D',surface:'#302D4A',surface2:'#3B3658',text:'#EDE6F5',subtext:'#2CB7B5',accent:'#D1448D',accentHover:'#B93879',secondary:'#2CB7B5',border:'#D1448D',danger:'#FF6B8A'}),
+ T('evileye','Evil Eye',{bg:'#05364B',surface:'#0A4A66',surface2:'#0E5C80',text:'#EAF7FD',subtext:'#68C4E8',accent:'#33C9F5',accentHover:'#1FA8D0',secondary:'#FFD166',border:'#0D5872',danger:'#FF7A7A'}),
+ T('ezmode','EZ Mode',{bg:'#0C3C66',surface:'#124F84',surface2:'#186199',text:'#FFFFFF',subtext:'#A8DAF7',accent:'#FF8BDA',accentHover:'#F06BC4',secondary:'#2AA7E8',border:'#2D7FC4',danger:'#FF6B6B'}),
+ T('nebula','Nebula',{bg:'#25233D',surface:'#302D4A',surface2:'#3B3658',text:'#EDE6F5',subtext:'#2CB7B5',accent:'#EE72AE',accentHover:'#D25494',secondary:'#2CB7B5',border:'#D1448D',danger:'#FF6B8A'}),
  T('catppuccin','Catppuccin',{bg:'#1E1E2E',surface:'#313244',surface2:'#45475A',text:'#CDD6F4',subtext:'#A6ADC8',accent:'#CBA6F7',accentHover:'#B48BE8',secondary:'#9399B2',border:'#45475A',danger:'#F38BA8'}),
  T('gruvbox','Gruvbox',{bg:'#282828',surface:'#3C3836',surface2:'#504945',text:'#EBDBB2',subtext:'#A89984',accent:'#FABD2F',accentHover:'#D79921',secondary:'#8EC07C',border:'#665C54',danger:'#FB4934'}),
  T('solardark','Solarized Dark',{bg:'#002B36',surface:'#073642',surface2:'#124552',text:'#EEE8D5',subtext:'#93A1A1',accent:'#B58900',accentHover:'#A17900',secondary:'#268BD2',border:'#1C4C59',danger:'#DC322F'}),
- T('redvelvet','Red Velvet',{bg:'#2A1016',surface:'#3A1720',surface2:'#4A1D29',text:'#F4D7D7',subtext:'#C4858E',accent:'#D94F5C',accentHover:'#B93E49',secondary:'#8F2634',border:'#5B2830',danger:'#FF6B72'}),
+ T('redvelvet','Red Velvet',{bg:'#2A1016',surface:'#3A1720',surface2:'#4A1D29',text:'#F4D7D7',subtext:'#C4858E',accent:'#F0707C',accentHover:'#D25764',secondary:'#8F2634',border:'#5B2830',danger:'#FF6B72'}),
  T('mintchoco','Mint Choco',{bg:'#16211D',surface:'#20312B',surface2:'#2C443B',text:'#D7F3EA',subtext:'#8CB6A8',accent:'#64D6AC',accentHover:'#4EBC94',secondary:'#7B5E4B',border:'#355248',danger:'#E36C6C'}),
- T('spiderman','Spiderman',{bg:'#0D1426',surface:'#151E36',surface2:'#1E2A47',text:'#EDF1FA',subtext:'#3D7FE0',accent:'#E1232C',accentHover:'#BB1A22',secondary:'#2F6FE4',border:'#24314F',danger:'#FF5560'})];
+ T('spiderman','Spiderman',{bg:'#0D1426',surface:'#151E36',surface2:'#1E2A47',text:'#EDF1FA',subtext:'#3D7FE0',accent:'#F23A42',accentHover:'#D0262E',secondary:'#2F6FE4',border:'#24314F',danger:'#FF5560'})];
 
 /* ---------- MODEL ---------- */
 const KEY='dental_tracker_v5';
@@ -626,20 +654,50 @@ function bars(rows,label){
     return `<div class="strow"><span class="stk">${esc(nm)}</span>
       <span class="stbar"><i style="width:${Math.round(n/max*100)}%;background:${col}"></i></span>
       <b class="stn">${n}</b></div>`}).join('')}</div>`}
+const MON_EN=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+function yearSeen(y){return MON_EN.map((_,i)=>monthStats(y,i).done)}
 function vStats(){
   const y=S.cur.getFullYear(),m=S.cur.getMonth(),s=monthStats(y,m);
-  return `<div class="sthead"><div><div class="stmn">${TH_MF[m]}</div><div class="styr">${y+543}</div></div>
-    <div class="nav2" style="margin:0"><button data-act="mv" data-n="-1" aria-label="เดือนก่อน"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
-    <button data-act="mv" data-n="1" aria-label="เดือนถัดไป"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div></div>
-  <div class="stbig">
-    <div><b>${s.done}</b><span>มาแล้ว</span></div>
-    <div><b>${s.noshow}</b><span>ไม่มา</span></div>
-    <div><b>${s.cancel}</b><span>ยกเลิก</span></div>
-    ${s.pending?`<div><b>${s.pending}</b><span>ยังไม่ปิดสถานะ</span></div>`:''}
+  const ys=yearSeen(y),yTot=ys.reduce((a,b)=>a+b,0),yMax=Math.max(1,...ys);
+  const best=ys.indexOf(Math.max(...ys));
+  const booked=s.done+s.noshow+s.cancel;
+  const pc=n=>booked?Math.round(n/booked*100)+'% ของที่นัด':'—';
+  const days=new Set(DB.appointments.filter(a=>a.status==='done'&&a.date.startsWith(`${y}-${String(m+1).padStart(2,'0')}`)).map(a=>a.date)).size;
+  return `<div class="sthead">
+    <div><div class="eyebrow">MONTHLY OVERVIEW</div><h1 class="ptitle2">${TH_MF[m]} ${y+543}</h1></div>
+    <div class="ynav"><button data-act="mv" data-n="-1" aria-label="เดือนก่อน">‹</button>
+      <span>${MON_EN[m]}</span><button data-act="mv" data-n="1" aria-label="เดือนถัดไป">›</button></div></div>
+
+  <div class="stgrid">
+    <div class="stcell"><div class="eyebrow">PATIENTS SEEN</div><b>${s.done}</b><small>${days?`เฉลี่ย ${(s.done/days).toFixed(1)} คน/วันตรวจ`:'ยังไม่มีวันตรวจ'}</small></div>
+    <div class="stcell"><div class="eyebrow">NO-SHOW</div><b>${s.noshow}</b><small>${pc(s.noshow)}</small></div>
+    <div class="stcell"><div class="eyebrow">CANCELLED</div><b>${s.cancel}</b><small>${pc(s.cancel)}</small></div>
+    <div class="stcell hi"><div class="eyebrow">STILL OPEN</div><b>${s.pending}</b><small>ยังไม่ปิดสถานะ</small></div>
   </div>
-  ${s.done?bars(s.rooms,'แยกตามห้อง')+bars(s.cats,'แยกตามประเภทเคส')
-    :`<div class="empty" style="margin-top:20px">เดือนนี้ยังไม่มีคนไข้ที่บันทึกว่า “มาแล้ว”</div>`}
-  <div class="row" style="margin-top:22px"><button class="btn sm" data-act="copyStats">คัดลอกเป็นข้อความ</button></div>`}
+
+  <div class="sechead"><span class="pill">12 MONTHS</span><span class="sect">คนไข้ที่มาต่อเดือน</span>
+    <span class="secr">Total <b>${yTot}</b></span></div>
+  <div class="chart">${ys.map((n,i)=>`<div class="cb ${i===m?'on':''}" title="${MON_EN[i]} ${n}">
+    <i style="height:${Math.max(2,Math.round(n/yMax*100))}%"></i><span>${MON_EN[i]}</span></div>`).join('')}</div>
+  <div class="foot3">
+    <div><div class="eyebrow">BEST MONTH</div><b>${MON_EN[best]} · ${ys[best]}</b></div>
+    <div><div class="eyebrow">DAYS WITH PATIENTS</div><b>${days}</b></div>
+    <div><div class="eyebrow">MONTH SHARE</div><b>${yTot?Math.round(s.done/yTot*100):0}%</b></div>
+  </div>
+
+  ${s.rooms.length?`<div class="sechead"><span class="pill">BY ROOM</span><span class="sect">แยกตามห้อง</span></div>
+  <table class="dt"><thead><tr><th>ROOM</th><th class="n">SEEN</th><th class="n">SHARE</th></tr></thead>
+  <tbody>${s.rooms.map(([k,n])=>{const w=wt(k);
+    return `<tr><td><i class="rdot" style="background:${w?w.color:'var(--hl)'};display:inline-block;margin-right:7px;vertical-align:-1px"></i>${esc(w?w.name:k)}</td>
+    <td class="n">${n}</td><td class="n muted">${Math.round(n/s.done*100)}%</td></tr>`}).join('')}</tbody></table>`:''}
+
+  ${s.cats.length?`<div class="sechead"><span class="pill">BY CASE</span><span class="sect">แยกตามประเภทเคส</span></div>
+  <table class="dt"><thead><tr><th>TYPE</th><th class="n">SEEN</th><th class="n">SHARE</th></tr></thead>
+  <tbody>${s.cats.map(([k,n])=>`<tr><td>${esc(k)}</td><td class="n">${n}</td>
+    <td class="n muted">${Math.round(n/s.done*100)}%</td></tr>`).join('')}</tbody></table>`:''}
+
+  ${!s.done?`<div class="empty" style="margin-top:20px">เดือนนี้ยังไม่มีคนไข้ที่บันทึกว่า “มาแล้ว”</div>`:''}
+  <div class="row" style="margin-top:24px"><button class="btn sm" data-act="copyStats">คัดลอกเป็นข้อความ</button></div>`}
 function statsText(){
   const y=S.cur.getFullYear(),m=S.cur.getMonth(),s=monthStats(y,m);
   const L=[`สรุปงาน ${TH_MF[m]} ${y+543}`,`มาแล้ว ${s.done} · ไม่มา ${s.noshow} · ยกเลิก ${s.cancel}`];
