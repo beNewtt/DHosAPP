@@ -27,9 +27,9 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Thai Looped',sy
 button,input,select,textarea{font-family:inherit;font-size:12.5px;color:inherit}
 button{cursor:pointer;border:0;background:none}
 .mono{font-family:'IBM Plex Mono',monospace}
-.app{max-width:1160px;margin:0 auto;padding:0 clamp(12px,2vw,24px) 70px}
+.app{max-width:1000px;margin:0 auto;padding:0 clamp(12px,2vw,24px) 70px}
 header{border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:30;padding-top:env(safe-area-inset-top)}
-.hd{max-width:1160px;margin:0 auto;padding:9px clamp(12px,2vw,24px);display:flex;align-items:center;gap:clamp(8px,1.2vw,16px);flex-wrap:wrap}
+.hd{max-width:1000px;margin:0 auto;padding:9px clamp(12px,2vw,24px);display:flex;align-items:center;gap:clamp(8px,1.2vw,16px);flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px}
 .brand .ic{width:34px;height:34px;background:var(--hl);color:var(--onhl);display:grid;place-items:center;font-weight:800;font-size:13px;border-radius:8px}
 .brand h1{font-size:clamp(13px,1.3vw,16px);font-weight:800;color:var(--ink);line-height:1.15}
@@ -60,7 +60,7 @@ nav button.on{background:var(--hl);color:var(--onhl);box-shadow:0 2px 6px rgba(0
 .row{display:flex;align-items:center;gap:10px}.sp{justify-content:space-between}
 h2{font-size:clamp(16px,1.8vw,19px);font-weight:800;color:var(--ink);margin:22px 0 13px}
 h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-.btn{background:var(--surface);border:1px solid var(--line);padding:9px 15px;border-radius:var(--r);font-weight:600;color:var(--tx)}
+.btn{background:var(--surface);border:1px solid var(--line);padding:9px 16px;border-radius:999px;font-weight:600;color:var(--tx)}
 .btn:hover{border-color:var(--hl);color:var(--ink)}
 .btn.pri{background:var(--hl);border-color:var(--hl);color:var(--onhl)}
 .btn.pri:hover{filter:brightness(1.12);color:var(--onhl)}
@@ -77,17 +77,24 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .note{background:var(--wrnBg);border:1px solid var(--wrnLn);color:var(--wrn);padding:8px 11px;border-radius:var(--r);font-size:12px;font-weight:600}
 .warn{background:var(--dngBg);border:1px solid var(--dngLn);color:var(--dng);padding:8px 11px;font-size:12px;font-weight:600;border-radius:var(--r);margin-bottom:10px}
 .ok{background:var(--okBg);border:1px solid var(--okLn);color:var(--ok);padding:8px 11px;font-size:12px;font-weight:600;border-radius:var(--r)}
+.odbox{background:var(--wrnBg);border:1px solid var(--wrnLn);border-radius:var(--r);padding:12px 14px;margin:14px 0}
+.odbox>.row b{color:var(--wrn)}
+.odrow{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;border-top:1px solid var(--wrnLn);margin-top:9px;padding-top:9px;font-size:12.5px}
+.odbtns{display:flex;gap:6px;flex-wrap:wrap}
+nav button.alert{position:relative}
+nav button.alert:after{content:'';position:absolute;top:3px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--dng)}
 .hero{display:flex;align-items:flex-end;justify-content:space-between;padding:clamp(8px,1.4vw,18px) 0 clamp(8px,1vw,13px);gap:10px;flex-wrap:nowrap}
-.hero .num{font-size:clamp(36px,5.6vw,66px);font-weight:700;line-height:.85;color:transparent;-webkit-text-stroke:1.8px var(--ink)}
+.hero .num{font-size:clamp(46px,7vw,84px);font-weight:700;line-height:.82;color:transparent;-webkit-text-stroke:2px var(--ink)}
 .hero .rt{text-align:right;margin-left:auto}
 .hero .mn{font-size:clamp(18px,2.4vw,28px);font-weight:800;color:var(--ink);line-height:1}
 .hero .yr{font-size:clamp(12px,1.2vw,15px);font-weight:700;color:var(--pm);margin-top:1px}
 .nav2{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
-.nav2 button{width:28px;height:28px;border:1px solid var(--line);border-radius:50%;color:var(--ink);display:grid;place-items:center;font-size:13px}
+.nav2 button{width:30px;height:30px;border:1px solid var(--line);border-radius:50%;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:0}
 .tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
 .tools .btn{font-size:11px;padding:6px 11px}
-.seg{display:flex;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.seg button{padding:6px 11px;font-size:11px;color:var(--tx2);font-weight:600;border-right:1px solid var(--line)}
+.seg{display:flex;gap:2px;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:2px}
+.seg button{padding:6px 13px;font-size:11px;color:var(--tx2);font-weight:700;border-radius:999px;white-space:nowrap}
+.seg button:hover{color:var(--ink)}
 .seg button:last-child{border-right:0}.seg button.on{background:var(--hl);color:var(--onhl)}
 .cal{border-top:1px solid var(--line);border-left:1px solid var(--line)}
 .grid{display:grid;grid-template-columns:repeat(7,1fr)}
@@ -97,18 +104,15 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .cell.out{background:var(--soft);opacity:.5}
 .cell.tdy{background:var(--hl)}.cell.tdy .cn,.cell.tdy .rl,.cell.tdy .cnt{color:var(--onhl)!important}
 .cell.mark{box-shadow:inset 0 0 0 1.3px var(--mk)}
-.ctop{display:flex;align-items:flex-start;justify-content:space-between}
+.ctop{display:flex;align-items:flex-start;justify-content:flex-end}
 .cn{font-size:clamp(12px,1.25vw,16px);font-weight:700;color:var(--ink);margin-left:auto}
 .cn.sun{color:var(--dng)}
-.rl{font-size:clamp(9px,.85vw,10.5px);font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cbot{margin-top:auto;display:flex;align-items:center;gap:6px;justify-content:space-between}
-.cbar{position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--line2);text-decoration:none;display:block}
+.rl{font-size:clamp(9px,.85vw,10.5px);font-weight:700;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cbot{margin-top:auto;display:flex;align-items:center;justify-content:flex-end;min-height:12px}
+.cmid{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;overflow:hidden;text-align:center}
+.rdot{width:8px;height:8px;border-radius:50%;flex:none;display:block}
+.cbar{position:absolute;left:0;right:0;bottom:0;height:3px;background:none;border:0;text-decoration:none;display:block}
 .cbar b{display:block;height:100%}
-.cadd{width:17px;height:17px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;line-height:1;color:var(--tx2);background:var(--soft);border:1px solid var(--line);opacity:0;transition:opacity .12s}
-.cell:hover .cadd,.cell:focus-within .cadd{opacity:1}
-.cadd:hover{color:var(--onhl);background:var(--hl);border-color:var(--hl)}
-.cell.tdy .cadd{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.35);color:var(--onhl)}
-@media(hover:none){.cadd{opacity:.5}}
 .cnt{font-size:clamp(9px,.85vw,11px);font-weight:700;color:var(--ink);white-space:nowrap}
 .cnt i{font-weight:500;font-style:normal;color:var(--tx2);margin-left:1px}
 .cell.tdy .cnt i{color:var(--onhl);opacity:.85}
@@ -132,13 +136,13 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 @media(max-width:900px){.plan{grid-template-columns:1fr}.side{position:static}}
 .day{display:flex;border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
 .day:first-child{border-top:0;padding-top:0;margin-top:0}
-.rail{width:clamp(84px,10vw,120px);flex:0 0 auto;border-right:1px solid var(--line);padding:0 10px 12px 0;text-align:center;background:none}
+.rail{width:clamp(80px,9vw,104px);flex:0 0 auto;border-right:1px solid var(--line);padding:0 10px 12px;text-align:center;background:none}
 .rail .dw{font-size:11px;color:var(--tx2);font-weight:700}
 .rail .dn{font-size:clamp(24px,3vw,34px);font-weight:800;color:var(--ink);line-height:1.05}
 .rail .dm{font-size:10.5px;color:var(--tx2);margin-bottom:8px}
 .rail.today{background:var(--hl)}.rail.today .dw,.rail.today .dn,.rail.today .dm{color:var(--onhl)}
 .rail.today .btn{background:transparent;color:var(--onhl);border-color:rgba(255,255,255,.4)}
-.rl2{font-size:11px;font-weight:700;padding:4px 6px;border-radius:var(--r);display:block;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rl2{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;display:inline-block;max-width:100%;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .slots{flex:1;min-width:0;padding:12px;display:flex;flex-direction:column;gap:10px}
 .addrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:11.5px;color:var(--tx2);font-weight:600}
 .slot{border:1px solid var(--line);border-left:3px solid;border-radius:var(--r);padding:10px 12px}
@@ -174,7 +178,19 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
 .f input:focus,.f select:focus,.f textarea:focus{border-color:var(--hl)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-@media(max-width:560px){.g3,.g2{grid-template-columns:1fr}}
+.g2m{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.g3,.g2{grid-template-columns:1fr}.g2m{gap:8px}}
+.mfoot{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;border-top:1px solid var(--line);margin-top:4px;padding-top:13px}
+.mfoot .btn{flex:1 1 auto;justify-content:center;text-align:center}
+.mfoot .btn.pri{flex:1 1 100px}
+@media(max-width:560px){
+  .mask{padding:10px 8px}
+  .modal{padding:15px}
+  .f{margin-bottom:9px}
+  .f label{font-size:10px;margin-bottom:3px;letter-spacing:.03em}
+  .f input,.f select,.f textarea{padding:8px 9px}
+  .mtitle{font-size:15.5px}
+}
 .pick{display:flex;gap:8px;flex-wrap:wrap}
 .pick label{display:flex;align-items:center;gap:7px;border:1px solid var(--line);padding:9px 12px;border-radius:var(--r);cursor:pointer;font-weight:600;font-size:12.5px}
 .pick label.on{border-color:var(--hl);background:var(--soft);color:var(--ink)}
@@ -208,9 +224,9 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
   <div class="brand"><div class="ic">DT</div>
     <div><h1>DENTAL TRACKER</h1><p>ระบบนัดหมายและประวัติคนไข้ทันตกรรม</p></div></div>
   <nav id="nav">
-    <button data-act="nav" data-v="schedule" class="on">ปฏิทิน</button>
-    <button data-act="nav" data-v="planner">วางแผน</button>
-    <button data-act="nav" data-v="upcoming">นัดที่จะถึง</button>
+    <button data-act="nav" data-v="schedule" class="on">Calendar</button>
+    <button data-act="nav" data-v="upcoming">Upcoming</button>
+    <button data-act="nav" data-v="planner">Planner</button>
     <button data-act="nav" data-v="archive" title="ทะเบียนคนไข้ / ค้นหาคนไข้" aria-label="ทะเบียนคนไข้"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg></button>
   </nav>
   <div class="hright">
@@ -306,7 +322,11 @@ const digits=s=>(s||'').replace(/\D/g,'');
 const ses4=t=>{const h=+(t||'13:00').split(':')[0];return h<12?'am':h<16?'pm':'ev'};
 
 let DB=loadLocal();
-function loadLocal(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.patients)return r}catch(e){}return seed()}
+function loadLocal(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.patients){if(!Array.isArray(r.trash))r.trash=[];return r}}catch(e){}return seed()}
+const TRASH_DAYS=30;
+function purgeOldTrash(){if(!DB.trash)DB.trash=[];const cut=Date.now()-TRASH_DAYS*864e5,n=DB.trash.length;
+  DB.trash=DB.trash.filter(t=>t.at>cut);if(DB.trash.length!==n)localSave()}
+function toTrash(o){DB.trash=DB.trash||[];DB.trash.unshift(Object.assign({tid:uid('t_'),at:Date.now(),patients:[],appts:[],visits:[]},o))}
 function localSave(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){alert('พื้นที่เก็บข้อมูลเต็ม — สำรองแล้วลบข้อมูลเก่า')}}
 function save(){localSave();autoBackup();if(SYNC.on)queuePush()}
 const wt=id=>DB.workTypes.find(w=>w.id===id)||DB.workTypes[0];
@@ -314,7 +334,7 @@ const pt=id=>DB.patients.find(p=>p.id===id);
 const daySch=d=>DB.daySchedules[d]||null;
 const isOff=d=>{const s=daySch(d);return !!s&&s.typeId==='off'};
 function seed(){
-  const db={patients:[],appointments:[],visits:[],daySchedules:{},workTypes:DEF_WT.slice(),
+  const db={patients:[],appointments:[],visits:[],trash:[],daySchedules:{},workTypes:DEF_WT.slice(),
     categories:['Oral exam','RPD','TP','CD','ENDO','SUR','Stitch off','F/U','อื่นๆ'],
     categoryStyles:{'Oral exam':{bg:'#EDEAE0',text:'#5C6D68'},'RPD':{bg:'#EFE1EA',text:'#63405A'},
       'TP':{bg:'#EFE1EA',text:'#63405A'},'CD':{bg:'#EFE1EA',text:'#63405A'},'ENDO':{bg:'#F7E4DD',text:'#9C4530'},
@@ -342,6 +362,7 @@ function applyTheme(id){const t=THEMES.find(x=>x.id===id)||THEMES.find(x=>x.id==
   const m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',t.v.hl);
   DB.theme=t.id;localSave()}
 applyTheme(DB.theme||'cheesecake');
+purgeOldTrash();
 
 /* ---------- QUERIES ---------- */
 const apptsOn=d=>DB.appointments.filter(a=>a.date===d).sort((x,y)=>(x.time||'99:99').localeCompare(y.time||'99:99'));
@@ -360,18 +381,19 @@ const catChip=c=>{const cs=(DB.categoryStyles||{})[c];
 /* ---------- RENDER ---------- */
 const app=document.getElementById('app'),$=x=>document.getElementById(x);
 function render(){
+  {const b=document.querySelector('#nav button[data-v=upcoming]');if(b)b.classList.toggle('alert',overdueAppts().length>0)}
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.view));
   app.innerHTML=S.view==='schedule'?vSchedule():S.view==='planner'?vPlanner():S.view==='upcoming'?vUpcoming():S.view==='archive'?vArchive():vSettings();
 }
 function vSchedule(){const y=S.cur.getFullYear(),m=S.cur.getMonth();
   return `<div class="hero"><div class="num mono">${String(m+1).padStart(2,'0')}</div>
     <div class="rt"><div class="mn">${TH_MF[m]}</div><div class="yr">${y+543}</div>
-    <div class="nav2"><button data-act="mv" data-n="-1">‹</button><button data-act="mv" data-n="1">›</button></div></div></div>
+    <div class="nav2"><button data-act="mv" data-n="-1" aria-label="เดือนก่อน"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button data-act="mv" data-n="1" aria-label="เดือนถัดไป"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div></div></div>
   <div class="tools"><div class="seg">
-    <button data-act="mode" data-m="cal" class="${S.mode==='cal'?'on':''}">ภาพรวม</button>
-    <button data-act="mode" data-m="list" class="${S.mode==='list'?'on':''}">รายวัน</button></div>
-    <button class="btn sm" data-act="today" aria-label="วันนี้">📍</button>
-    <button class="btn pri sm" style="margin-left:auto" data-act="addAppt" data-d="${TODAY}">＋ เพิ่มนัดคนไข้</button></div>`
+    <button data-act="mode" data-m="cal" class="${S.mode==='cal'?'on':''}">Month</button>
+    <button data-act="today">Today</button>
+    <button data-act="mode" data-m="list" class="${S.mode==='list'?'on':''}">Day</button></div>
+    <button class="btn pri sm" style="margin-left:auto" data-act="addAppt" data-d="${TODAY}">＋ เพิ่มนัด</button></div>`
   +(S.mode==='cal'?calendar(y,m):dayList(y,m))}
 function calendar(y,m){
   const start=new Date(y,m,1-new Date(y,m,1).getDay());let max=1;
@@ -380,13 +402,13 @@ function calendar(y,m){
   for(let i=0;i<42;i++){
     const dt=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),k=iso(dt);
     const out=dt.getMonth()!==m,s=daySch(k),w=s?wt(s.typeId):null;
-    if(S.filter!=='all'&&(!w||w.id!==S.filter)){cells+=`<div class="cell ${out?'out':''}" role="button" tabindex="0" data-act="openDay" data-d="${k}" style="opacity:.3"><div class="ctop"><span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div></div>`;continue}
+    if(S.filter!=='all'&&(!w||w.id!==S.filter)){cells+=`<div class="cell ${out?'out':''}" style="opacity:.3"><div class="ctop"><span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div></div>`;continue}
     const n=liveOn(k).length,tdy=k===TODAY,mk=w&&(w.id==='off'||w.id==='scr');
-    cells+=`<div class="cell ${out?'out':''} ${tdy?'tdy':''} ${mk&&!tdy?'mark':''}" ${mk?`style="--mk:${w.color}"`:''} role="button" tabindex="0" data-act="openDay" data-d="${k}">
-      <div class="ctop">${w?`<i class="sq" style="background:${w.color}"></i>`:'<i></i>'}<span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div>
-      ${w?`<div class="rl" style="color:${tdy?'var(--onhl)':w.color}">${esc(s.room||w.room)}</div>`:''}
-      ${s&&s.note?`<div class="rl sub" style="color:var(--tx2);font-weight:500">${esc(s.note)}</div>`:''}
-      <div class="cbot"><button class="cadd" data-act="addAppt" data-d="${k}" title="เพิ่มนัดวันนี้" aria-label="เพิ่มนัด">＋</button>${n?`<span class="cnt">${n}<i> คน</i></span>`:''}</div>
+    cells+=`<div class="cell ${out?'out':''} ${tdy?'tdy':''} ${mk&&!tdy?'mark':''}" ${mk?`style="--mk:${w.color}"`:''} role="button" tabindex="0" data-act="addAppt" data-d="${k}" title="คลิกเพื่อเพิ่มนัดวันนี้">
+      <div class="ctop"><span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div>
+      <div class="cmid">${w?`<i class="rdot" style="background:${w.color}"></i><div class="rl" style="color:${tdy?'var(--onhl)':w.color}">${esc(s.room||w.room)}</div>`:''}
+      ${s&&s.note?`<div class="rl sub" style="color:var(--tx2);font-weight:500">${esc(s.note)}</div>`:''}</div>
+      <div class="cbot">${n?`<span class="cnt">${n}<i> คน</i></span>`:''}</div>
       ${n?`<u class="cbar"><b style="width:${Math.round(n/max*100)}%;background:${tdy?'var(--onhl)':(w?w.color:'var(--hl)')}"></b></u>`:''}</div>`}
   return `<div class="cal"><div class="grid">${DOW.map(d=>`<div class="gh">${d}</div>`).join('')}</div><div class="grid">${cells}</div></div>
     <div class="filters"><button class="fl ${S.filter==='all'?'on':''}" data-act="filt" data-f="all">ทั้งหมด</button>
@@ -475,12 +497,26 @@ function planWarnHTML(){const P=S.plan,d=[...P.sel];if(!d.length)return'';
   const c=d.filter(x=>{const s=daySch(x);return s&&s.typeId!==P.typeId});
   return c.length?`<div class="warn">⚠ ${c.length} วันมีห้องเดิมอยู่แล้ว — จะเขียนทับ</div>`:''}
 function refreshPlan(){const c=$('planCount'),w=$('planWarn');if(c)c.textContent=`เลือกแล้ว ${S.plan.sel.size} วัน`;if(w)w.innerHTML=planWarnHTML()}
+function overdueAppts(){return DB.appointments.filter(a=>a.date<TODAY&&a.status==='scheduled')
+  .sort((a,b)=>b.date.localeCompare(a.date)||(b.time||'').localeCompare(a.time||''))}
+function overdueHTML(){
+  const od=overdueAppts();if(!od.length)return '';
+  return `<div class="odbox"><div class="row sp" style="flex-wrap:wrap;gap:8px">
+    <b>⏰ ค้างอัปเดต ${od.length} นัด</b>
+    <span class="muted" style="font-size:11.5px">เลยวันนัดแล้วแต่ยังเป็น “นัดไว้” — ปิดสถานะเพื่อให้ยอดนับถูกต้อง</span></div>
+    ${od.slice(0,12).map(a=>{const p=pt(a.patientId);if(!p)return '';
+      return `<div class="odrow"><div style="min-width:0"><b>${esc(p.name)}</b>
+        <span class="muted"> · ${thDate(a.date)}${a.time?' '+esc(a.time):''}${a.proc?' · '+esc(a.proc):''}</span></div>
+        <div class="odbtns"><button class="btn sm" data-act="setSt" data-id="${a.id}" data-s="done">มาแล้ว</button>
+        <button class="btn sm" data-act="setSt" data-id="${a.id}" data-s="noshow">ไม่มา</button>
+        <button class="btn sm dg" data-act="setSt" data-id="${a.id}" data-s="cancelled">ยกเลิก</button></div></div>`}).join('')}
+    ${od.length>12?`<div class="muted" style="font-size:11.5px;margin-top:8px">และอีก ${od.length-12} นัด</div>`:''}</div>`}
 function vUpcoming(){
   const list=filterAppts(DB.appointments.filter(a=>a.date>=TODAY&&a.status!=='cancelled'))
     .sort((a,b)=>a.date.localeCompare(b.date)||(a.time||'99').localeCompare(b.time||'99'));
-  if(!list.length)return `<h2>นัดที่จะถึง</h2><div class="empty">ยังไม่มีนัดล่วงหน้า</div>`;
+  if(!list.length)return `<h2>นัดที่จะถึง</h2>`+overdueHTML()+`<div class="empty">ยังไม่มีนัดล่วงหน้า</div>`;
   const by={};list.forEach(a=>(by[a.date]=by[a.date]||[]).push(a));
-  return `<h2>นัดที่จะถึง <span class="muted" style="font-size:13px;font-weight:600">· ${list.length} นัด</span></h2>`+
+  return `<h2>นัดที่จะถึง <span class="muted" style="font-size:13px;font-weight:600">· ${list.length} นัด</span></h2>`+overdueHTML()+
     Object.entries(by).map(([d,as])=>{const dt=parseD(d),diff=Math.round((dt-parseD(TODAY))/864e5),s=daySch(d),w=s?wt(s.typeId):null;
       const shown=SESSIONS.filter(se=>as.some(a=>a.session===se.id));
       return `<div class="day"><div class="rail ${d===TODAY?'today':''}">
@@ -506,7 +542,8 @@ function vArchive(){
       <div class="avatar" style="width:46px;height:46px;flex:0 0 46px;font-size:16px">${esc(initials(p.name))}</div>
       <div><div style="font-size:18px;font-weight:800;color:var(--ink)">${esc(p.name)} ${catChip(p.cat)}</div>
       <div class="muted">${esc(p.hn||'ไม่มี HN')} · ${esc(p.sex||'-')} · ${p.age||'-'} ปี · ${esc(p.phone||'ไม่มีเบอร์')}</div></div></div>
-      <div class="row"><button class="btn sm" data-act="editPatient" data-id="${p.id}">แก้ไข</button>
+      <div class="row"><button class="btn sm dg" data-act="delPatient" data-id="${p.id}">ลบ</button>
+      <button class="btn sm" data-act="editPatient" data-id="${p.id}">แก้ไข</button>
       <button class="btn sm pri" data-act="addAppt" data-p="${p.id}" data-d="${TODAY}">＋ นัดใหม่</button></div></div>
       ${(p.tags||[]).length?`<div class="row" style="gap:6px;margin-top:11px;flex-wrap:wrap">${p.tags.map(t=>`<span class="chip" style="border-color:var(--dngLn);color:var(--dng);background:var(--dngBg)">⚠ ${esc(t)}</span>`).join('')}</div>`:''}
       ${p.note?`<div class="note" style="margin-top:11px">📝 ${esc(p.note)}</div>`:''}
@@ -557,6 +594,17 @@ function vSettings(){
     <div class="ac"><button class="btn sm" data-act="restoreBk" data-id="${k}">กู้คืน</button></div></div>`).join('')||'<div class="muted">ยังไม่มีสแนปช็อต</div>'}
   <div class="row" style="margin-top:12px"><button class="btn" data-act="export">⬇ สำรองเป็นไฟล์</button>
   <button class="btn" data-act="import">⬆ นำเข้าไฟล์</button></div></div>
+  <h2>ถังขยะ <span class="muted" style="font-size:12px;font-weight:600">· เก็บไว้ ${TRASH_DAYS} วันแล้วลบถาวรอัตโนมัติ</span></h2>
+  <div class="card">${(DB.trash||[]).length?`
+    ${DB.trash.map(t=>{const days=Math.max(0,TRASH_DAYS-Math.floor((Date.now()-t.at)/864e5));
+      return `<div class="pt"><div class="avatar">🗑</div>
+      <div style="min-width:0"><div class="nm">${esc(t.label||'รายการที่ลบ')}</div>
+      <div class="hn">ลบเมื่อ ${thDate(new Date(t.at).toISOString().slice(0,10))} · เหลืออีก ${days} วัน${t.appts&&t.appts.length>1?` · ${t.appts.length} นัด`:''}</div></div>
+      <div class="ac"><button class="btn sm pri" data-act="restoreTrash" data-id="${t.tid}">กู้คืน</button>
+      <button class="btn sm dg" data-act="dropTrash" data-id="${t.tid}">ลบถาวร</button></div></div>`}).join('')}
+    <div class="row" style="margin-top:12px"><button class="btn sm dg" data-act="emptyTrash">ล้างถังขยะทั้งหมด</button></div>`
+    :`<div class="ok">✓ ถังขยะว่าง</div>`}</div>
+
   <h2>ตรวจสอบคนไข้ซ้ำ</h2>
   <div class="card">${dups.length?dups.map(g=>`<div style="margin-bottom:12px">
     <div class="warn">พบข้อมูลซ้ำ (${g.k.startsWith('hn')?'HN':'เบอร์โทร'}เดียวกัน)</div>
@@ -604,27 +652,27 @@ function mAppt(id,pre={}){
      <input id="fpq" autocomplete="off" placeholder="เช่น 385129, ติ๋ม, 0851234567" value="${cp?esc((cp.hn||'—')+' — '+cp.name):''}">
      <input type="hidden" id="fpid" value="${a.patientId}"><div class="ac-list" id="fplist"></div>
      <div id="fpmsg" class="muted" style="font-size:11.5px;margin-top:5px"></div></div>
-   <div id="np" style="display:none;border:1px dashed var(--line);padding:12px;margin-bottom:12px">
-     <div class="g3"><div class="f"><label>HN</label><input id="nhn"></div>
-     <div class="f" style="grid-column:span 2"><label>ชื่อ-สกุล</label><input id="nnm"></div></div>
-     <div class="g3"><div class="f"><label>เบอร์โทร</label><input id="nph"></div>
-     <div class="f"><label>เพศ</label><select id="nsx"><option></option><option>ช</option><option>ญ</option></select></div>
+   <div id="np" style="display:none;border:1px dashed var(--line);border-radius:var(--r);padding:12px;margin-bottom:12px">
+     <div class="g2m"><div class="f"><label>HN</label><input id="nhn"></div>
+     <div class="f"><label>เบอร์โทร</label><input id="nph"></div></div>
+     <div class="f"><label>ชื่อ-สกุล</label><input id="nnm"></div>
+     <div class="g2m"><div class="f"><label>เพศ</label><select id="nsx"><option></option><option>ช</option><option>ญ</option></select></div>
      <div class="f"><label>ประเภท</label><select id="ncat">${(DB.categories||[]).map(c=>`<option>${esc(c)}</option>`).join('')}</select></div></div>
      <div id="nwarn"></div></div>
-   <div class="g2"><div class="f"><label>วันที่</label><input type="date" id="fd" value="${a.date}"></div>
-   <div class="f"><label>ห้องของวันนี้</label><select id="ft">${DB.workTypes.map(x=>`<option value="${x.id}" ${(s?s.typeId:a.typeId)===x.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select></div></div>
-   <div class="g3"><div class="f"><label>เวลา</label><input type="time" id="ftm" value="${a.time||''}"></div>
-   <div class="f"><label>นาที</label><input type="number" id="fdu" step="15" value="${a.duration||30}"></div>
-   <div class="f"><label>ซี่ฟัน</label><input id="fto" value="${esc(a.tooth)}" placeholder="#36"></div></div>
+   <div class="g2m"><div class="f"><label>วันที่</label><input type="date" id="fd" value="${a.date}"></div>
+   <div class="f"><label>เวลา</label><input type="time" id="ftm" value="${a.time||''}"></div></div>
+   <div class="g2m"><div class="f"><label>ห้องของวันนี้</label><select id="ft">${DB.workTypes.map(x=>`<option value="${x.id}" ${(s?s.typeId:a.typeId)===x.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select></div>
+   <div class="f"><label>นาที</label><input type="number" id="fdu" step="15" value="${a.duration||30}"></div></div>
+   <div class="g2m"><div class="f"><label>ซี่ฟัน</label><input id="fto" value="${esc(a.tooth)}" placeholder="#36"></div>
+   <div class="f"><label>สถานะ</label><select id="fst">
+     ${[['scheduled','นัดไว้'],['done','มาแล้ว'],['cancelled','ยกเลิก'],['noshow','ไม่มา']].map(([v,t])=>`<option value="${v}" ${a.status===v?'selected':''}>${t}</option>`).join('')}</select></div></div>
    <div class="f"><label>ขั้นตอน / หัตถการ</label>
      <input id="fpr" list="procList" value="${esc(a.proc)}" placeholder="เช่น Insert UTP, F/U 3 mo, Recheck RPD">
      <datalist id="procList">${PROCS.map(x=>`<option>${x}</option>`).join('')}</datalist></div>
-   <div class="g2"><div class="f"><label>สถานะ</label><select id="fst">
-     ${[['scheduled','นัดไว้'],['done','มาแล้ว'],['cancelled','ยกเลิก'],['noshow','ไม่มา']].map(([v,t])=>`<option value="${v}" ${a.status===v?'selected':''}>${t}</option>`).join('')}</select></div>
-   <div class="f"><label>หมายเหตุ</label><input id="fnt" value="${esc(a.note)}"></div></div>
-   <div class="row sp"><button class="btn" data-act="close">ยกเลิก</button>
-   <div class="row">${id?`<button class="btn" data-act="checkin" data-id="${id}">เช็คอิน → Visit</button>`:''}
-   <button class="btn pri" data-act="saveAppt" data-id="${id||''}">บันทึก</button></div></div>`);
+   <div class="f"><label>หมายเหตุ</label><input id="fnt" value="${esc(a.note)}"></div>
+   <div class="mfoot"><button class="btn" data-act="close">ยกเลิก</button>
+   ${id?`<button class="btn" data-act="checkin" data-id="${id}">✓ มาแล้ว — ลงบันทึกรักษา</button>`:''}
+   <button class="btn pri" data-act="saveAppt" data-id="${id||''}">บันทึก</button></div>`);
   initPtSearch(id);
   $('fd').addEventListener('change',e=>{const n=daySch(e.target.value);if(n)$('ft').value=n.typeId;checkDup()})}
 function initPtSearch(editId){
@@ -677,11 +725,11 @@ function mVisit(id){const v=DB.visits.find(x=>x.id===id),p=pt(v.patientId);
      <datalist id="procList2">${PROCS.map(x=>`<option>${x}</option>`).join('')}</datalist></div>
    <div class="f"><label>ซี่ฟัน</label><input id="vto" value="${esc(v.tooth)}"></div></div>
    <div class="f"><label>Diagnosis</label><input id="vd" value="${esc(v.dx)}"></div>
-   <div class="f"><label>Treatment plan / นัดครั้งถัดไป</label><input id="vt" value="${esc(v.tx)}"></div>
+   <div class="f"><label>แผนการรักษา / สิ่งที่ต้องทำครั้งหน้า</label><input id="vt" value="${esc(v.tx)}"></div>
    <div class="f"><label>บันทึกเพิ่มเติม</label><textarea id="vn" rows="4">${esc(v.note)}</textarea></div>
-   <div class="row sp"><button class="btn dg" data-act="delVisit" data-id="${id}">ลบ Visit</button>
-   <div class="row"><button class="btn" data-act="close">ปิด</button>
-   <button class="btn pri" data-act="saveVisit" data-id="${id}">บันทึก</button></div></div>`)}
+   <div class="mfoot"><button class="btn dg" data-act="delVisit" data-id="${id}">ลบบันทึก</button>
+   <button class="btn" data-act="nextAppt" data-pid="${v.patientId}" data-vid="${id}">＋ นัดครั้งต่อไป</button>
+   <button class="btn pri" data-act="saveVisit" data-id="${id}">บันทึก</button></div>`)}
 
 /* ---------- ACTIONS ---------- */
 document.addEventListener('click',e=>{
@@ -737,7 +785,12 @@ document.addEventListener('click',e=>{
     case'addAppt':{if(isOff(d||TODAY)&&!confirm('วันนี้ตั้งเป็น OFF — ยืนยันลงนัด?'))return;
       mAppt(null,{d:d||TODAY,s:t.dataset.s,p:t.dataset.p});break}
     case'editAppt':mAppt(id);break;
-    case'delAppt':if(confirm('ลบนัดนี้?')){DB.appointments=DB.appointments.filter(x=>x.id!==id);save();render()}break;
+    case'delAppt':if(confirm('ลบนัดนี้? (กู้คืนได้ภายใน 30 วัน ที่หน้าตั้งค่า)')){
+      const ap=DB.appointments.find(x=>x.id===id);
+      if(ap){const p=pt(ap.patientId),vs=DB.visits.filter(v=>v.apptId===ap.id);
+        toTrash({kind:'appt',label:`นัด ${p?p.name:'—'} · ${thDate(ap.date)}`,appts:[ap],visits:vs});
+        DB.appointments=DB.appointments.filter(x=>x.id!==id);DB.visits=DB.visits.filter(v=>v.apptId!==ap.id)}
+      save();render()}break;
     case'usePt':{const p=pt(id);$('fpid').value=p.id;$('fpq').value=(p.hn||'—')+' — '+p.name;
       $('np').style.display='none';$('nwarn').innerHTML='';checkDup();break}
     case'saveAppt':{let pid=$('fpid').value;
@@ -773,9 +826,21 @@ document.addEventListener('click',e=>{
     case'selP':S.sel=id;render();break;
     case'addPatient':mPatient(null);break;
     case'editPatient':mPatient(id);break;
-    case'delPatient':if(confirm('ลบคนไข้รายนี้ พร้อมนัดและ visit ทั้งหมด?')){
+    case'delPatient':{const p0=pt(id);if(!p0)break;
+      const aps=DB.appointments.filter(a=>a.patientId===id),vss=DB.visits.filter(v=>v.patientId===id);
+      if(!confirm(`ลบ ${p0.name} พร้อมนัด ${aps.length} รายการและบันทึกรักษา ${vss.length} รายการ?\n(กู้คืนได้ภายใน 30 วัน ที่หน้าตั้งค่า)`))break;
+      toTrash({kind:'patient',label:`คนไข้ ${p0.name}${p0.hn?' · HN '+p0.hn:''}`,patients:[p0],appts:aps,visits:vss});
       DB.patients=DB.patients.filter(p=>p.id!==id);DB.appointments=DB.appointments.filter(a=>a.patientId!==id);
-      DB.visits=DB.visits.filter(v=>v.patientId!==id);if(S.sel===id)S.sel=null;save();render()}break;
+      DB.visits=DB.visits.filter(v=>v.patientId!==id);if(S.sel===id)S.sel=null;save();render();break}
+    case'restoreTrash':{const t=(DB.trash||[]).find(x=>x.tid===id);if(!t)break;
+      (t.patients||[]).forEach(p=>{if(!pt(p.id))DB.patients.push(p)});
+      (t.appts||[]).forEach(a=>{if(!DB.appointments.find(x=>x.id===a.id))DB.appointments.push(a)});
+      (t.visits||[]).forEach(v=>{if(!DB.visits.find(x=>x.id===v.id))DB.visits.push(v)});
+      DB.trash=DB.trash.filter(x=>x.tid!==id);save();render();alert('กู้คืนเรียบร้อย');break}
+    case'dropTrash':if(confirm('ลบรายการนี้ถาวร? ย้อนกลับไม่ได้')){DB.trash=DB.trash.filter(x=>x.tid!==id);save();render()}break;
+    case'emptyTrash':if(confirm('ล้างถังขยะทั้งหมดถาวร? ย้อนกลับไม่ได้')){DB.trash=[];save();render()}break;
+    case'setSt':{const a=DB.appointments.find(x=>x.id===id);if(a){a.status=t.dataset.s;save();render()}break}
+    case'nextAppt':{const pid=t.dataset.pid;close();mAppt(null,{p:pid});break}
     case'savePatient':{const o={hn:$('phn').value.trim(),name:$('pnm').value.trim(),age:$('pag').value,sex:$('psx').value,
       phone:$('pph').value.trim(),cat:$('pcat').value,tags:$('ptg').value.split(',').map(s=>s.trim()).filter(Boolean),note:$('pnt').value};
       if(!o.name){alert('กรอกชื่อคนไข้');return}
