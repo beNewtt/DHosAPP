@@ -67,9 +67,11 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .btn.sm{padding:6px 11px;font-size:12px}.btn.dg{color:var(--dng)}.btn.dg:hover{border-color:var(--dng)}
 .btn.blk{width:100%;justify-content:center;display:flex}
 .card{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--bg)}
+.acct{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
+.acct .muted{font-size:11px;margin-top:2px}
 .chip{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:var(--r);font-size:10.5px;font-weight:700;border:1px solid}
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 8px}
-.sq{width:9px;height:9px;display:inline-block;flex:0 0 9px}
+.sq{width:9px;height:9px;border-radius:3px;display:inline-block;flex:0 0 9px}
 .muted{color:var(--tx2)}
 .empty{color:var(--tx2);text-align:center;padding:40px;border:1px dashed var(--line);border-radius:var(--r);background:var(--soft)}
 .note{background:var(--wrnBg);border:1px solid var(--wrnLn);color:var(--wrn);padding:8px 11px;border-radius:var(--r);font-size:12px;font-weight:600}
@@ -90,7 +92,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .cal{border-top:1px solid var(--line);border-left:1px solid var(--line)}
 .grid{display:grid;grid-template-columns:repeat(7,1fr)}
 .gh{padding:clamp(5px,.7vw,8px) 0;text-align:center;font-size:clamp(9.5px,.85vw,11px);font-weight:700;color:var(--ink);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
-.cell{position:relative;min-height:clamp(50px,6.6vw,86px);padding:clamp(4px,.6vw,7px) clamp(5px,.65vw,8px);border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg);text-align:left;display:flex;flex-direction:column;overflow:hidden}
+.cell{position:relative;aspect-ratio:1;min-height:46px;padding:clamp(4px,.6vw,7px) clamp(5px,.65vw,8px) clamp(7px,.9vw,10px);border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg);text-align:left;display:flex;flex-direction:column;overflow:hidden;cursor:pointer;color:inherit;font:inherit}
 .cell:hover{background:var(--soft)}
 .cell.out{background:var(--soft);opacity:.5}
 .cell.tdy{background:var(--hl)}.cell.tdy .cn,.cell.tdy .rl,.cell.tdy .cnt{color:var(--onhl)!important}
@@ -99,9 +101,14 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .cn{font-size:clamp(12px,1.25vw,16px);font-weight:700;color:var(--ink);margin-left:auto}
 .cn.sun{color:var(--dng)}
 .rl{font-size:clamp(9px,.85vw,10.5px);font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cbot{margin-top:auto;display:flex;align-items:center;gap:6px}
-.cbot u{flex:1;height:4px;background:var(--line2);text-decoration:none;display:block}
-.cbot u b{display:block;height:100%}
+.cbot{margin-top:auto;display:flex;align-items:center;gap:6px;justify-content:space-between}
+.cbar{position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--line2);text-decoration:none;display:block}
+.cbar b{display:block;height:100%}
+.cadd{width:17px;height:17px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;line-height:1;color:var(--tx2);background:var(--soft);border:1px solid var(--line);opacity:0;transition:opacity .12s}
+.cell:hover .cadd,.cell:focus-within .cadd{opacity:1}
+.cadd:hover{color:var(--onhl);background:var(--hl);border-color:var(--hl)}
+.cell.tdy .cadd{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.35);color:var(--onhl)}
+@media(hover:none){.cadd{opacity:.5}}
 .cnt{font-size:clamp(9px,.85vw,11px);font-weight:700;color:var(--ink);white-space:nowrap}
 .cnt i{font-weight:500;font-style:normal;color:var(--tx2);margin-left:1px}
 .cell.tdy .cnt i{color:var(--onhl);opacity:.85}
@@ -138,7 +145,9 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .slot.am{border-left-color:var(--am)}.slot.pm{border-left-color:var(--pm)}.slot.ev{border-left-color:var(--ev)}
 .slot h4{font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--tx)}
 .pt{display:flex;align-items:center;gap:10px;padding:9px 10px;border:1px solid var(--line2);border-radius:var(--r);margin-top:8px;background:var(--surface)}
-.pt .nm{font-weight:700}.pt .hn{font-size:11.5px;color:var(--tx2);margin-top:2px}
+.pt .nm{font-weight:700}
+.pt.cx{opacity:.5}
+.pt.cx .nm,.pt.cx .hn{text-decoration:line-through}.pt .hn{font-size:11.5px;color:var(--tx2);margin-top:2px}
 .pt .ac{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .avatar{width:42px;height:38px;border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:12.5px;background:var(--soft);color:var(--ink);border:1px solid var(--line);flex:0 0 42px;line-height:1.1}
 .st{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:var(--r);border:1px solid}
@@ -336,6 +345,7 @@ applyTheme(DB.theme||'cheesecake');
 
 /* ---------- QUERIES ---------- */
 const apptsOn=d=>DB.appointments.filter(a=>a.date===d).sort((x,y)=>(x.time||'99:99').localeCompare(y.time||'99:99'));
+const liveOn=d=>apptsOn(d).filter(a=>a.status!=='cancelled');   // ไม่นับนัดที่ยกเลิก
 const match=(p,q)=>!q||(p.hn+' '+p.name+' '+(p.cat||'')+' '+(p.tags||[]).join(' ')+' '+(p.phone||'')+' '+digits(p.phone)).toLowerCase().includes(q.toLowerCase());
 const filterAppts=l=>!S.q?l:l.filter(a=>{const p=pt(a.patientId);return p&&match(p,S.q)});
 const initials=n=>(n||'?').trim().split(/\s+/).map(x=>x[0]).slice(0,2).join('');
@@ -365,18 +375,19 @@ function vSchedule(){const y=S.cur.getFullYear(),m=S.cur.getMonth();
   +(S.mode==='cal'?calendar(y,m):dayList(y,m))}
 function calendar(y,m){
   const start=new Date(y,m,1-new Date(y,m,1).getDay());let max=1;
-  for(let i=0;i<42;i++){const k=iso(new Date(start.getFullYear(),start.getMonth(),start.getDate()+i));max=Math.max(max,apptsOn(k).length)}
+  for(let i=0;i<42;i++){const k=iso(new Date(start.getFullYear(),start.getMonth(),start.getDate()+i));max=Math.max(max,liveOn(k).length)}
   let cells='';
   for(let i=0;i<42;i++){
     const dt=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),k=iso(dt);
     const out=dt.getMonth()!==m,s=daySch(k),w=s?wt(s.typeId):null;
-    if(S.filter!=='all'&&(!w||w.id!==S.filter)){cells+=`<button class="cell ${out?'out':''}" data-act="openDay" data-d="${k}" style="opacity:.3"><div class="ctop"><span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div></button>`;continue}
-    const n=apptsOn(k).length,tdy=k===TODAY,mk=w&&(w.id==='off'||w.id==='scr');
-    cells+=`<button class="cell ${out?'out':''} ${tdy?'tdy':''} ${mk&&!tdy?'mark':''}" ${mk?`style="--mk:${w.color}"`:''} data-act="openDay" data-d="${k}">
+    if(S.filter!=='all'&&(!w||w.id!==S.filter)){cells+=`<div class="cell ${out?'out':''}" role="button" tabindex="0" data-act="openDay" data-d="${k}" style="opacity:.3"><div class="ctop"><span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div></div>`;continue}
+    const n=liveOn(k).length,tdy=k===TODAY,mk=w&&(w.id==='off'||w.id==='scr');
+    cells+=`<div class="cell ${out?'out':''} ${tdy?'tdy':''} ${mk&&!tdy?'mark':''}" ${mk?`style="--mk:${w.color}"`:''} role="button" tabindex="0" data-act="openDay" data-d="${k}">
       <div class="ctop">${w?`<i class="sq" style="background:${w.color}"></i>`:'<i></i>'}<span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div>
       ${w?`<div class="rl" style="color:${tdy?'var(--onhl)':w.color}">${esc(s.room||w.room)}</div>`:''}
       ${s&&s.note?`<div class="rl sub" style="color:var(--tx2);font-weight:500">${esc(s.note)}</div>`:''}
-      <div class="cbot">${n?`<u><b style="width:${Math.round(n/max*100)}%;background:${tdy?'var(--onhl)':(w?w.color:'var(--hl)')}"></b></u><span class="cnt">${n}<i> คน</i></span>`:''}</div></button>`}
+      <div class="cbot"><button class="cadd" data-act="addAppt" data-d="${k}" title="เพิ่มนัดวันนี้" aria-label="เพิ่มนัด">＋</button>${n?`<span class="cnt">${n}<i> คน</i></span>`:''}</div>
+      ${n?`<u class="cbar"><b style="width:${Math.round(n/max*100)}%;background:${tdy?'var(--onhl)':(w?w.color:'var(--hl)')}"></b></u>`:''}</div>`}
   return `<div class="cal"><div class="grid">${DOW.map(d=>`<div class="gh">${d}</div>`).join('')}</div><div class="grid">${cells}</div></div>
     <div class="filters"><button class="fl ${S.filter==='all'?'on':''}" data-act="filt" data-f="all">ทั้งหมด</button>
     ${DB.workTypes.map(w=>`<button class="fl ${S.filter===w.id?'on':''}" data-act="filt" data-f="${w.id}"><i class="dot" style="background:${w.color}"></i>${esc(w.name)}</button>`).join('')}</div>`}
@@ -404,7 +415,7 @@ function dayList(y,m){
         ${off?`<div class="slot" style="border-left-color:#9aa0b5"><h4>🚫 วันหยุด (OFF)</h4></div>`:''}
         ${shown.map(se=>{const l=ap.filter(a=>a.session===se.id);
           return `<div class="slot ${se.id}"><div class="row sp">
-            <h4><i class="dot" style="background:${se.c}"></i> ${se.name}<span class="muted">· ${l.length} คน</span></h4>
+            <h4><i class="dot" style="background:${se.c}"></i> ${se.name}<span class="muted">· ${l.filter(a=>a.status!=='cancelled').length} คน</span></h4>
             <button class="btn sm" data-act="addAppt" data-d="${k}" data-s="${se.id}">＋ เพิ่ม</button></div>
             ${l.map(ptRow).join('')}</div>`}).join('')}
         <div class="addrow">＋ เพิ่มนัด:
@@ -414,7 +425,7 @@ function dayList(y,m){
 function ptRow(a){
   const p=pt(a.patientId);if(!p)return'';
   const al=(p.tags||[]).length?`<span class="chip" style="border-color:var(--dngLn);color:var(--dng);background:var(--dngBg)">⚠ ${esc(p.tags[0])}</span>`:'';
-  return `<div class="pt">
+  return `<div class="pt ${a.status==='cancelled'?'cx':''}">
     <div class="avatar">${a.time?`<b style="font-size:11.5px">${esc(a.time)}</b><small style="font-size:8.5px;opacity:.7">${a.duration||30} น.</small>`:esc(initials(p.name))}</div>
     <div style="min-width:0"><div class="nm">${esc(p.name)} ${catChip(p.cat)} ${al}</div>
     <div class="hn">${esc(p.hn||'ไม่มี HN')}${p.phone?' · '+esc(p.phone):''} · 🦷 ${esc(a.proc||'ไม่ระบุ')}${a.tooth?' · ซี่ '+esc(a.tooth):''}</div></div>
@@ -521,7 +532,12 @@ function vSettings(){
      <span class="sws">${x.sw.map(c=>`<i class="sw" style="background:${c}"></i>`).join('')}</span></button>`).join('')}</div>
   <div class="row" style="gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn sm" data-act="export">⬇ สำรองข้อมูล</button>
   <button class="btn sm" data-act="import">⬆ นำเข้าไฟล์</button>
-  ${SYNC.on?`<button class="btn sm dg" data-act="logout" style="margin-left:auto">ออกจากระบบ</button>`:''}</div></div>
+  </div>
+  <div class="acct">${SYNC.on
+    ?`<div><b>เข้าสู่ระบบแล้ว</b><div class="muted">${esc(SYNC.email||'')} — ข้อมูลซิงก์ข้ามเครื่องอัตโนมัติ</div></div>
+      <button class="btn sm dg" data-act="logout">ออกจากระบบ</button>`
+    :`<div><b>ยังไม่ได้เข้าสู่ระบบ</b><div class="muted">${SUPA_URL?'ข้อมูลเก็บในเครื่องนี้เท่านั้น ยังไม่ซิงก์':'ยังไม่ได้ตั้งค่าเซิร์ฟเวอร์ซิงก์'}</div></div>
+      ${SUPA_URL?`<button class="btn sm pri" data-act="login">เข้าสู่ระบบ</button>`:''}`}</div></div>
   <h2>ตั้งค่าห้อง / ประเภทงาน</h2>
   <div class="card"><div class="muted" style="margin-bottom:12px">สีคือจุดบนปฏิทิน — <b>หนึ่งวันเลือกได้ห้องเดียว</b></div>
   <div style="overflow:auto"><table><thead><tr><th>สี</th><th>ชื่อ</th><th>ย่อ</th><th>ห้อง</th><th>กลุ่ม</th><th></th></tr></thead>
@@ -608,7 +624,7 @@ function mAppt(id,pre={}){
    <div class="f"><label>หมายเหตุ</label><input id="fnt" value="${esc(a.note)}"></div></div>
    <div class="row sp"><button class="btn" data-act="close">ยกเลิก</button>
    <div class="row">${id?`<button class="btn" data-act="checkin" data-id="${id}">เช็คอิน → Visit</button>`:''}
-   <button class="btn pri" data-act="saveAppt" data-id="${id}">บันทึก</button></div></div>`);
+   <button class="btn pri" data-act="saveAppt" data-id="${id||''}">บันทึก</button></div></div>`);
   initPtSearch(id);
   $('fd').addEventListener('change',e=>{const n=daySch(e.target.value);if(n)$('ft').value=n.typeId;checkDup()})}
 function initPtSearch(editId){
@@ -680,7 +696,8 @@ document.addEventListener('click',e=>{
       el.href=u;el.download=`dental-tracker-${TODAY}.json`;el.click();URL.revokeObjectURL(u);break}
     case'import':$('fileIn').click();break;
     case'restoreBk':if(confirm('กู้คืนข้อมูลกลับไปเป็นสแนปช็อตนี้?'))restoreBackup(id);break;
-    case'logout':if(SYNC.sb){SYNC.sb.auth.signOut().then(()=>location.reload())}break;
+    case'logout':if(SYNC.sb&&confirm('ออกจากระบบ? ข้อมูลที่ซิงก์แล้วจะยังอยู่บนคลาวด์'))SYNC.sb.auth.signOut().then(()=>location.reload());break;
+    case'login':loginUI();break;
     case'nav':S.view=t.dataset.v;location.hash=t.dataset.v;render();window.scrollTo(0,0);break;
     case'mode':S.mode=t.dataset.m;render();break;
     case'filt':S.filter=t.dataset.f;render();break;
@@ -785,10 +802,14 @@ document.addEventListener('input',e=>{
   const el=id&&$(id);if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(_){}}
   document.querySelectorAll('[data-q]').forEach(i=>{if(i.id!==id)i.value=S.q})
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape')$('tpanel').classList.remove('on')});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){$('tpanel').classList.remove('on');return}
+  const t=e.target;
+  if((e.key==='Enter'||e.key===' ')&&t.getAttribute&&t.getAttribute('role')==='button'&&t.dataset.act){e.preventDefault();t.click()}
+});
 
 /* ---------- CLOUD SYNC ---------- */
-const SYNC={on:false,sb:null,dirty:false,t:null};
+const SYNC={on:false,sb:null,dirty:false,t:null,email:''};
 const DEVICE=localStorage.getItem('dev_id')||(()=>{const v='d_'+Math.random().toString(36).slice(2,8);localStorage.setItem('dev_id',v);return v})();
 function setSync(txt,color){const b=$('syncBadge');if(!b)return;
   b.classList.remove('ok','wrn','dng');
@@ -823,6 +844,7 @@ async function boot(){
   SYNC.sb=supabase.createClient(SUPA_URL,SUPA_KEY);
   const {data:{session}}=await SYNC.sb.auth.getSession();
   if(!session){setSync('ยังไม่เข้าสู่ระบบ');loginUI();return}
+  SYNC.email=(session.user&&session.user.email)||'';
   SYNC.on=true;setSync('กำลังดึงข้อมูล…');
   await cloudPull();applyTheme(DB.theme||'cheesecake');render();subscribeRealtime();setSync('sync.','var(--ok)')}
 boot();
