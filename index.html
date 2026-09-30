@@ -67,6 +67,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .btn.sm{padding:6px 11px;font-size:12px}.btn.dg{color:var(--dng)}.btn.dg:hover{border-color:var(--dng)}
 .btn.blk{width:100%;justify-content:center;display:flex}
 .card{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--bg)}
+.sql{background:var(--soft);border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.6;overflow:auto;white-space:pre;color:var(--tx)}
 .acct{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
 .acct .muted{font-size:11px;margin-top:2px}
 .chip{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:var(--r);font-size:10.5px;font-weight:700;border:1px solid}
@@ -109,8 +110,9 @@ nav button.alert:after{content:'';position:absolute;top:3px;right:5px;width:6px;
 .cn.sun{color:var(--dng)}
 .rl{font-size:clamp(9px,.85vw,10.5px);font-weight:700;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cbot{margin-top:auto;display:flex;align-items:center;justify-content:flex-end;min-height:12px}
-.cmid{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;overflow:hidden;text-align:center}
+.cmid{flex:1;min-height:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;overflow:hidden;text-align:left}
 .rdot{width:8px;height:8px;border-radius:50%;flex:none;display:block}
+.rline{display:flex;align-items:center;gap:5px;max-width:100%;min-width:0}
 .cbar{position:absolute;left:0;right:0;bottom:0;height:3px;background:none;border:0;text-decoration:none;display:block}
 .cbar b{display:block;height:100%}
 .cnt{font-size:clamp(9px,.85vw,11px);font-weight:700;color:var(--ink);white-space:nowrap}
@@ -180,6 +182,9 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .g2m{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:560px){.g3,.g2{grid-template-columns:1fr}.g2m{gap:8px}}
+.quick{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:-4px 0 12px;font-size:10.5px;color:var(--tx2);font-weight:700}
+.qbtn{border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:700;color:var(--tx)}
+.qbtn:hover{border-color:var(--hl);color:var(--hl)}
 .mfoot{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;border-top:1px solid var(--line);margin-top:4px;padding-top:13px}
 .mfoot .btn{flex:1 1 auto;justify-content:center;text-align:center}
 .mfoot .btn.pri{flex:1 1 100px}
@@ -406,7 +411,7 @@ function calendar(y,m){
     const n=liveOn(k).length,tdy=k===TODAY,mk=w&&(w.id==='off'||w.id==='scr');
     cells+=`<div class="cell ${out?'out':''} ${tdy?'tdy':''} ${mk&&!tdy?'mark':''}" ${mk?`style="--mk:${w.color}"`:''} role="button" tabindex="0" data-act="addAppt" data-d="${k}" title="คลิกเพื่อเพิ่มนัดวันนี้">
       <div class="ctop"><span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div>
-      <div class="cmid">${w?`<i class="rdot" style="background:${w.color}"></i><div class="rl" style="color:${tdy?'var(--onhl)':w.color}">${esc(s.room||w.room)}</div>`:''}
+      <div class="cmid">${w?`<div class="rline"><i class="rdot" style="background:${w.color}"></i><span class="rl" style="color:${tdy?'var(--onhl)':w.color}">${esc(s.room||w.room)}</span></div>`:''}
       ${s&&s.note?`<div class="rl sub" style="color:var(--tx2);font-weight:500">${esc(s.note)}</div>`:''}</div>
       <div class="cbot">${n?`<span class="cnt">${n}<i> คน</i></span>`:''}</div>
       ${n?`<u class="cbar"><b style="width:${Math.round(n/max*100)}%;background:${tdy?'var(--onhl)':(w?w.color:'var(--hl)')}"></b></u>`:''}</div>`}
@@ -511,10 +516,27 @@ function overdueHTML(){
         <button class="btn sm" data-act="setSt" data-id="${a.id}" data-s="noshow">ไม่มา</button>
         <button class="btn sm dg" data-act="setSt" data-id="${a.id}" data-s="cancelled">ยกเลิก</button></div></div>`}).join('')}
     ${od.length>12?`<div class="muted" style="font-size:11.5px;margin-top:8px">และอีก ${od.length-12} นัด</div>`:''}</div>`}
+function openCases(){
+  const future=new Set(DB.appointments.filter(a=>a.date>=TODAY&&a.status==='scheduled').map(a=>a.patientId));
+  const last={};
+  DB.visits.forEach(v=>{if(!last[v.patientId]||v.date>last[v.patientId].date)last[v.patientId]=v});
+  return Object.values(last).filter(v=>!future.has(v.patientId)&&pt(v.patientId))
+    .sort((a,b)=>b.date.localeCompare(a.date))}
+function openCasesHTML(){
+  const oc=openCases();if(!oc.length)return '';
+  return `<h2 style="margin-top:26px">ยังไม่ได้นัดครั้งต่อไป <span class="muted" style="font-size:13px;font-weight:600">· ${oc.length} ราย</span></h2>
+    <div class="muted" style="margin:-6px 0 10px">รักษาไปแล้วแต่ยังไม่มีนัดล่วงหน้า — เช็กว่าจบเคสแล้วหรือตกหล่น</div>
+    <div class="card">${oc.slice(0,25).map(v=>{const p=pt(v.patientId);
+      return `<div class="pt"><div class="avatar">${esc(initials(p.name))}</div>
+      <div style="min-width:0"><div class="nm">${esc(p.name)} ${catChip(p.cat)}</div>
+      <div class="hn">รักษาล่าสุด ${thDate(v.date)}${v.proc?' · '+esc(v.proc):''}${v.tx?' · แผน: '+esc(v.tx):''}</div></div>
+      <div class="ac"><button class="btn sm" data-act="selP" data-id="${p.id}">ดูประวัติ</button>
+      <button class="btn sm pri" data-act="addAppt" data-p="${p.id}" data-d="${TODAY}">＋ นัด</button></div></div>`}).join('')}
+      ${oc.length>25?`<div class="muted" style="margin-top:8px;font-size:11.5px">และอีก ${oc.length-25} ราย</div>`:''}</div>`}
 function vUpcoming(){
   const list=filterAppts(DB.appointments.filter(a=>a.date>=TODAY&&a.status!=='cancelled'))
     .sort((a,b)=>a.date.localeCompare(b.date)||(a.time||'99').localeCompare(b.time||'99'));
-  if(!list.length)return `<h2>นัดที่จะถึง</h2>`+overdueHTML()+`<div class="empty">ยังไม่มีนัดล่วงหน้า</div>`;
+  if(!list.length)return `<h2>นัดที่จะถึง</h2>`+overdueHTML()+`<div class="empty">ยังไม่มีนัดล่วงหน้า</div>`+openCasesHTML();
   const by={};list.forEach(a=>(by[a.date]=by[a.date]||[]).push(a));
   return `<h2>นัดที่จะถึง <span class="muted" style="font-size:13px;font-weight:600">· ${list.length} นัด</span></h2>`+overdueHTML()+
     Object.entries(by).map(([d,as])=>{const dt=parseD(d),diff=Math.round((dt-parseD(TODAY))/864e5),s=daySch(d),w=s?wt(s.typeId):null;
@@ -524,7 +546,7 @@ function vUpcoming(){
         ${w?`<span class="rl2" style="background:${w.color}22;color:${w.color};border:1px solid ${w.color}55">${esc(s.room||w.room)}</span>`:''}
         <span class="rl2" style="background:var(--infBg);color:var(--inf)">${diff===0?'วันนี้':diff===1?'พรุ่งนี้':'อีก '+diff+' วัน'}</span></div>
         <div class="slots">${shown.map(se=>{const l=as.filter(a=>a.session===se.id);
-          return `<div class="slot ${se.id}"><h4><i class="dot" style="background:${se.c}"></i> ${se.name}</h4>${l.map(ptRow).join('')}</div>`}).join('')}</div></div>`}).join('')}
+          return `<div class="slot ${se.id}"><h4><i class="dot" style="background:${se.c}"></i> ${se.name}</h4>${l.map(ptRow).join('')}</div>`}).join('')}</div></div>`}).join('')+openCasesHTML()}
 function vArchive(){
   const res=DB.patients.filter(p=>match(p,S.q)).sort((a,b)=>(a.hn||'').localeCompare(b.hn||''));
   const left=`<div class="card"><div class="row sp"><h3 style="margin:0">คนไข้ (${res.length})</h3>
@@ -587,6 +609,11 @@ function vSettings(){
     <td><button class="btn sm dg" data-act="delWT" data-id="${w.id}">ลบ</button></td></tr>`).join('')}</tbody></table></div>
   <div class="row" style="margin-top:14px"><button class="btn pri" data-act="addWT">＋ เพิ่มห้อง</button>
   <button class="btn dg" data-act="reset" style="margin-left:auto">ล้างข้อมูลทั้งหมด</button></div></div>
+  <h2>ข้อมูลสำรองบนคลาวด์ <span class="muted" style="font-size:12px;font-weight:600">· เก็บวันละ 1 ชุด ย้อนหลัง 60 วัน</span></h2>
+  <div class="card"><div class="muted" style="margin-bottom:10px">กันกรณีข้อมูลหลักเสียหายหรือเผลอนำเข้าไฟล์ผิด — ต้องสร้างตาราง <b>clinic_backups</b> ใน Supabase ก่อน (ดู SQL ที่ท้ายหน้านี้)</div>
+  <div class="row" style="margin-bottom:10px"><button class="btn sm" data-act="loadSnaps">โหลดรายการสำรอง</button></div>
+  <div id="snapBox"></div></div>
+
   <h2>สำรองข้อมูลอัตโนมัติ</h2>
   <div class="card"><div class="muted" style="margin-bottom:10px">เก็บสแนปช็อตย้อนหลัง 7 วันอัตโนมัติ</div>
   ${bks.map(k=>`<div class="pt"><div class="avatar">💾</div><div><div class="nm">${thDate(k.replace(BK,''))}</div>
@@ -604,6 +631,21 @@ function vSettings(){
       <button class="btn sm dg" data-act="dropTrash" data-id="${t.tid}">ลบถาวร</button></div></div>`}).join('')}
     <div class="row" style="margin-top:12px"><button class="btn sm dg" data-act="emptyTrash">ล้างถังขยะทั้งหมด</button></div>`
     :`<div class="ok">✓ ถังขยะว่าง</div>`}</div>
+
+  <h2>SQL สำหรับตารางสำรองบนคลาวด์</h2>
+  <div class="card"><div class="muted" style="margin-bottom:8px">รันครั้งเดียวใน Supabase → SQL Editor</div>
+  <pre class="sql">create table if not exists clinic_backups (
+  id bigserial primary key,
+  row_id text not null,
+  data jsonb not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists clinic_backups_row_created
+  on clinic_backups (row_id, created_at desc);
+alter table clinic_backups enable row level security;
+create policy "auth users only" on clinic_backups
+  for all using (auth.role() = 'authenticated')
+  with check (auth.role() = 'authenticated');</pre></div>
 
   <h2>ตรวจสอบคนไข้ซ้ำ</h2>
   <div class="card">${dups.length?dups.map(g=>`<div style="margin-bottom:12px">
@@ -661,6 +703,8 @@ function mAppt(id,pre={}){
      <div id="nwarn"></div></div>
    <div class="g2m"><div class="f"><label>วันที่</label><input type="date" id="fd" value="${a.date}"></div>
    <div class="f"><label>เวลา</label><input type="time" id="ftm" value="${a.time||''}"></div></div>
+   <div class="quick">นัดต่อ:${[['1 สัปดาห์',7],['2 สัปดาห์',14],['1 เดือน',30],['3 เดือน',90],['6 เดือน',180]]
+     .map(([t,n])=>`<button type="button" class="qbtn" data-act="dplus" data-n="${n}">+${t}</button>`).join('')}</div>
    <div class="g2m"><div class="f"><label>ห้องของวันนี้</label><select id="ft">${DB.workTypes.map(x=>`<option value="${x.id}" ${(s?s.typeId:a.typeId)===x.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select></div>
    <div class="f"><label>นาที</label><input type="number" id="fdu" step="15" value="${a.duration||30}"></div></div>
    <div class="g2m"><div class="f"><label>ซี่ฟัน</label><input id="fto" value="${esc(a.tooth)}" placeholder="#36"></div>
@@ -823,7 +867,7 @@ document.addEventListener('click',e=>{
     case'delVisit':if(confirm('ลบ Visit นี้?')){const ap=DB.appointments.find(x=>x.visitId===id);
       if(ap){ap.visitId=null;ap.status='scheduled'}
       DB.visits=DB.visits.filter(x=>x.id!==id);save();close();render()}break;
-    case'selP':S.sel=id;render();break;
+    case'selP':S.sel=id;S.view='archive';render();break;
     case'addPatient':mPatient(null);break;
     case'editPatient':mPatient(id);break;
     case'delPatient':{const p0=pt(id);if(!p0)break;
@@ -838,6 +882,15 @@ document.addEventListener('click',e=>{
       (t.visits||[]).forEach(v=>{if(!DB.visits.find(x=>x.id===v.id))DB.visits.push(v)});
       DB.trash=DB.trash.filter(x=>x.tid!==id);save();render();alert('กู้คืนเรียบร้อย');break}
     case'dropTrash':if(confirm('ลบรายการนี้ถาวร? ย้อนกลับไม่ได้')){DB.trash=DB.trash.filter(x=>x.tid!==id);save();render()}break;
+    case'dplus':{const f=$('fd');if(!f)break;const base=f.value?parseD(f.value):new Date();
+      base.setDate(base.getDate()+ +t.dataset.n);f.value=iso(base);
+      f.dispatchEvent(new Event('change',{bubbles:true}));break}
+    case'loadSnaps':loadSnapshots();break;
+    case'restoreSnap':{const r=SNAPS.find(x=>String(x.id)===String(id));if(!r)break;
+      const n=r.data||{};
+      if(!confirm(`กู้คืนข้อมูลของ ${new Date(r.created_at).toLocaleString('th-TH')}?\n\nข้อมูลปัจจุบันทั้งหมดจะถูกแทนที่\n(คนไข้ ${(n.patients||[]).length} · นัด ${(n.appointments||[]).length})`))break;
+      DB=n;if(!Array.isArray(DB.trash))DB.trash=[];if(!DB.workTypes||!DB.workTypes.length)DB.workTypes=DEF_WT.slice();
+      save();applyTheme(DB.theme||'cheesecake');S.sel=null;render();alert('กู้คืนเรียบร้อย');break}
     case'emptyTrash':if(confirm('ล้างถังขยะทั้งหมดถาวร? ย้อนกลับไม่ได้')){DB.trash=[];save();render()}break;
     case'setSt':{const a=DB.appointments.find(x=>x.id===id);if(a){a.status=t.dataset.s;save();render()}break}
     case'nextAppt':{const pid=t.dataset.pid;close();mAppt(null,{p:pid});break}
@@ -874,23 +927,60 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ---------- CLOUD SYNC ---------- */
-const SYNC={on:false,sb:null,dirty:false,t:null,email:''};
+const SYNC={on:false,sb:null,dirty:false,t:null,email:'',seenAt:''};   // seenAt = updated_at ของคลาวด์ที่เครื่องนี้เห็นล่าสุด
+const SNAP_KEY='dental_last_snapshot';
 const DEVICE=localStorage.getItem('dev_id')||(()=>{const v='d_'+Math.random().toString(36).slice(2,8);localStorage.setItem('dev_id',v);return v})();
 function setSync(txt,color){const b=$('syncBadge');if(!b)return;
   b.classList.remove('ok','wrn','dng');
   if(color==='var(--ok)')b.classList.add('ok');else if(color==='var(--wrn)')b.classList.add('wrn');else if(color==='var(--dng)')b.classList.add('dng');
   b.innerHTML='<b></b>'+esc(txt)}
 function queuePush(){SYNC.dirty=true;clearTimeout(SYNC.t);setSync('กำลังบันทึก…');SYNC.t=setTimeout(cloudPush,700)}
-async function cloudPush(){if(!navigator.onLine){setSync('ออฟไลน์','var(--wrn)');return}
-  const {error}=await SYNC.sb.from('clinic_state').upsert({id:ROW_ID,data:DB,updated_at:new Date().toISOString(),updated_by:DEVICE});
-  if(error){setSync('ซิงก์ไม่สำเร็จ','var(--dng)');console.warn(error)}else{SYNC.dirty=false;setSync('sync.','var(--ok)')}}
-async function cloudPull(){const {data,error}=await SYNC.sb.from('clinic_state').select('data').eq('id',ROW_ID).maybeSingle();
+async function cloudPush(force){if(!navigator.onLine){setSync('ออฟไลน์','var(--wrn)');return}
+  // กันเขียนทับ: ถ้าคลาวด์ใหม่กว่าที่เครื่องนี้เห็นล่าสุด และมาจากอีกเครื่อง ให้ถามก่อน
+  if(!force){
+    const {data:cur}=await SYNC.sb.from('clinic_state').select('updated_at,updated_by').eq('id',ROW_ID).maybeSingle();
+    if(cur&&cur.updated_by!==DEVICE&&SYNC.seenAt&&cur.updated_at>SYNC.seenAt){
+      setSync('ข้อมูลชนกัน','var(--dng)');
+      const keepMine=confirm('อีกเครื่องหนึ่งบันทึกข้อมูลใหม่กว่าไว้บนคลาวด์\n\nกด "ตกลง" = ใช้ข้อมูลของเครื่องนี้ทับของบนคลาวด์\nกด "ยกเลิก" = ทิ้งการแก้ไขในเครื่องนี้ แล้วดึงของบนคลาวด์มาแทน');
+      if(!keepMine){await cloudPull();applyTheme(DB.theme||'cheesecake');render();SYNC.dirty=false;setSync('sync.','var(--ok)');return}
+    }
+  }
+  const at=new Date().toISOString();
+  const {error}=await SYNC.sb.from('clinic_state').upsert({id:ROW_ID,data:DB,updated_at:at,updated_by:DEVICE});
+  if(error){setSync('ซิงก์ไม่สำเร็จ','var(--dng)');console.warn(error)}
+  else{SYNC.dirty=false;SYNC.seenAt=at;setSync('sync.','var(--ok)');cloudSnapshot()}}
+async function cloudPull(){const {data,error}=await SYNC.sb.from('clinic_state').select('data,updated_at').eq('id',ROW_ID).maybeSingle();
   if(error){setSync('ดึงข้อมูลไม่ได้','var(--dng)');return}
-  if(data?.data?.patients){DB=data.data;localSave()}else await cloudPush()}
+  if(data?.data?.patients){DB=data.data;if(!Array.isArray(DB.trash))DB.trash=[];SYNC.seenAt=data.updated_at||'';localSave()}else await cloudPush(true)}
+/* สแนปช็อตบนคลาวด์ วันละครั้ง — กู้คืนได้ถ้าข้อมูลหลักเสียหาย */
+async function cloudSnapshot(){
+  if(!SYNC.on)return;
+  try{
+    if(localStorage.getItem(SNAP_KEY)===TODAY)return;
+    const {error}=await SYNC.sb.from('clinic_backups').insert({row_id:ROW_ID,data:DB});
+    if(error){console.warn('snapshot',error);return}
+    localStorage.setItem(SNAP_KEY,TODAY);
+    const {data:old}=await SYNC.sb.from('clinic_backups').select('id').eq('row_id',ROW_ID).order('created_at',{ascending:false}).range(60,200);
+    if(old&&old.length)await SYNC.sb.from('clinic_backups').delete().in('id',old.map(r=>r.id));
+  }catch(e){console.warn('snapshot',e)}}
+async function loadSnapshots(){
+  const box=$('snapBox');if(!box)return;
+  if(!SYNC.on){box.innerHTML='<div class="muted">ต้องเข้าสู่ระบบก่อนจึงจะดูข้อมูลสำรองบนคลาวด์ได้</div>';return}
+  box.innerHTML='<div class="muted">กำลังโหลด…</div>';
+  const {data,error}=await SYNC.sb.from('clinic_backups').select('id,created_at,data').eq('row_id',ROW_ID).order('created_at',{ascending:false}).limit(60);
+  if(error){box.innerHTML=`<div class="warn">อ่านไม่ได้ — ยังไม่ได้สร้างตาราง clinic_backups หรือสิทธิ์ไม่พอ<br><span style="font-weight:400">${esc(error.message||'')}</span></div>`;return}
+  if(!data.length){box.innerHTML='<div class="muted">ยังไม่มีสแนปช็อต — ระบบจะสร้างให้อัตโนมัติวันละครั้งเมื่อมีการบันทึก</div>';return}
+  SNAPS=data;
+  box.innerHTML=data.map(r=>{const d=new Date(r.created_at),n=r.data||{};
+    return `<div class="pt"><div class="avatar">☁</div><div style="min-width:0">
+      <div class="nm">${d.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'})} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</div>
+      <div class="hn">คนไข้ ${(n.patients||[]).length} · นัด ${(n.appointments||[]).length} · บันทึกรักษา ${(n.visits||[]).length}</div></div>
+      <div class="ac"><button class="btn sm" data-act="restoreSnap" data-id="${r.id}">กู้คืน</button></div></div>`}).join('')}
+let SNAPS=[];
 function subscribeRealtime(){SYNC.sb.channel('clinic-sync').on('postgres_changes',
   {event:'*',schema:'public',table:'clinic_state',filter:`id=eq.${ROW_ID}`},p=>{
-    const n=p.new;if(!n||n.updated_by===DEVICE)return;
-    DB=n.data;localSave();applyTheme(DB.theme||'cheesecake');render();setSync('sync.','var(--ok)')}).subscribe()}
+    const n=p.new;if(!n)return;SYNC.seenAt=n.updated_at||SYNC.seenAt;if(n.updated_by===DEVICE)return;
+    DB=n.data;if(!Array.isArray(DB.trash))DB.trash=[];localSave();applyTheme(DB.theme||'cheesecake');render();setSync('sync.','var(--ok)')}).subscribe()}
 window.addEventListener('online',()=>{if(SYNC.dirty)cloudPush()});
 function loginUI(msg){
   app.innerHTML=`<div style="max-width:380px;margin:12vh auto"><div class="card">
@@ -911,7 +1001,7 @@ async function boot(){
   if(!session){setSync('ยังไม่เข้าสู่ระบบ');loginUI();return}
   SYNC.email=(session.user&&session.user.email)||'';
   SYNC.on=true;setSync('กำลังดึงข้อมูล…');
-  await cloudPull();applyTheme(DB.theme||'cheesecake');render();subscribeRealtime();setSync('sync.','var(--ok)')}
+  await cloudPull();applyTheme(DB.theme||'cheesecake');purgeOldTrash();render();subscribeRealtime();setSync('sync.','var(--ok)');cloudSnapshot()}
 boot();
 
 /* ---------- PWA ---------- */
