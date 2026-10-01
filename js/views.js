@@ -20,8 +20,7 @@ function vSchedule(){const y=S.cur.getFullYear(),m=S.cur.getMonth(),od=overdueAp
     <button class="btn pri sm" data-act="addAppt" data-d="${TODAY}">＋ เพิ่มนัด</button></div></div>`
   +(S.mode==='cal'?calendar(y,m):S.mode==='up'?vUpcoming():dayList(y,m))}
 function calendar(y,m){
-  const start=new Date(y,m,1-new Date(y,m,1).getDay());let max=1;
-  for(let i=0;i<42;i++){const k=iso(new Date(start.getFullYear(),start.getMonth(),start.getDate()+i));max=Math.max(max,liveOn(k).length)}
+  const start=new Date(y,m,1-new Date(y,m,1).getDay());
   let cells='';
   for(let i=0;i<42;i++){
     const dt=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),k=iso(dt);
@@ -32,8 +31,7 @@ function calendar(y,m){
       <div class="ctop"><span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div>
       <div class="cmid">${w?`<div class="rline"><i class="rdot" style="background:${w.color}"></i><span class="rl" style="color:${tdy?'var(--onhl)':w.color}">${esc(s.room||w.room)}</span></div>`:''}
       ${s&&s.note?`<div class="rl sub" style="color:var(--tx2);font-weight:500">${esc(s.note)}</div>`:''}</div>
-      <div class="cbot">${n?`<span class="cnt">${n}<i> คน</i></span>`:''}</div>
-      ${n?`<u class="cbar"><b style="width:${Math.round(n/max*100)}%"></b></u>`:''}</div>`}
+      <div class="cbot">${n?`<span class="cnt">${n}<i> คน</i></span>`:''}</div></div>`}
   return `<div class="cal"><div class="grid">${DOW.map(d=>`<div class="gh">${d}</div>`).join('')}</div><div class="grid">${cells}</div></div>
     <div class="filters"><button class="fl ${S.filter==='all'?'on':''}" data-act="filt" data-f="all">ทั้งหมด</button>
     ${DB.workTypes.map(w=>`<button class="fl ${S.filter===w.id?'on':''}" data-act="filt" data-f="${w.id}"><i class="dot" style="background:${w.color}"></i>${esc(w.name)}</button>`).join('')}</div>`}
