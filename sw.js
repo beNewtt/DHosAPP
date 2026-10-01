@@ -1,4 +1,4 @@
-const VERSION = 'v1.1.5';            // ← เปลี่ยนทุกครั้งที่แก้ index.html
+const VERSION = 'v1.1.6';            // ← เปลี่ยนทุกครั้งที่แก้ index.html
 const CACHE   = `dental-tracker-${VERSION}`;
 const SHELL = ['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-maskable.png'];
 
