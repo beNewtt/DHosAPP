@@ -60,6 +60,8 @@ nav button.on{background:var(--hl);color:var(--onhl);box-shadow:0 2px 6px rgba(0
 .cf b{opacity:.55;font-weight:700}
 .cf:hover{color:var(--ink)}
 .cf.on{background:var(--hl);color:var(--onhl)}.cf.on b{opacity:.8}
+a.tel{color:inherit;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px}
+a.tel:hover{color:var(--hl);text-decoration-style:solid}
 .asearch{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:7px 13px;margin:10px 0;background:var(--soft)}
 .asearch svg{flex:none;width:16px;height:16px;color:var(--tx2)}
 .asearch input{background:none;border:0;outline:none;width:100%;font-size:12.5px;color:inherit}
@@ -414,6 +416,7 @@ const thDate=s=>{const d=parseD(s);return `${d.getDate()} ${TH_M[d.getMonth()]} 
 const TODAY=iso(new Date());
 const esc=s=>(s??'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const digits=s=>(s||'').replace(/\D/g,'');
+const telLink=(ph,label)=>{const d=digits(ph);return d.length>=9?`<a class="tel" href="tel:${d}" onclick="event.stopPropagation()">${esc(label||ph)}</a>`:esc(label||ph||'')};
 const ses4=t=>{const h=+(t||'13:00').split(':')[0];return h<12?'am':h<16?'pm':'ev'};
 
 let DB=loadLocal();
@@ -546,7 +549,7 @@ function ptRow(a){
   return `<div class="pt ${a.status==='cancelled'?'cx':''}">
     <div class="avatar">${a.time?`<b style="font-size:11.5px">${esc(a.time)}</b><small style="font-size:8.5px;opacity:.7">${a.duration||30} น.</small>`:esc(initials(p.name))}</div>
     <div style="min-width:0"><div class="nm">${esc(p.name)} ${catChip(p.cat)} ${al}</div>
-    <div class="hn">${esc(p.hn||'ไม่มี HN')}${p.phone?' · '+esc(p.phone):''} · 🦷 ${esc(a.proc||'ไม่ระบุ')}${a.tooth?' · ซี่ '+esc(a.tooth):''}${(a.moves||[]).length?` · <span style="color:var(--wrn)">เลื่อน ${a.moves.length}×</span>`:''}</div></div>
+    <div class="hn">${esc(p.hn||'ไม่มี HN')}${p.phone?' · '+telLink(p.phone):''} · 🦷 ${esc(a.proc||'ไม่ระบุ')}${a.tooth?' · ซี่ '+esc(a.tooth):''}${(a.moves||[]).length?` · <span style="color:var(--wrn)">เลื่อน ${a.moves.length}×</span>`:''}</div></div>
     <div class="ac"><span class="st ${a.status}">${({scheduled:'นัดไว้',done:'มาแล้ว',cancelled:'ยกเลิก',noshow:'ไม่มา'})[a.status]}</span>
     ${a.status==='scheduled'?`<button class="btn sm" data-act="resched" data-id="${a.id}">เลื่อน</button>`:''}
     <button class="btn sm" data-act="editAppt" data-id="${a.id}">แก้ไข</button>
@@ -559,9 +562,13 @@ function mResched(id){const a=DB.appointments.find(x=>x.id===id);if(!a)return;co
    <div class="f"><label>เวลา</label><input type="time" id="rst" value="${esc(a.time||'')}"></div></div>
    <div class="quick">เลื่อนไป:${[['1 สัปดาห์',7],['2 สัปดาห์',14],['1 เดือน',30],['3 เดือน',90]]
      .map(([t,n])=>`<button type="button" class="qbtn" data-act="rplus" data-n="${n}">+${t}</button>`).join('')}</div>
+   <div id="rswarn" class="muted" style="font-size:11.5px;margin:-4px 0 10px"></div>
    <div class="f"><label>เหตุผล (ไม่ใส่ก็ได้)</label><input id="rsr" placeholder="เช่น คนไข้ติดธุระ, หมอติดประชุม"></div>
    <div class="mfoot"><button class="btn" data-act="close">ยกเลิก</button>
-   <button class="btn pri" data-act="saveResched" data-id="${id}">บันทึกการเลื่อน</button></div>`)}
+   <button class="btn pri" data-act="saveResched" data-id="${id}">บันทึกการเลื่อน</button></div>`);
+  const rw=()=>{const b=$('rswarn');if(!b)return;const c=clashAt($('rsd').value,$('rst').value,a.duration,a.id);
+    b.innerHTML=c?`<span style="color:var(--wrn);font-weight:700">⚠ เวลาทับกับ ${esc(clashMsg(c))}</span>`:''};
+  ['rsd','rst'].forEach(k=>{const el=$(k);if(el)el.addEventListener('input',rw)});rw()}
 function vPlanner(){
   const y=S.cur.getFullYear(),m=S.cur.getMonth(),P=S.plan;
   const start=new Date(y,m,1-new Date(y,m,1).getDay());let cells='';
@@ -743,7 +750,7 @@ function vArchive(){
     right=`<div class="card"><div class="row sp" style="flex-wrap:wrap"><div class="row">
       <div class="avatar" style="width:46px;height:46px;flex:0 0 46px;font-size:16px">${esc(initials(p.name))}</div>
       <div><div style="font-size:18px;font-weight:800;color:var(--ink)">${esc(p.name)} ${catChip(p.cat)}</div>
-      <div class="muted">${esc(p.hn||'ไม่มี HN')} · ${esc(p.sex||'-')} · ${p.age||'-'} ปี · ${esc(p.phone||'ไม่มีเบอร์')}</div></div></div>
+      <div class="muted">${esc(p.hn||'ไม่มี HN')} · ${esc(p.sex||'-')} · ${p.age||'-'} ปี · ${p.phone?telLink(p.phone):'ไม่มีเบอร์'}</div></div></div>
       <div class="row">${p.caseSt?`<button class="btn sm" data-act="caseSt" data-id="${p.id}" data-s="${p.caseSt}" title="กดเพื่อเปิดเคสอีกครั้ง">${CASE_ST[p.caseSt]} ✕</button>`:''}
       <button class="btn sm dg" data-act="delPatient" data-id="${p.id}">ลบ</button>
       <button class="btn sm" data-act="editPatient" data-id="${p.id}">แก้ไข</button>
@@ -890,6 +897,7 @@ function mAppt(id,pre={}){
      .map(([t,n])=>`<button type="button" class="qbtn" data-act="dplus" data-n="${n}">+${t}</button>`).join('')}</div>
    <div class="g2m"><div class="f"><label>ห้องของวันนี้</label><select id="ft">${DB.workTypes.map(x=>`<option value="${x.id}" ${(s?s.typeId:a.typeId)===x.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select></div>
    <div class="f"><label>นาที</label><input type="number" id="fdu" step="15" value="${a.duration||30}"></div></div>
+   <div id="ftwarn" class="muted" style="font-size:11.5px;margin:-6px 0 10px"></div>
    <div class="g2m"><div class="f"><label>ซี่ฟัน</label><input id="fto" value="${esc(a.tooth)}" placeholder="#36"></div>
    <div class="f"><label>สถานะ</label><select id="fst">
      ${[['scheduled','นัดไว้'],['done','มาแล้ว'],['cancelled','ยกเลิก'],['noshow','ไม่มา']].map(([v,t])=>`<option value="${v}" ${a.status===v?'selected':''}>${t}</option>`).join('')}</select></div></div>
@@ -901,7 +909,10 @@ function mAppt(id,pre={}){
    ${id?`<button class="btn" data-act="checkin" data-id="${id}">✓ มาแล้ว — ลงบันทึกรักษา</button>`:''}
    <button class="btn pri" data-act="saveAppt" data-id="${id||''}">บันทึก</button></div>`);
   initPtSearch(id);
-  $('fd').addEventListener('change',e=>{const n=daySch(e.target.value);if(n)$('ft').value=n.typeId;checkDup()})}
+  SH_APPT=id||null;
+  $('fd').addEventListener('change',e=>{const n=daySch(e.target.value);if(n)$('ft').value=n.typeId;checkDup()});
+  ['ftm','fdu'].forEach(k=>{const el=$(k);if(el)el.addEventListener('input',checkClash)});
+  checkClash()}
 function initPtSearch(editId){
   const inp=$('fpq'),box=$('fplist'),hid=$('fpid');
   const draw=()=>{const q=inp.value.trim().toLowerCase(),date=$('fd').value,busy=busyOn(date,editId);
@@ -923,7 +934,25 @@ function initPtSearch(editId){
     const p=pt(o.dataset.p);hid.value=p.id;inp.value=(p.hn||'—')+' — '+p.name;box.style.display='none';$('np').style.display='none';checkDup()});
   document.addEventListener('mousedown',e=>{if(!e.target.closest('.ac-wrap')&&box)box.style.display='none'});
   ['nhn','nph','nnm'].forEach(k=>$(k).addEventListener('input',checkNewDup));checkDup()}
+const toMin=t=>{const[h,m]=(t||'').split(':').map(Number);return h*60+(m||0)};
+const fmtMin=v=>`${String(Math.floor(v/60)%24).padStart(2,'0')}:${String(v%60).padStart(2,'0')}`;
+/* คืนนัดที่เวลาทับกัน (วันเดียวกัน = ห้องเดียวกันอยู่แล้ว) */
+function clashAt(date,time,dur,exceptId){
+  if(!time)return null;
+  const s1=toMin(time),e1=s1+(+dur||30);
+  return DB.appointments.find(a=>{
+    if(a.date!==date||a.id===exceptId||a.status==='cancelled'||!a.time)return false;
+    const s2=toMin(a.time),e2=s2+(+a.duration||30);
+    return s1<e2&&s2<e1});
+}
+function clashMsg(c){const p=pt(c.patientId);
+  return `${p?p.name:'นัดอื่น'} ${c.time}–${fmtMin(toMin(c.time)+(+c.duration||30))}`}
+function checkClash(){const box=$('ftwarn');if(!box)return;
+  const c=clashAt($('fd').value,$('ftm').value,$('fdu').value,SH_APPT);
+  box.innerHTML=c?`<span style="color:var(--wrn);font-weight:700">⚠ เวลาทับกับ ${esc(clashMsg(c))}</span>`:''}
+let SH_APPT=null;
 function checkDup(){const hid=$('fpid'),msg=$('fpmsg');if(!hid||!msg)return;
+  checkClash();
   if(!hid.value||hid.value==='__new'){msg.textContent='';return}
   const date=$('fd').value,ex=DB.appointments.find(a=>a.patientId===hid.value&&a.date===date&&a.status!=='cancelled');
   msg.innerHTML=ex?`<span style="color:var(--dng);font-weight:700">⚠ มีนัดวันที่ ${thDate(date)} แล้ว (${ex.time||SESSIONS.find(s=>s.id===ex.session).name})</span>`:''}
@@ -1034,6 +1063,8 @@ document.addEventListener('click',e=>{
       const date=$('fd').value,tm=$('ftm').value,sesId=tm?ses4(tm):'pm';
       const clash=DB.appointments.find(x=>x.patientId===pid&&x.date===date&&x.status!=='cancelled'&&x.id!==id);
       if(clash&&!confirm('คนไข้มีนัดวันนี้แล้ว — เพิ่มอีกนัด?'))return;
+      const ov=clashAt(date,$('ftm').value,$('fdu').value,id||null);
+      if(ov&&!confirm(`เวลาทับกับ ${clashMsg(ov)}\n\nยืนยันลงนัดซ้อนไหม?`))return;
       const ty=$('ft').value,w=wt(ty),cur=daySch(date),room=cur&&cur.typeId===ty?cur.room:w.room;
       DB.daySchedules[date]={typeId:ty,room,note:cur?cur.note:''};
       DB.appointments.filter(x=>x.date===date).forEach(x=>{x.typeId=ty;x.room=room});
@@ -1074,6 +1105,8 @@ document.addEventListener('click',e=>{
     case'saveResched':{const a=DB.appointments.find(x=>x.id===id);if(!a)break;
       const nd=$('rsd').value;if(!nd){alert('เลือกวันที่ใหม่ก่อน');return}
       if(nd===a.date&&$('rst').value===(a.time||'')){close();break}
+      const ov2=clashAt(nd,$('rst').value,a.duration,a.id);
+      if(ov2&&!confirm(`เวลาใหม่ทับกับ ${clashMsg(ov2)}\n\nยืนยันเลื่อนไปเวลานี้ไหม?`))break;
       const why=$('rsr').value.trim();
       a.moves=a.moves||[];a.moves.push({from:a.date,to:nd,at:new Date().toISOString(),why});
       a.note=(`เลื่อนจาก ${thDate(a.date)}${why?' ('+why+')':''}`+(a.note?' · '+a.note:''));
