@@ -20,8 +20,21 @@
   --ink:#2a2a6e;--ink2:#8a8fa8;--tx:#1f2140;--tx2:#8a8fa8;--hl:#2a2a6e;--onhl:#fff;
   --am:#d99206;--pm:#6b6ec9;--ev:#8b5cf6;
   --dngBg:#fdecee;--dngLn:#f6d2d8;--dng:#c2344a;--okBg:#e8f6ee;--okLn:#c9e9d8;--ok:#0f7a4c;
-  --wrnBg:#fffaed;--wrnLn:#f0e3bd;--wrn:#8a6410;--infBg:#eef0fb;--infLn:#d8dcf3;--inf:#2a2a6e;--r:9px;
+  --wrnBg:#fffaed;--wrnLn:#f0e3bd;--wrn:#8a6410;--infBg:#eef0fb;--infLn:#d8dcf3;--inf:#2a2a6e;--bar:#b9bcd8;--r:9px;
 }
+@property --hl{syntax:'<color>';inherits:true;initial-value:#2a2a6e}
+@property --ink{syntax:'<color>';inherits:true;initial-value:#2a2a6e}
+@property --inf{syntax:'<color>';inherits:true;initial-value:#2a2a6e}
+@keyframes rgbcycle{
+  0%  {--hl:hsl(120,39%,49%);--ink:hsl(120,39%,49%);--inf:hsl(120,39%,49%)}
+  20% {--hl:hsl(192,48%,48%);--ink:hsl(192,48%,48%);--inf:hsl(192,48%,48%)}
+  40% {--hl:hsl(264,90%,58%);--ink:hsl(264,90%,58%);--inf:hsl(264,90%,58%)}
+  60% {--hl:hsl(357,89%,50%);--ink:hsl(357,89%,50%);--inf:hsl(357,89%,50%)}
+  80% {--hl:hsl(46,100%,51%);--ink:hsl(46,100%,51%);--inf:hsl(46,100%,51%)}
+  100%{--hl:hsl(120,39%,49%);--ink:hsl(120,39%,49%);--inf:hsl(120,39%,49%)}
+}
+:root[data-rgb]{animation:rgbcycle 5s linear infinite}
+@media(prefers-reduced-motion:reduce){:root[data-rgb]{animation:none}}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--tx);font-family:'Roboto Mono','Noto Sans Thai Looped',system-ui,sans-serif;font-size:12.5px;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom);transition:background .2s,color .2s}
 button,input,select,textarea{font-family:inherit;font-size:12.5px;color:inherit}
@@ -115,6 +128,8 @@ table.dt td.muted{font-weight:500}
 .th:hover{transform:translateY(-1px)}
 .th.on{box-shadow:0 0 0 2px currentColor}
 .th .sw{box-shadow:0 0 0 1px rgba(128,128,128,.25)}
+.th[data-id=rgb] .sw:first-child{animation:swcycle 5s linear infinite}
+@keyframes swcycle{0%{background:hsl(120,39%,49%)}20%{background:hsl(192,48%,48%)}40%{background:hsl(264,90%,58%)}60%{background:hsl(357,89%,50%)}80%{background:hsl(46,100%,51%)}100%{background:hsl(120,39%,49%)}}
 .th .sws{position:absolute;right:11px;opacity:0;transition:opacity .12s}
 .th:hover .sws,.th.on .sws{opacity:1}
 .th:hover{border-color:var(--line)}.th.on{border-color:var(--hl);color:var(--ink)}
@@ -182,7 +197,8 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .rdot{width:8px;height:8px;border-radius:50%;flex:none;display:block}
 .rline{display:flex;align-items:center;gap:5px;max-width:100%;min-width:0}
 .cbar{position:absolute;left:0;right:0;bottom:0;height:3px;background:none;border:0;text-decoration:none;display:block}
-.cbar b{display:block;height:100%}
+.cbar b{display:block;height:100%;background:var(--bar)}
+.cell.tdy .cbar b{background:var(--onhl);opacity:.75}
 .cnt{font-size:clamp(9px,.85vw,11px);font-weight:700;color:var(--ink);white-space:nowrap}
 .cnt i{font-weight:500;font-style:normal;color:var(--tx2);margin-left:1px}
 .cell.tdy .cnt i{color:var(--onhl);opacity:.85}
@@ -339,6 +355,7 @@ function T(id,name,c){
   return {id,name,dark,sw:[c.accent,c.secondary,c.text],v:{
     bg:c.bg, surface:c.surface, soft:c.surface2,
     line:c.border, line2:mixc(c.border,c.surface,.55),
+    bar:mixc(c.accent,c.bg,.52),
     ink:c.accent, ink2:c.subtext, tx:c.text, tx2:c.subtext,
     hl:c.accent, onhl:onC(c.accent),
     am:dark?'#fbbf24':'#d99206', pm:c.secondary, ev:c.accentHover,
@@ -372,6 +389,7 @@ const THEMES=[
  T('solardark','Solarized Dark',{bg:'#002B36',surface:'#073642',surface2:'#124552',text:'#EEE8D5',subtext:'#93A1A1',accent:'#B58900',accentHover:'#A17900',secondary:'#268BD2',border:'#1C4C59',danger:'#DC322F'}),
  T('redvelvet','Red Velvet',{bg:'#2A1016',surface:'#3A1720',surface2:'#4A1D29',text:'#F4D7D7',subtext:'#C4858E',accent:'#F0707C',accentHover:'#D25764',secondary:'#8F2634',border:'#5B2830',danger:'#FF6B72'}),
  T('mintchoco','Mint Choco',{bg:'#16211D',surface:'#20312B',surface2:'#2C443B',text:'#D7F3EA',subtext:'#8CB6A8',accent:'#64D6AC',accentHover:'#4EBC94',secondary:'#7B5E4B',border:'#355248',danger:'#E36C6C'}),
+ T('rgb','RGB',{bg:'#111215',surface:'#191A1E',surface2:'#232428',text:'#E9EAEC',subtext:'#8A8D94',accent:'#3FAE55',accentHover:'#34913F',secondary:'#3C9FB8',border:'#2B2C31',danger:'#F0474E'}),
  T('spiderman','Spiderman',{bg:'#0D1426',surface:'#151E36',surface2:'#1E2A47',text:'#EDF1FA',subtext:'#3D7FE0',accent:'#F23A42',accentHover:'#D0262E',secondary:'#2F6FE4',border:'#24314F',danger:'#FF5560'})];
 
 /* ---------- MODEL ---------- */
@@ -436,6 +454,7 @@ let S={view:'schedule',mode:'cal',cur:new Date(now.getFullYear(),now.getMonth(),
   plan:{sel:new Set(),mode:'room',typeId:DEF_WT[0].id,session:'am',note:'',dows:new Set(),every:'all'}};
 function applyTheme(id){const t=THEMES.find(x=>x.id===id)||THEMES.find(x=>x.id==='cheesecake')||THEMES[0];
   Object.entries(t.v).forEach(([k,v])=>document.documentElement.style.setProperty('--'+k,v));
+  document.documentElement.toggleAttribute('data-rgb',t.id==='rgb');
   const m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',t.v.hl);
   DB.theme=t.id;localSave()}
 applyTheme(DB.theme||'cheesecake');
@@ -486,7 +505,7 @@ function calendar(y,m){
       <div class="cmid">${w?`<div class="rline"><i class="rdot" style="background:${w.color}"></i><span class="rl" style="color:${tdy?'var(--onhl)':w.color}">${esc(s.room||w.room)}</span></div>`:''}
       ${s&&s.note?`<div class="rl sub" style="color:var(--tx2);font-weight:500">${esc(s.note)}</div>`:''}</div>
       <div class="cbot">${n?`<span class="cnt">${n}<i> คน</i></span>`:''}</div>
-      ${n?`<u class="cbar"><b style="width:${Math.round(n/max*100)}%;background:${tdy?'var(--onhl)':(w?w.color:'var(--hl)')}"></b></u>`:''}</div>`}
+      ${n?`<u class="cbar"><b style="width:${Math.round(n/max*100)}%"></b></u>`:''}</div>`}
   return `<div class="cal"><div class="grid">${DOW.map(d=>`<div class="gh">${d}</div>`).join('')}</div><div class="grid">${cells}</div></div>
     <div class="filters"><button class="fl ${S.filter==='all'?'on':''}" data-act="filt" data-f="all">ทั้งหมด</button>
     ${DB.workTypes.map(w=>`<button class="fl ${S.filter===w.id?'on':''}" data-act="filt" data-f="${w.id}"><i class="dot" style="background:${w.color}"></i>${esc(w.name)}</button>`).join('')}</div>`}
