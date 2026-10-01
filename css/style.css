@@ -171,7 +171,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .cal{border-top:1px solid var(--line);border-left:1px solid var(--line)}
 .grid{display:grid;grid-template-columns:repeat(7,1fr)}
 .gh{padding:clamp(5px,.7vw,8px) 0;text-align:center;font-size:clamp(9.5px,.85vw,11px);font-weight:700;color:var(--ink);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
-.cell{position:relative;aspect-ratio:1;min-height:46px;padding:clamp(4px,.6vw,7px) clamp(5px,.65vw,8px) clamp(7px,.9vw,10px);border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg);text-align:left;display:flex;flex-direction:column;overflow:hidden;cursor:pointer;color:inherit;font:inherit}
+.cell{position:relative;aspect-ratio:1;min-height:46px;padding:clamp(4px,.6vw,7px) clamp(5px,.65vw,8px) clamp(5px,.7vw,8px);border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg);text-align:left;display:flex;flex-direction:column;overflow:hidden;cursor:pointer;color:inherit;font:inherit}
 .cell:hover{background:var(--soft)}
 .cell.out{background:var(--soft);opacity:.5}
 .cell.tdy{background:var(--hl)}.cell.tdy .cn,.cell.tdy .rl,.cell.tdy .cnt{color:var(--onhl)!important}
@@ -184,9 +184,6 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .cmid{flex:1;min-height:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;overflow:hidden;text-align:left}
 .rdot{width:8px;height:8px;border-radius:50%;flex:none;display:block}
 .rline{display:flex;align-items:center;gap:5px;max-width:100%;min-width:0}
-.cbar{position:absolute;left:0;right:0;bottom:0;height:3px;background:none;border:0;text-decoration:none;display:block}
-.cbar b{display:block;height:100%;background:var(--bar)}
-.cell.tdy .cbar b{background:var(--onhl);opacity:.75}
 .cnt{font-size:clamp(9px,.85vw,11px);font-weight:700;color:var(--ink);white-space:nowrap}
 .cnt i{font-weight:500;font-style:normal;color:var(--tx2);margin-left:1px}
 .cell.tdy .cnt i{color:var(--onhl);opacity:.85}
