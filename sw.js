@@ -4,6 +4,9 @@
    ออฟไลน์ = ใช้ cache ที่เก็บไว้ครั้งล่าสุด                                   */
 const CACHE = 'dental-tracker';
 const SHELL = ['./', './index.html', './manifest.webmanifest',
+               './css/style.css',
+               './js/config.js', './js/themes.js', './js/data.js',
+               './js/views.js', './js/app.js',
                './icon-192.png', './icon-512.png', './icon-maskable.png'];
 
 self.addEventListener('install', e => {
