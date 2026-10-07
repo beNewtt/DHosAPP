@@ -98,7 +98,7 @@ function vPlanner(){
   for(let i=0;i<42;i++){const dt=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),k=iso(dt),out=dt.getMonth()!==m;
     const s=daySch(k),w=s?wt(s.typeId):null;
     cells+=`<button class="cell ${out?'out':''} ${P.sel.has(k)?'pk':''}" data-act="pickDay" data-d="${k}" ${out?'disabled':''}>
-      <div class="ctop">${w?`<i class="sq" style="background:${w.color}"></i>`:'<i></i>'}<span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div>
+      <div class="ctop"><span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div>
       ${w?`<div class="rl" style="color:${w.color}">${esc(s.room||w.room)}</div>`:''}</button>`}
   const roomOpts=DB.workTypes.filter(w=>w.id!=='off').map(w=>`<option value="${w.id}" ${P.typeId===w.id?'selected':''}>${esc(w.name)} — ${esc(w.room)}</option>`).join('');
   return `<div class="row sp" style="margin:22px 0 6px;flex-wrap:wrap;gap:14px">
