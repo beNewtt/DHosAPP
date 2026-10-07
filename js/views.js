@@ -13,13 +13,18 @@ function vSchedule(){const y=S.cur.getFullYear(),m=S.cur.getMonth(),od=overdueAp
   const hero=S.mode==='up'?'':`<div class="hero"><div class="num mono">${String(m+1).padStart(2,'0')}</div>
     <div class="rt"><div class="mn">${TH_MF[m]}</div><div class="yr">${y+543}</div>
     <div class="nav2"><button data-act="mv" data-n="-1" aria-label="เดือนก่อน"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button data-act="mv" data-n="1" aria-label="เดือนถัดไป"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div></div></div>`;
+  const sub=S.mode==='cal'?'':`<div class="row subrow">
+    <div class="seg sub"><button data-act="mode" data-m="up" class="${S.mode==='up'?'on':''}">All</button>
+    <button data-act="mode" data-m="list" class="${S.mode==='list'?'on':''}">By day</button></div>
+    ${S.mode==='list'?`<div class="seg sub"><button data-act="busy" data-v="1" class="${S.onlyBusy?'on':''}">เฉพาะวันที่มีนัด</button>
+    <button data-act="busy" data-v="0" class="${!S.onlyBusy?'on':''}">ทุกวันที่มีงาน</button></div>`:''}
+    ${S.q?`<span class="chip" style="border-color:var(--line);color:var(--tx2)">กรอง “${esc(S.q)}”</span>`:''}</div>`;
   return hero+`<div class="tools"><div class="seg">
     <button data-act="mode" data-m="cal" class="${S.mode==='cal'?'on':''}">Month</button>
-    <button data-act="mode" data-m="up" class="${S.mode==='up'?'on':''} ${od?'alert':''}">Upcoming</button>
-    <button data-act="mode" data-m="list" class="${S.mode==='list'?'on':''}">Day list</button></div>
+    <button data-act="mode" data-m="${S.mode==='list'?'list':'up'}" class="${S.mode!=='cal'?'on':''} ${od?'alert':''}">Upcoming</button></div>
     <div class="tright"><button class="ico-sm" data-act="today" title="วันนี้" aria-label="วันนี้"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none"/><path d="M12 1.6v2.6M12 19.8v2.6M22.4 12h-2.6M4.2 12H1.6"/></svg></button>
     <button class="btn pri sm" data-act="addAppt" data-d="${TODAY}">＋ เพิ่มนัด</button></div></div>`
-  +(S.mode==='cal'?calendar(y,m):S.mode==='up'?vUpcoming():dayList(y,m))}
+  +sub+(S.mode==='cal'?calendar(y,m):S.mode==='up'?vUpcoming():dayList(y,m))}
 function calendar(y,m){
   const start=new Date(y,m,1-new Date(y,m,1).getDay());
   let cells='';
@@ -38,10 +43,6 @@ function calendar(y,m){
     ${DB.workTypes.map(w=>`<button class="fl ${S.filter===w.id?'on':''}" data-act="filt" data-f="${w.id}"><i class="dot" style="background:${w.color}"></i>${esc(w.name)}</button>`).join('')}</div>`}
 function dayList(y,m){
   const last=new Date(y,m+1,0).getDate();let out='',any=false;
-  out+=`<div class="row" style="margin-bottom:12px;gap:8px;flex-wrap:wrap">
-    <div class="seg"><button data-act="busy" data-v="1" class="${S.onlyBusy?'on':''}">เฉพาะวันที่มีนัด</button>
-    <button data-act="busy" data-v="0" class="${!S.onlyBusy?'on':''}">ทุกวันที่มีงาน</button></div>
-    ${S.q?`<span class="chip" style="border-color:var(--line);color:var(--tx2)">กรอง “${esc(S.q)}”</span>`:''}</div>`;
   for(let i=1;i<=last;i++){
     const k=iso(new Date(y,m,i)),s=daySch(k),ap=filterAppts(apptsOn(k));
     if(S.onlyBusy&&!ap.length)continue;
@@ -81,7 +82,7 @@ function ptRow(a){
     </div>
     <div class="ac">
     ${a.status==='scheduled'
-      ?`<button class="btn sm pri" data-act="checkin" data-id="${a.id}">✓ มาแล้ว</button>
+      ?`<button class="btn sm pri" data-act="checkin" data-id="${a.id}">มาแล้ว</button>
         <button class="btn sm" data-act="resched" data-id="${a.id}">เลื่อน</button>`
       :`<button class="btn sm" data-act="checkin" data-id="${a.id}">บันทึกรักษา</button>`}
     <button class="btn sm" data-act="editAppt" data-id="${a.id}">แก้ไข</button>

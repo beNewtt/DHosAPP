@@ -19,40 +19,49 @@ function mDaySet(d){const c=daySch(d);
    <button class="btn pri" data-act="saveDay" data-d="${d}">บันทึก</button></div></div>`);
   $('wtPick').addEventListener('change',e=>{document.querySelectorAll('#wtPick label').forEach(l=>l.classList.toggle('on',l.querySelector('input').checked));
     const w=wt(e.target.value),r=$('rm');if(!r.value.trim())r.value=w.room})}
+/* visit ล่าสุดของคนไข้ ใช้ตั้งค่าเริ่มต้นให้นัดครั้งถัดไป */
+function lastVisit(pid){
+  return DB.visits.filter(v=>v.patientId===pid)
+    .sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0]||null}
+function nextDefaults(pid){const v=lastVisit(pid);
+  return v?{proc:(v.tx||v.proc||'').trim(),tooth:(v.tooth||'').trim()}:{proc:'',tooth:''}}
 function mAppt(id,pre={}){
   const a=id?DB.appointments.find(x=>x.id===id):{id:'',patientId:pre.p||'',date:pre.d||TODAY,session:pre.s||'pm',
     typeId:'',room:'',proc:'',tooth:'',time:'',duration:30,status:'scheduled',note:''};
+  if(!id&&a.patientId){const df=nextDefaults(a.patientId);
+    a.proc=pre.proc!==undefined?pre.proc:df.proc;
+    a.tooth=pre.tooth!==undefined?pre.tooth:df.tooth}
   const s=daySch(a.date),w=s?wt(s.typeId):null,cp=pt(a.patientId);
-  open(`<div class="mtitle">${id?'แก้ไขนัด':'เพิ่มนัดคนไข้'}</div>
-   <div class="muted" style="margin-bottom:14px">พิมพ์ HN / ชื่อ / เบอร์โทร เพื่อค้นหา</div>
-   <div class="f ac-wrap"><label>คนไข้</label>
-     <input id="fpq" autocomplete="off" placeholder="เช่น 385129, ติ๋ม, 0851234567" value="${cp?esc((cp.hn||'—')+' — '+cp.name):''}">
+  open(`<div class="mtitle">${id?'Edit appointment':'New appointment'}</div>
+   <div class="muted" style="margin-bottom:14px">Search by HN / name / phone</div>
+   <div class="f ac-wrap"><label>Patient</label>
+     <input id="fpq" autocomplete="off" placeholder="e.g. 385129, ติ๋ม, 0851234567" value="${cp?esc((cp.hn||'—')+' — '+cp.name):''}">
      <input type="hidden" id="fpid" value="${a.patientId}"><div class="ac-list" id="fplist"></div>
      <div id="fpmsg" class="muted" style="font-size:11.5px;margin-top:5px"></div></div>
    <div id="np" style="display:none;border:1px dashed var(--line);border-radius:var(--r);padding:12px;margin-bottom:12px">
      <div class="g2m"><div class="f"><label>HN</label><input id="nhn"></div>
-     <div class="f"><label>เบอร์โทร</label><input id="nph"></div></div>
-     <div class="f"><label>ชื่อ-สกุล</label><input id="nnm"></div>
-     <div class="g2m"><div class="f"><label>เพศ</label><select id="nsx"><option></option><option>ช</option><option>ญ</option></select></div>
-     <div class="f"><label>ประเภท</label><select id="ncat">${(DB.categories||[]).map(c=>`<option>${esc(c)}</option>`).join('')}</select></div></div>
+     <div class="f"><label>Phone</label><input id="nph"></div></div>
+     <div class="f"><label>Full name</label><input id="nnm"></div>
+     <div class="g2m"><div class="f"><label>Sex</label><select id="nsx"><option></option><option>ช</option><option>ญ</option></select></div>
+     <div class="f"><label>Case type</label><select id="ncat">${(DB.categories||[]).map(c=>`<option>${esc(c)}</option>`).join('')}</select></div></div>
      <div id="nwarn"></div></div>
-   <div class="g2m"><div class="f"><label>วันที่</label><input type="date" id="fd" value="${a.date}"></div>
-   <div class="f"><label>เวลา</label><input type="time" id="ftm" value="${a.time||''}"></div></div>
-   <div class="quick">นัดต่อ:${[['1 สัปดาห์',7],['2 สัปดาห์',14],['1 เดือน',30],['3 เดือน',90],['6 เดือน',180]]
+   <div class="g2m"><div class="f"><label>Date</label><input type="date" id="fd" value="${a.date}"></div>
+   <div class="f"><label>Time</label><input type="time" id="ftm" value="${a.time||''}"></div></div>
+   <div class="quick">Next:${[['1 wk',7],['2 wk',14],['1 mo',30],['3 mo',90],['6 mo',180]]
      .map(([t,n])=>`<button type="button" class="qbtn" data-act="dplus" data-n="${n}">+${t}</button>`).join('')}</div>
-   <div class="g2m"><div class="f"><label>ห้องของวันนี้</label><select id="ft">${DB.workTypes.map(x=>`<option value="${x.id}" ${(s?s.typeId:a.typeId)===x.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select></div>
-   <div class="f"><label>นาที</label><input type="number" id="fdu" step="15" value="${a.duration||30}"></div></div>
+   <div class="g2m"><div class="f"><label>Room</label><select id="ft">${DB.workTypes.map(x=>`<option value="${x.id}" ${(s?s.typeId:a.typeId)===x.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select></div>
+   <div class="f"><label>Minutes</label><input type="number" id="fdu" step="15" value="${a.duration||30}"></div></div>
    <div id="ftwarn" class="muted" style="font-size:11.5px;margin:-6px 0 10px"></div>
-   <div class="g2m"><div class="f"><label>ซี่ฟัน</label><input id="fto" value="${esc(a.tooth)}" placeholder="#36"></div>
-   <div class="f"><label>สถานะ</label><select id="fst">
-     ${[['scheduled','นัดไว้'],['done','มาแล้ว'],['cancelled','ยกเลิก'],['noshow','ไม่มา']].map(([v,t])=>`<option value="${v}" ${a.status===v?'selected':''}>${t}</option>`).join('')}</select></div></div>
-   <div class="f"><label>ขั้นตอน / หัตถการ</label>
-     <input id="fpr" list="procList" value="${esc(a.proc)}" placeholder="เช่น Insert UTP, F/U 3 mo, Recheck RPD">
+   <div class="g2m"><div class="f"><label>Area</label><input id="fto" value="${esc(a.tooth)}" placeholder="#36"></div>
+   <div class="f"><label>Status</label><select id="fst">
+     ${[['scheduled','Scheduled'],['done','Done'],['cancelled','Cancelled'],['noshow','No show']].map(([v,t])=>`<option value="${v}" ${a.status===v?'selected':''}>${t}</option>`).join('')}</select></div></div>
+   <div class="f"><label>Procedure — next visit</label>
+     <input id="fpr" list="procList" value="${esc(a.proc)}" placeholder="e.g. Insert UTP, F/U 3 mo, Recheck RPD">
      <datalist id="procList">${PROCS.map(x=>`<option>${x}</option>`).join('')}</datalist></div>
-   <div class="f"><label>หมายเหตุ</label><input id="fnt" value="${esc(a.note)}"></div>
-   <div class="mfoot"><button class="btn" data-act="close">ยกเลิก</button>
-   ${id?`<button class="btn" data-act="checkin" data-id="${id}">✓ มาแล้ว — ลงบันทึกรักษา</button>`:''}
-   <button class="btn pri" data-act="saveAppt" data-id="${id||''}">บันทึก</button></div>`);
+   <div class="f"><label>Note</label><input id="fnt" value="${esc(a.note)}"></div>
+   <div class="mfoot"><button class="btn" data-act="close">Cancel</button>
+   ${id?`<button class="btn" data-act="checkin" data-id="${id}">Check in — record treatment</button>`:''}
+   <button class="btn pri" data-act="saveAppt" data-id="${id||''}">Save</button></div>`);
   initPtSearch(id);
   SH_APPT=id||null;
   $('fd').addEventListener('change',e=>{const n=daySch(e.target.value);if(n)$('ft').value=n.typeId;checkDup()});
@@ -64,9 +73,9 @@ function initPtSearch(editId){
     const list=DB.patients.filter(p=>!q||((p.hn||'')+' '+p.name+' '+(p.phone||'')+' '+digits(p.phone)).toLowerCase().includes(q)).slice(0,10);
     box.innerHTML=list.map(p=>{const b=busy.has(p.id);
       return `<div class="opt ${b?'dis':''}" data-p="${p.id}" data-b="${b?1:0}">
-      <div style="min-width:0"><b>${esc(p.name)}</b><small>${esc(p.hn||'ไม่มี HN')} · ${esc(p.phone||'-')} · ${esc(p.cat||'')}</small></div>
-      ${b?'<span class="tag">มีนัดวันนี้แล้ว</span>':''}</div>`}).join('')
-      +`<div class="opt new" data-p="__new">＋ สร้างคนไข้ใหม่${q?' “'+esc(inp.value.trim())+'”':''}</div>`;
+      <div style="min-width:0"><b>${esc(p.name)}</b><small>${esc(p.hn||'No HN')} · ${esc(p.phone||'-')} · ${esc(p.cat||'')}</small></div>
+      ${b?'<span class="tag">Booked</span>':''}</div>`}).join('')
+      +`<div class="opt new" data-p="__new">＋ New patient${q?' “'+esc(inp.value.trim())+'”':''}</div>`;
     box.style.display='block'};
   inp.addEventListener('input',()=>{hid.value='';$('np').style.display='none';draw();checkDup()});
   inp.addEventListener('focus',draw);
@@ -74,9 +83,13 @@ function initPtSearch(editId){
     if(o.dataset.p==='__new'){hid.value='__new';$('np').style.display='block';box.style.display='none';
       const raw=inp.value.trim();
       if(/^\d{4,}$/.test(raw))$('nhn').value=raw;else if(/^0\d[\d\-\s]*$/.test(raw))$('nph').value=raw;else $('nnm').value=raw;
-      inp.value='＋ คนไข้ใหม่';checkNewDup();return}
-    if(o.dataset.b==='1'){alert('คนไข้รายนี้มีนัดในวันที่เลือกแล้ว');return}
-    const p=pt(o.dataset.p);hid.value=p.id;inp.value=(p.hn||'—')+' — '+p.name;box.style.display='none';$('np').style.display='none';checkDup()});
+      inp.value='＋ New patient';checkNewDup();return}
+    if(o.dataset.b==='1'){alert('This patient already has an appointment on that date.');return}
+    const p=pt(o.dataset.p);hid.value=p.id;inp.value=(p.hn||'—')+' — '+p.name;box.style.display='none';$('np').style.display='none';
+    if(!editId){const df=nextDefaults(p.id);
+      if(df.proc&&!$('fpr').value.trim())$('fpr').value=df.proc;
+      if(df.tooth&&!$('fto').value.trim())$('fto').value=df.tooth}
+    checkDup()});
   document.addEventListener('mousedown',e=>{if(!e.target.closest('.ac-wrap')&&box)box.style.display='none'});
   ['nhn','nph','nnm'].forEach(k=>$(k).addEventListener('input',checkNewDup));checkDup()}
 const toMin=t=>{const[h,m]=(t||'').split(':').map(Number);return h*60+(m||0)};
@@ -91,21 +104,21 @@ function clashAt(date,time,dur,exceptId){
     return s1<e2&&s2<e1});
 }
 function clashMsg(c){const p=pt(c.patientId);
-  return `${p?p.name:'นัดอื่น'} ${c.time}–${fmtMin(toMin(c.time)+(+c.duration||30))}`}
+  return `${p?p.name:'another appointment'} ${c.time}–${fmtMin(toMin(c.time)+(+c.duration||30))}`}
 function checkClash(){const box=$('ftwarn');if(!box)return;
   const c=clashAt($('fd').value,$('ftm').value,$('fdu').value,SH_APPT);
-  box.innerHTML=c?`<span style="color:var(--wrn);font-weight:700">⚠ เวลาทับกับ ${esc(clashMsg(c))}</span>`:''}
+  box.innerHTML=c?`<span style="color:var(--wrn);font-weight:700">⚠ Overlaps ${esc(clashMsg(c))}</span>`:''}
 let SH_APPT=null;
 function checkDup(){const hid=$('fpid'),msg=$('fpmsg');if(!hid||!msg)return;
   checkClash();
   if(!hid.value||hid.value==='__new'){msg.textContent='';return}
   const date=$('fd').value,ex=DB.appointments.find(a=>a.patientId===hid.value&&a.date===date&&a.status!=='cancelled');
-  msg.innerHTML=ex?`<span style="color:var(--dng);font-weight:700">⚠ มีนัดวันที่ ${thDate(date)} แล้ว (${ex.time||SESSIONS.find(s=>s.id===ex.session).name})</span>`:''}
+  msg.innerHTML=ex?`<span style="color:var(--dng);font-weight:700">⚠ Already booked on ${thDate(date)} (${ex.time||SESSIONS.find(s=>s.id===ex.session).name})</span>`:''}
 function checkNewDup(){const w=$('nwarn');if(!w)return;
   const hn=$('nhn').value.trim().toLowerCase(),ph=digits($('nph').value);
   const d=(hn&&DB.patients.find(p=>(p.hn||'').trim().toLowerCase()===hn))||(ph.length>=9&&DB.patients.find(p=>digits(p.phone)===ph));
-  w.innerHTML=d?`<div class="warn">⚠ มีคนไข้นี้แล้ว: <b>${esc(d.hn)} — ${esc(d.name)}</b><br>
-    <button class="btn sm" style="margin-top:6px" data-act="usePt" data-id="${d.id}">ใช้ข้อมูลคนไข้เดิม</button></div>`:''}
+  w.innerHTML=d?`<div class="warn">⚠ Patient already exists: <b>${esc(d.hn)} — ${esc(d.name)}</b><br>
+    <button class="btn sm" style="margin-top:6px" data-act="usePt" data-id="${d.id}">Use this patient</button></div>`:''}
 function mPatient(id){const p=id?pt(id):{id:'',hn:'',name:'',age:'',sex:'',phone:'',cat:'อื่นๆ',tags:[],note:''};
   open(`<div class="mtitle">${id?'แก้ไขข้อมูลคนไข้':'เพิ่มคนไข้ใหม่'}</div><div style="height:12px"></div>
    <div class="g2"><div class="f"><label>HN</label><input id="phn" value="${esc(p.hn)}"></div>
@@ -199,17 +212,17 @@ document.addEventListener('click',e=>{
       $('np').style.display='none';$('nwarn').innerHTML='';checkDup();break}
     case'saveAppt':{let pid=$('fpid').value;
       if(pid==='__new'){const hn=$('nhn').value.trim(),ph=$('nph').value.trim(),nm=$('nnm').value.trim();
-        if(!nm){alert('กรอกชื่อคนไข้');return}
+        if(!nm){alert('Please enter the patient name.');return}
         const dup=DB.patients.find(p=>(hn&&(p.hn||'').trim().toLowerCase()===hn.toLowerCase())||(digits(ph).length>=9&&digits(p.phone)===digits(ph)));
-        if(dup){alert(`มีคนไข้นี้แล้ว: ${dup.hn} — ${dup.name}`);return}
+        if(dup){alert(`Patient already exists: ${dup.hn} — ${dup.name}`);return}
         const np={id:uid('p_'),hn,name:nm,age:'',sex:$('nsx').value,phone:ph,cat:$('ncat').value,tags:[],note:'',createdAt:TODAY};
         DB.patients.push(np);pid=np.id}
-      if(!pid){alert('กรุณาค้นหาและเลือกคนไข้ก่อน');return}
+      if(!pid){alert('Please search and select a patient first.');return}
       const date=$('fd').value,tm=$('ftm').value,sesId=tm?ses4(tm):'pm';
       const clash=DB.appointments.find(x=>x.patientId===pid&&x.date===date&&x.status!=='cancelled'&&x.id!==id);
-      if(clash&&!confirm('คนไข้มีนัดวันนี้แล้ว — เพิ่มอีกนัด?'))return;
+      if(clash&&!confirm('This patient is already booked that day — add another appointment?'))return;
       const ov=clashAt(date,$('ftm').value,$('fdu').value,id||null);
-      if(ov&&!confirm(`เวลาทับกับ ${clashMsg(ov)}\n\nยืนยันลงนัดซ้อนไหม?`))return;
+      if(ov&&!confirm(`Overlaps ${clashMsg(ov)}\n\nBook it anyway?`))return;
       const ty=$('ft').value,w=wt(ty),cur=daySch(date),room=cur&&cur.typeId===ty?cur.room:w.room;
       DB.daySchedules[date]={typeId:ty,room,note:cur?cur.note:''};
       DB.appointments.filter(x=>x.date===date).forEach(x=>{x.typeId=ty;x.room=room});
@@ -228,7 +241,7 @@ document.addEventListener('click',e=>{
       save();close();render();break}
     case'saveVisitNext':{const v=DB.visits.find(x=>x.id===id);if(!v)break;
       v.proc=$('vpr').value;v.tooth=$('vto').value.trim();v.dx=$('vd').value;v.tx=$('vt').value;v.note=$('vn').value;
-      save();close();mAppt(null,{p:v.patientId});break}
+      save();close();mAppt(null,{p:v.patientId,proc:(v.tx||v.proc||'').trim(),tooth:(v.tooth||'').trim()});break}
     case'delVisit':if(confirm('ลบ Visit นี้?')){const ap=DB.appointments.find(x=>x.visitId===id);
       if(ap){ap.visitId=null;ap.status='scheduled'}
       DB.visits=DB.visits.filter(x=>x.id!==id);save();close();render()}break;
