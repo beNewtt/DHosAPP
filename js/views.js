@@ -6,6 +6,7 @@
 const app=document.getElementById('app'),$=x=>document.getElementById(x);
 function render(){
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.view));
+  document.body.dataset.v=S.view;
   app.innerHTML=S.view==='schedule'?vSchedule():S.view==='planner'?vPlanner():S.view==='stats'?vStats():S.view==='upcoming'?vUpcoming():S.view==='archive'?vArchive():vSettings();
 }
 function vSchedule(){const y=S.cur.getFullYear(),m=S.cur.getMonth(),od=overdueAppts().length;
@@ -69,12 +70,20 @@ function dayList(y,m){
 function ptRow(a){
   const p=pt(a.patientId);if(!p)return'';
   const al=(p.tags||[]).length?`<span class="chip" style="border-color:var(--dngLn);color:var(--dng);background:var(--dngBg)">⚠ ${esc(p.tags[0])}</span>`:'';
+  const ST={scheduled:'นัดไว้',done:'มาแล้ว',cancelled:'ยกเลิก',noshow:'ไม่มา'};
   return `<div class="pt ${a.status==='cancelled'?'cx':''}">
-    <div class="avatar">${a.time?`<b style="font-size:11.5px">${esc(a.time)}</b><small style="font-size:8.5px;opacity:.7">${a.duration||30} น.</small>`:esc(initials(p.name))}</div>
-    <div style="min-width:0"><div class="nm">${esc(p.name)} ${catChip(p.cat)} ${al}</div>
-    <div class="hn">${esc(p.hn||'ไม่มี HN')}${p.phone?' · '+telLink(p.phone):''} · 🦷 ${esc(a.proc||'ไม่ระบุ')}${a.tooth?' · ซี่ '+esc(a.tooth):''}${(a.moves||[]).length?` · <span style="color:var(--wrn)">เลื่อน ${a.moves.length}×</span>`:''}</div></div>
-    <div class="ac"><span class="st ${a.status}">${({scheduled:'นัดไว้',done:'มาแล้ว',cancelled:'ยกเลิก',noshow:'ไม่มา'})[a.status]}</span>
-    ${a.status==='scheduled'?`<button class="btn sm" data-act="resched" data-id="${a.id}">เลื่อน</button>`:''}
+    <div class="ptinfo">
+      <div class="ptop">${a.time?`<span class="ptime">${esc(a.time)}<i>${a.duration||30} น.</i></span>`:''}
+        <span class="st ${a.status}">${ST[a.status]}</span>
+        ${(a.moves||[]).length?`<span class="mv">เลื่อน ${a.moves.length}×</span>`:''}</div>
+      <div class="nm">${esc(p.name)} ${catChip(p.cat)} ${al}</div>
+      <div class="hn">${esc(p.hn||'ไม่มี HN')}${p.phone?' · '+telLink(p.phone):''} · ${esc(a.proc||'ไม่ระบุ')}${a.tooth?' · ซี่ '+esc(a.tooth):''}</div>
+    </div>
+    <div class="ac">
+    ${a.status==='scheduled'
+      ?`<button class="btn sm pri" data-act="checkin" data-id="${a.id}">✓ มาแล้ว</button>
+        <button class="btn sm" data-act="resched" data-id="${a.id}">เลื่อน</button>`
+      :`<button class="btn sm" data-act="checkin" data-id="${a.id}">บันทึกรักษา</button>`}
     <button class="btn sm" data-act="editAppt" data-id="${a.id}">แก้ไข</button>
     <button class="btn sm dg" data-act="delAppt" data-id="${a.id}">ลบ</button></div></div>`}
 function mResched(id){const a=DB.appointments.find(x=>x.id===id);if(!a)return;const p=pt(a.patientId);
@@ -283,14 +292,14 @@ function vArchive(){
       <h3>นัดหมายที่จะถึง (${ap.length})</h3>
       ${ap.map(a=>{const w=wt(a.typeId);return`<div class="pt"><div class="avatar" style="background:${w.color}18;color:${w.color};border-color:${w.color}55">${esc(w.short)}</div>
         <div><div class="nm">${thDate(a.date)}${a.time?' · '+esc(a.time):''}</div>
-        <div class="hn">${esc(a.room)} · 🦷 ${esc(a.proc||'-')}</div></div>
+        <div class="hn">${esc(a.room)} · ${esc(a.proc||'-')}</div></div>
         <div class="ac"><button class="btn sm" data-act="editAppt" data-id="${a.id}">แก้ไข</button>
         <button class="btn sm pri" data-act="checkin" data-id="${a.id}">เช็คอิน</button></div></div>`}).join('')||'<div class="muted">ไม่มีนัดล่วงหน้า</div>'}
       <h3>Case History · Visits (${vs.length})</h3>
       <div class="tl">${vs.map(v=>{const w=wt(v.typeId);return`<div class="it"><div class="row sp" style="flex-wrap:wrap"><b>${thDate(v.date)}
         <span class="chip" style="border-color:${w.color}55;color:${w.color};background:${w.color}15">${esc(w.name)}</span></b>
         <button class="btn sm" data-act="editVisit" data-id="${v.id}">บันทึก/แก้ไข</button></div>
-        <div class="muted" style="margin-top:4px">🦷 ${esc(v.proc||'-')}${v.tooth?' · '+esc(v.tooth):''}</div>
+        <div class="muted" style="margin-top:4px">${esc(v.proc||'-')}${v.tooth?' · ซี่ '+esc(v.tooth):''}</div>
         ${v.dx?`<div class="muted"><b>Dx:</b> ${esc(v.dx)}</div>`:''}
         ${v.tx?`<div class="muted"><b>Tx plan:</b> ${esc(v.tx)}</div>`:''}
         ${v.note?`<div class="muted">${esc(v.note)}</div>`:''}</div>`}).join('')||'<div class="muted">ยังไม่มีประวัติ</div>'}</div></div>`}

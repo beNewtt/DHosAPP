@@ -129,8 +129,8 @@ function mVisit(id){const v=DB.visits.find(x=>x.id===id),p=pt(v.patientId);
    <div class="f"><label>แผนการรักษา / สิ่งที่ต้องทำครั้งหน้า</label><input id="vt" value="${esc(v.tx)}"></div>
    <div class="f"><label>บันทึกเพิ่มเติม</label><textarea id="vn" rows="4">${esc(v.note)}</textarea></div>
    <div class="mfoot"><button class="btn dg" data-act="delVisit" data-id="${id}">ลบบันทึก</button>
-   <button class="btn" data-act="nextAppt" data-pid="${v.patientId}" data-vid="${id}">＋ นัดครั้งต่อไป</button>
-   <button class="btn pri" data-act="saveVisit" data-id="${id}">บันทึก</button></div>`)}
+   <button class="btn" data-act="saveVisit" data-id="${id}">บันทึก</button>
+   <button class="btn pri" data-act="saveVisitNext" data-id="${id}">บันทึก + นัดต่อ →</button></div>`)}
 
 /* ---------- ACTIONS ---------- */
 document.addEventListener('click',e=>{
@@ -226,6 +226,9 @@ document.addEventListener('click',e=>{
     case'saveVisit':{const v=DB.visits.find(x=>x.id===id);
       v.proc=$('vpr').value;v.tooth=$('vto').value.trim();v.dx=$('vd').value;v.tx=$('vt').value;v.note=$('vn').value;
       save();close();render();break}
+    case'saveVisitNext':{const v=DB.visits.find(x=>x.id===id);if(!v)break;
+      v.proc=$('vpr').value;v.tooth=$('vto').value.trim();v.dx=$('vd').value;v.tx=$('vt').value;v.note=$('vn').value;
+      save();close();mAppt(null,{p:v.patientId});break}
     case'delVisit':if(confirm('ลบ Visit นี้?')){const ap=DB.appointments.find(x=>x.visitId===id);
       if(ap){ap.visitId=null;ap.status='scheduled'}
       DB.visits=DB.visits.filter(x=>x.id!==id);save();close();render()}break;
@@ -301,6 +304,19 @@ document.addEventListener('input',e=>{
   const el=id&&$(id);if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(_){}}
   document.querySelectorAll('[data-q]').forEach(i=>{if(i.id!==id)i.value=S.q})
 });
+/* ปัดซ้าย/ขวาเพื่อสลับ Month / Upcoming / Day list (เฉพาะหน้าปฏิทิน) */
+let _tx=0,_ty=0,_tt=0;
+document.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;
+  _tx=e.touches[0].clientX;_ty=e.touches[0].clientY;_tt=Date.now()},{passive:true});
+document.addEventListener('touchend',e=>{
+  if(S.view!=='schedule'||mask.classList.contains('on'))return;
+  if(e.target.closest&&e.target.closest('input,select,textarea,button,a,.ac-list'))return;
+  const t=e.changedTouches[0],dx=t.clientX-_tx,dy=t.clientY-_ty;
+  if(Date.now()-_tt>700||Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.8)return;
+  const ord=['cal','up','list'],j=ord.indexOf(S.mode)+(dx<0?1:-1);
+  if(j<0||j>=ord.length)return;
+  S.mode=ord[j];render();window.scrollTo(0,0)},{passive:true});
+
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){$('tpanel').classList.remove('on');return}
   const t=e.target;
