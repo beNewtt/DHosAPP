@@ -170,6 +170,48 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .seg button:last-child{border-right:0}.seg button.on{background:var(--hl);color:var(--onhl)}
 .subrow{margin-bottom:12px;gap:8px;flex-wrap:wrap}
 .seg.sub button{padding:5px 12px;font-size:10.5px}
+
+/* ---------- แผ่นสรุปรายวัน (กดจากช่องปฏิทิน) ---------- */
+.dsec{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;color:var(--tx2);
+  text-transform:uppercase;letter-spacing:.06em;margin:14px 0 2px}
+.dsec:first-of-type{margin-top:4px}
+.dsec i.sdot{width:7px;height:7px;border-radius:50%;flex:none}
+
+/* ---------- ปุ่มติ๊ก/เลือก ในฟอร์มเคส ---------- */
+.sec{font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--pm);
+  margin:18px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--line2)}
+.pickg{display:flex;flex-wrap:wrap;gap:5px}
+.pk{padding:6px 11px;font-size:11.5px;font-weight:700;color:var(--tx2);background:var(--soft);
+  border:1.5px solid var(--line);border-radius:999px;white-space:nowrap}
+.pk:hover{color:var(--ink);border-color:var(--line2)}
+.pk.on{background:var(--hl);border-color:var(--hl);color:var(--onhl)}
+.exrow{display:flex;align-items:center;gap:10px;margin-bottom:7px;flex-wrap:wrap}
+.exrow>span{flex:0 0 108px;font-size:11px;font-weight:700;color:var(--tx2);
+  text-transform:uppercase;letter-spacing:.05em}
+.exrow>div{flex:1 1 180px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.xin{background:var(--soft);color:var(--tx);border:1.5px solid var(--line);border-radius:var(--r);
+  padding:6px 10px;font-size:12px;outline:none;max-width:150px}
+.xin.sm{max-width:78px}
+.xin:focus{border-color:var(--hl);box-shadow:0 0 0 3px color-mix(in srgb,var(--hl) 18%,transparent)}
+
+/* ---------- การ์ดเคสที่ติดตาม ---------- */
+.ccard{border:1px solid var(--line2);border-left:3px solid var(--line2);border-radius:10px;
+  padding:12px 14px;margin-top:9px;background:var(--surface)}
+.ccard.due{border-left-color:var(--dng);background:color-mix(in srgb,var(--dngBg) 45%,var(--surface))}
+.ccard.cdone{opacity:.62}
+.chead{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.chead .ac{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.cname{font-weight:800;color:var(--ink);overflow-wrap:anywhere}
+.ctooth{display:inline-block;font-size:11px;font-weight:800;color:var(--hl);
+  background:color-mix(in srgb,var(--hl) 12%,transparent);border-radius:5px;padding:1px 6px;margin-left:3px}
+.cmeta{font-size:11.5px;color:var(--tx2);margin-top:2px}
+.csym{margin-top:8px;display:flex;gap:5px;align-items:center;flex-wrap:wrap;font-size:11.5px}
+.cchips{margin-top:7px;display:flex;gap:5px;flex-wrap:wrap}
+.ck{font-size:10.5px;font-weight:700;color:var(--tx2);background:var(--soft);
+  border:1px solid var(--line2);border-radius:5px;padding:2px 7px;font-variant-numeric:tabular-nums}
+.cnote{margin-top:8px;font-size:12.5px;color:var(--tx);white-space:pre-wrap;overflow-wrap:anywhere}
+.crev{margin-top:9px;font-size:11.5px;font-weight:700;color:var(--tx2)}
+.crev.on{color:var(--dng)}
 .cal{border-top:1px solid var(--line);border-left:1px solid var(--line)}
 .grid{display:grid;grid-template-columns:repeat(7,1fr)}
 .gh{padding:clamp(5px,.7vw,8px) 0;text-align:center;font-size:clamp(9.5px,.85vw,11px);font-weight:700;color:var(--ink);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -262,7 +304,9 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .g2m{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:560px){.g3,.g2{grid-template-columns:1fr}.g2m{gap:8px}}
+@media(max-width:560px){.g3,.g2{grid-template-columns:1fr}.g2m{gap:8px}
+  /* ฟอร์มเคส: ซี่ฟัน+วันที่ ยังอยู่บรรทัดเดียวกันบนมือถือ */
+  .g3.tight{grid-template-columns:1fr 1fr}.g3.tight>:last-child{grid-column:1/-1}}
 .quick{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:-4px 0 12px;font-size:10.5px;color:var(--tx2);font-weight:700}
 .qbtn{border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:700;color:var(--tx)}
 .qbtn:hover{border-color:var(--hl);color:var(--hl)}
@@ -320,4 +364,7 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
   .pt .ac{margin-left:0;width:100%;justify-content:flex-start;border-top:1px solid var(--line2);padding-top:7px;margin-top:2px}
   .pt .ac .btn{font-size:11.5px;padding:6px 9px}
   .ptinfo{flex:1 1 100%}
+  .exrow{align-items:flex-start;gap:4px}
+  .exrow>span{flex:1 1 100%}
+  .chead .ac{margin-left:0;width:100%;justify-content:flex-start}
 }
