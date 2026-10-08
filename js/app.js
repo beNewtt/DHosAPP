@@ -5,8 +5,113 @@
 /* ---------- MODALS ---------- */
 const mask=$('mask'),modal=$('modal');
 const open=h=>{modal.innerHTML=h;mask.classList.add('on')};
-const close=()=>{mask.classList.remove('on');modal.innerHTML=''};
+let SH_DAY=null;                       /* วันที่ของแผ่นสรุปวันที่เปิดค้างอยู่ */
+const close=()=>{mask.classList.remove('on');modal.innerHTML='';SH_DAY=null};
 mask.addEventListener('click',e=>{if(e.target===mask)close()});
+
+/* ---------- ปุ่มติ๊ก/เลือก ใช้ในฟอร์มเคส ---------- */
+function pickG(name,opts,val,multi){
+  const sel=multi?(Array.isArray(val)?val:[]):[val||''];
+  return `<div class="pickg" data-g="${name}" data-multi="${multi?1:0}">`+opts.map(o=>{
+    const[v,t]=Array.isArray(o)?o:[o,o];
+    return `<button type="button" class="pk ${sel.includes(v)?'on':''}" data-pick="${esc(v)}">${esc(t)}</button>`}).join('')+`</div>`}
+function pickVal(name){const g=modal.querySelector(`.pickg[data-g="${name}"]`);
+  if(!g)return g===null?'':'';
+  const on=[...g.querySelectorAll('.pk.on')].map(b=>b.dataset.pick);
+  return g.dataset.multi==='1'?on:(on[0]||'')}
+modal.addEventListener('click',e=>{const b=e.target.closest('.pk');if(!b)return;
+  const g=b.closest('.pickg');if(!g)return;
+  if(g.dataset.multi==='1'){b.classList.toggle('on');return}
+  const was=b.classList.contains('on');
+  g.querySelectorAll('.pk').forEach(x=>x.classList.remove('on'));
+  if(!was)b.classList.add('on')});
+
+/* ---------- แผ่นสรุปรายวัน: เห็นคนไข้ก่อน แล้วค่อยเพิ่มนัด ---------- */
+function mDay(d){
+  SH_DAY=d;
+  const ap=apptsOn(d),s=daySch(d),w=s?wt(s.typeId):null;
+  const shown=SESSIONS.filter(se=>ap.some(a=>a.session===se.id));
+  const live=liveOn(d).length;
+  modal.innerHTML=`<div class="mtitle">${thDate(d)}${d===TODAY?' <span class="chip" style="border-color:var(--hl);color:var(--hl)">วันนี้</span>':''}</div>
+   <div class="muted" style="margin-bottom:13px">${w?`<i class="rdot" style="background:${w.color};display:inline-block;width:8px;height:8px;border-radius:50%;vertical-align:1px"></i> ${esc(s.room||w.room)}`:'ยังไม่ได้ตั้งค่าห้อง'}${s&&s.note?' · '+esc(s.note):''} · ${live} คน</div>
+   ${ap.length
+     ?shown.map(se=>`<div class="dsec"><i class="sdot" style="background:${se.c}"></i>${se.name}</div>`
+        +ap.filter(a=>a.session===se.id).map(ptRow).join('')).join('')
+     :`<div class="empty" style="padding:26px">ยังไม่มีนัดของวันนี้</div>`}
+   <div class="mfoot"><button class="btn" data-act="daySet" data-d="${d}">ตั้งค่าห้อง</button>
+   <button class="btn" data-act="close">ปิด</button>
+   <button class="btn pri" data-act="addAppt" data-d="${d}">\uff0b เพิ่มนัด</button></div>`;
+  mask.classList.add('on')}
+
+/* ---------- บันทึกเคสที่ต้องติดตาม ---------- */
+function mCase(id,pre={}){
+  const c=id?DB.cases.find(x=>x.id===id)
+    :{id:'',patientId:pre.p||'',tooth:pre.tooth||'',type:'vpt',date:TODAY,sym:[],symNote:'',
+      perc:'',mob:'',pd:'',caries:[],expo:'',hemo:'',hemoMin:'',cap:'',liner:[],temp:'',fin:'',
+      review:'',status:'watch',note:''};
+  if(!c)return;
+  const p=pt(c.patientId);
+  const row=(lbl,inner)=>`<div class="exrow"><span>${lbl}</span><div>${inner}</div></div>`;
+  open(`<div class="mtitle">${id?'Edit case note':'New case note'}</div>
+   <div class="muted" style="margin-bottom:14px">Follow-up log for a case worth watching</div>
+   <div class="f ac-wrap"><label>Patient</label>
+     <input id="cpq" autocomplete="off" placeholder="HN / name / phone" value="${p?esc((p.hn||'—')+' — '+p.name):''}">
+     <input type="hidden" id="cpid" value="${esc(c.patientId)}"><div class="ac-list" id="cplist"></div></div>
+   <div class="g3 tight"><div class="f"><label>Tooth</label><input id="cto" value="${esc(c.tooth)}" placeholder="36"></div>
+   <div class="f"><label>Date</label><input type="date" id="cdt" value="${c.date||TODAY}"></div>
+   <div class="f"><label>Template</label><select id="ctp">${Object.entries(CASE_TPL).map(([k,t])=>`<option value="${k}" ${c.type===k?'selected':''}>${t}</option>`).join('')}</select></div></div>
+
+   <div class="sec">Symptom</div>
+   ${pickG('sym',['Asymptomatic','Provoked','Lingering','Spontaneous','Night pain','Swelling'],c.sym,true)}
+   <div class="f" style="margin-top:9px"><label>Symptom note</label><input id="csn" value="${esc(c.symNote)}" placeholder="e.g. cold-provoked, settles in 5 s"></div>
+
+   <div id="vptBlk" style="display:${c.type==='gen'?'none':'block'}">
+     <div class="sec">Examination (I/O)</div>
+     ${row('Percussion',pickG('perc',[['+','+ve'],['-','\u2212ve']],c.perc))}
+     ${row('Mobility',pickG('mob',['0','I','II','III'],c.mob))}
+     ${row('PD',`<input id="cpd" class="xin" value="${esc(c.pd)}" placeholder="WNL / 4 mm">`)}
+     ${row('Caries surface',pickG('caries',['O','M','D','B','L'],c.caries,true))}
+
+     <div class="sec">Pulp exposure</div>
+     ${row('Exposure',pickG('expo',['None','Pinpoint','<1 mm','>1 mm'],c.expo))}
+     ${row('Haemostasis',pickG('hemo',['Achieved','Not achieved'],c.hemo)
+        +`<input id="chm" class="xin sm" type="number" min="0" step="1" value="${esc(c.hemoMin)}" placeholder="min">`)}
+
+     <div class="sec">Materials</div>
+     ${row('Pulp cap',pickG('cap',['Dycal','Ca(OH)\u2082','MTA','Biodentine'],c.cap))}
+     ${row('Liner / base',pickG('liner',['Vitrebond','GIC','None'],c.liner,true))}
+     ${row('Temporary',pickG('temp',['Cavit','IRM','None'],c.temp))}
+     ${row('Final',pickG('fin',['Bulkfill','Composite','Flowable','None'],c.fin))}
+   </div>
+
+   <div class="sec">Follow-up</div>
+   <div class="g2"><div class="f"><label>Next review</label><input type="date" id="crv" value="${esc(c.review)}"></div>
+   <div class="f"><label>Status</label><select id="cst">
+     <option value="watch" ${(c.status||'watch')==='watch'?'selected':''}>Watching</option>
+     <option value="done" ${c.status==='done'?'selected':''}>Closed</option></select></div></div>
+   <div class="quick">Review in:${[['1 wk',7],['1 mo',30],['3 mo',90],['6 mo',180],['1 y',365]]
+     .map(([t,k])=>`<button type="button" class="qbtn" data-act="rvplus" data-n="${k}">+${t}</button>`).join('')}</div>
+   <div class="f"><label>Note / outcome</label><textarea id="cnt" rows="3">${esc(c.note)}</textarea></div>
+   <div class="mfoot">${id?`<button class="btn dg" data-act="delCase" data-id="${id}">ลบ</button>`:''}
+   <button class="btn" data-act="close">Cancel</button>
+   <button class="btn pri" data-act="saveCase" data-id="${id||''}">Save</button></div>`);
+  $('ctp').addEventListener('change',e=>{$('vptBlk').style.display=e.target.value==='gen'?'none':'block'});
+  initCasePt()}
+function initCasePt(){
+  const inp=$('cpq'),box=$('cplist'),hid=$('cpid');
+  const draw=()=>{const q=inp.value.trim().toLowerCase();
+    const list=DB.patients.filter(x=>!q||((x.hn||'')+' '+x.name+' '+(x.phone||'')+' '+digits(x.phone)).toLowerCase().includes(q)).slice(0,10);
+    box.innerHTML=list.length?list.map(x=>`<div class="opt" data-p="${x.id}">
+      <div style="min-width:0"><b>${esc(x.name)}</b><small>${esc(x.hn||'No HN')} · ${esc(x.cat||'')}</small></div></div>`).join('')
+      :`<div class="opt dis">No match</div>`;
+    box.style.display='block'};
+  inp.addEventListener('input',()=>{hid.value='';draw()});
+  inp.addEventListener('focus',draw);
+  box.addEventListener('mousedown',e=>{const o=e.target.closest('.opt');if(!o||!o.dataset.p)return;e.preventDefault();
+    const x=pt(o.dataset.p);hid.value=x.id;inp.value=(x.hn||'—')+' — '+x.name;box.style.display='none';
+    const lv=lastVisit(x.id);if(lv&&lv.tooth&&!$('cto').value.trim())$('cto').value=lv.tooth});
+  document.addEventListener('mousedown',e=>{if(box&&!e.target.closest('.ac-wrap'))box.style.display='none'})}
+
 function mDaySet(d){const c=daySch(d);
   open(`<div class="mtitle">ตั้งค่าห้อง · ${thDate(d)}</div>
    <div class="muted" style="margin-bottom:14px">หนึ่งวันเลือกได้ <b>ห้องเดียว</b></div>
@@ -164,6 +269,26 @@ document.addEventListener('click',e=>{
       if(v==='upcoming'){S.view='schedule';S.mode='up'}else S.view=v;
       location.hash=v;render();window.scrollTo(0,0);break}
     case'mode':S.mode=t.dataset.m;render();break;
+    case'sub':S.sub=t.dataset.s;render();window.scrollTo(0,0);break;
+    case'day':mDay(d);break;
+    case'caseFilt':S.cfilter=t.dataset.f;render();break;
+    case'addCase':mCase(null,{p:t.dataset.p,tooth:t.dataset.tooth});break;
+    case'editCase':mCase(id);break;
+    case'rvplus':{const f=$('crv');if(!f)break;const b=f.value?parseD(f.value):new Date();
+      b.setDate(b.getDate()+ +t.dataset.n);f.value=iso(b);break}
+    case'caseDone':{const c=DB.cases.find(x=>x.id===id);if(c){c.status='done';save();render()}break}
+    case'caseOpen':{const c=DB.cases.find(x=>x.id===id);if(c){c.status='watch';save();render()}break}
+    case'delCase':if(confirm('ลบบันทึกเคสนี้?')){DB.cases=DB.cases.filter(x=>x.id!==id);save();close();render()}break;
+    case'saveCase':{const pid=$('cpid').value;
+      if(!pid){alert('Please select a patient first.');return}
+      const o={patientId:pid,tooth:$('cto').value.trim().replace(/^#/,''),date:$('cdt').value||TODAY,type:$('ctp').value,
+        sym:pickVal('sym'),symNote:$('csn').value.trim(),
+        perc:pickVal('perc'),mob:pickVal('mob'),pd:($('cpd')||{}).value?$('cpd').value.trim():'',
+        caries:pickVal('caries'),expo:pickVal('expo'),hemo:pickVal('hemo'),hemoMin:($('chm')||{}).value||'',
+        cap:pickVal('cap'),liner:pickVal('liner'),temp:pickVal('temp'),fin:pickVal('fin'),
+        review:$('crv').value,status:$('cst').value,note:$('cnt').value.trim()};
+      if(id)Object.assign(DB.cases.find(x=>x.id===id),o);else DB.cases.push({id:uid('c_'),...o});
+      save();close();S.view='more';S.sub='cases';render();break}
     case'filt':S.filter=t.dataset.f;render();break;
     case'busy':S.onlyBusy=t.dataset.v==='1';render();break;
     case'mv':S.cur=new Date(S.cur.getFullYear(),S.cur.getMonth()+ +t.dataset.n,1);render();break;
@@ -197,8 +322,8 @@ document.addEventListener('click',e=>{
       const w=wt(r.value),room=$('rm').value.trim()||w.room;
       DB.daySchedules[d]={typeId:w.id,room,note:$('dn').value.trim()};
       DB.appointments.filter(x=>x.date===d).forEach(x=>{x.typeId=w.id;x.room=room});
-      save();close();render();break}
-    case'clearDay':delete DB.daySchedules[d];save();close();render();break;
+      {const back=SH_DAY;save();close();render();if(back)mDay(back)}break}
+    case'clearDay':{const back=SH_DAY;delete DB.daySchedules[d];save();close();render();if(back)mDay(back)}break;
     case'addAppt':{if(isOff(d||TODAY)&&!confirm('วันนี้ตั้งเป็น OFF — ยืนยันลงนัด?'))return;
       mAppt(null,{d:d||TODAY,s:t.dataset.s,p:t.dataset.p});break}
     case'editAppt':mAppt(id);break;
@@ -207,7 +332,7 @@ document.addEventListener('click',e=>{
       if(ap){const p=pt(ap.patientId),vs=DB.visits.filter(v=>v.apptId===ap.id);
         toTrash({kind:'appt',label:`นัด ${p?p.name:'—'} · ${thDate(ap.date)}`,appts:[ap],visits:vs});
         DB.appointments=DB.appointments.filter(x=>x.id!==id);DB.visits=DB.visits.filter(v=>v.apptId!==ap.id)}
-      save();render()}break;
+      save();render();if(SH_DAY)mDay(SH_DAY)}break;
     case'usePt':{const p=pt(id);$('fpid').value=p.id;$('fpq').value=(p.hn||'—')+' — '+p.name;
       $('np').style.display='none';$('nwarn').innerHTML='';checkDup();break}
     case'saveAppt':{let pid=$('fpid').value;
@@ -281,7 +406,7 @@ document.addEventListener('click',e=>{
     case'restoreSnap':{const r=SNAPS.find(x=>String(x.id)===String(id));if(!r)break;
       const n=r.data||{};
       if(!confirm(`กู้คืนข้อมูลของ ${new Date(r.created_at).toLocaleString('th-TH')}?\n\nข้อมูลปัจจุบันทั้งหมดจะถูกแทนที่\n(คนไข้ ${(n.patients||[]).length} · นัด ${(n.appointments||[]).length})`))break;
-      DB=n;if(!Array.isArray(DB.trash))DB.trash=[];if(!DB.workTypes||!DB.workTypes.length)DB.workTypes=DEF_WT.slice();
+      DB=n;fixDB(DB);if(!DB.workTypes||!DB.workTypes.length)DB.workTypes=DEF_WT.slice();
       save();applyTheme(DB.theme||'cheesecake');S.sel=null;render();alert('กู้คืนเรียบร้อย');break}
     case'emptyTrash':if(confirm('ล้างถังขยะทั้งหมดถาวร? ย้อนกลับไม่ได้')){DB.trash=[];save();render()}break;
     case'setSt':{const a=DB.appointments.find(x=>x.id===id);if(a){a.status=t.dataset.s;save();render()}break}
@@ -309,9 +434,13 @@ document.addEventListener('change',e=>{const i=e.target;
 document.addEventListener('input',e=>{if(e.target.dataset.plan==='note')S.plan.note=e.target.value});
 $('fileIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;
   const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(!j.patients)throw 0;
-    DB=j;save();applyTheme(DB.theme||'cheesecake');S.sel=null;render();alert('นำเข้าข้อมูลสำเร็จ — '+DB.patients.length+' คนไข้')}
+    DB=fixDB(j);save();applyTheme(DB.theme||'cheesecake');S.sel=null;render();alert('นำเข้าข้อมูลสำเร็จ — '+DB.patients.length+' คนไข้')}
     catch(x){alert('ไฟล์ไม่ถูกต้อง')}};r.readAsText(f);e.target.value=''});
 document.addEventListener('input',e=>{
+  if(e.target.matches('[data-cq]')){
+    S.cq=e.target.value;const pos=e.target.selectionStart;render();
+    const el=$('cq');if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(_){}}
+    return}
   if(!e.target.matches('[data-q]'))return;
   S.q=e.target.value;const id=e.target.id,pos=e.target.selectionStart;render();
   const el=id&&$(id);if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(_){}}
@@ -361,7 +490,7 @@ async function cloudPush(force){if(!navigator.onLine){setSync('ออฟไล�
   else{SYNC.dirty=false;SYNC.seenAt=at;setSync('sync.','var(--ok)');cloudSnapshot()}}
 async function cloudPull(){const {data,error}=await SYNC.sb.from('clinic_state').select('data,updated_at').eq('id',ROW_ID).maybeSingle();
   if(error){setSync('ดึงข้อมูลไม่ได้','var(--dng)');return}
-  if(data?.data?.patients){DB=data.data;if(!Array.isArray(DB.trash))DB.trash=[];SYNC.seenAt=data.updated_at||'';localSave()}else await cloudPush(true)}
+  if(data?.data?.patients){DB=data.data;fixDB(DB);SYNC.seenAt=data.updated_at||'';localSave()}else await cloudPush(true)}
 /* สแนปช็อตบนคลาวด์ วันละครั้ง — กู้คืนได้ถ้าข้อมูลหลักเสียหาย */
 async function cloudSnapshot(){
   if(!SYNC.on)return;
@@ -390,7 +519,7 @@ let SNAPS=[];
 function subscribeRealtime(){SYNC.sb.channel('clinic-sync').on('postgres_changes',
   {event:'*',schema:'public',table:'clinic_state',filter:`id=eq.${ROW_ID}`},p=>{
     const n=p.new;if(!n)return;SYNC.seenAt=n.updated_at||SYNC.seenAt;if(n.updated_by===DEVICE)return;
-    DB=n.data;if(!Array.isArray(DB.trash))DB.trash=[];localSave();applyTheme(DB.theme||'cheesecake');render();setSync('sync.','var(--ok)')}).subscribe()}
+    DB=n.data;fixDB(DB);localSave();applyTheme(DB.theme||'cheesecake');render();setSync('sync.','var(--ok)')}).subscribe()}
 window.addEventListener('online',()=>{if(SYNC.dirty)cloudPush()});
 function loginUI(msg){
   app.innerHTML=`<div style="max-width:380px;margin:12vh auto"><div class="card">

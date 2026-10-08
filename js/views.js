@@ -6,8 +6,9 @@
 const app=document.getElementById('app'),$=x=>document.getElementById(x);
 function render(){
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.view));
-  document.body.dataset.v=S.view;
-  app.innerHTML=S.view==='schedule'?vSchedule():S.view==='planner'?vPlanner():S.view==='stats'?vStats():S.view==='upcoming'?vUpcoming():S.view==='archive'?vArchive():vSettings();
+  document.body.dataset.v=S.view==='stats'?'more':S.view;
+  document.querySelectorAll('#nav button').forEach(b=>{if(b.dataset.v==='more')b.classList.toggle('on',S.view==='more'||S.view==='stats')});
+  app.innerHTML=S.view==='schedule'?vSchedule():S.view==='planner'?vPlanner():(S.view==='more'||S.view==='stats')?vMore():S.view==='upcoming'?vUpcoming():S.view==='archive'?vArchive():vSettings();
 }
 function vSchedule(){const y=S.cur.getFullYear(),m=S.cur.getMonth(),od=overdueAppts().length;
   const hero=S.mode==='up'?'':`<div class="hero"><div class="num mono">${String(m+1).padStart(2,'0')}</div>
@@ -33,7 +34,7 @@ function calendar(y,m){
     const out=dt.getMonth()!==m,s=daySch(k),w=s?wt(s.typeId):null;
     if(S.filter!=='all'&&(!w||w.id!==S.filter)){cells+=`<div class="cell ${out?'out':''}" style="opacity:.3"><div class="ctop"><span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div></div>`;continue}
     const n=liveOn(k).length,tdy=k===TODAY,mk=w&&(w.id==='off'||w.id==='scr');
-    cells+=`<div class="cell ${out?'out':''} ${tdy?'tdy':''} ${mk&&!tdy?'mark':''}" ${mk?`style="--mk:${w.color}"`:''} role="button" tabindex="0" data-act="addAppt" data-d="${k}" title="คลิกเพื่อเพิ่มนัดวันนี้">
+    cells+=`<div class="cell ${out?'out':''} ${tdy?'tdy':''} ${mk&&!tdy?'mark':''}" ${mk?`style="--mk:${w.color}"`:''} role="button" tabindex="0" data-act="day" data-d="${k}" title="ดูนัดของวันนี้">
       <div class="ctop"><span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div>
       <div class="cmid">${w?`<div class="rline"><i class="rdot" style="background:${w.color}"></i><span class="rl" style="color:${tdy?'var(--onhl)':w.color}">${esc(s.room||w.room)}</span></div>`:''}
       ${s&&s.note?`<div class="rl sub" style="color:var(--tx2);font-weight:500">${esc(s.note)}</div>`:''}</div>
@@ -215,6 +216,71 @@ function bars(rows,label){
       <b class="stn">${n}</b></div>`}).join('')}</div>`}
 const MON_EN=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
 function yearSeen(y){return MON_EN.map((_,i)=>monthStats(y,i).done)}
+/* ---------- MORE: สรุป + เคสที่ต้องติดตาม ---------- */
+function vMore(){
+  const sb=S.sub==='cases'?'cases':'stats';
+  const watch=DB.cases.filter(c=>(c.status||'watch')==='watch').length;
+  return `<div class="row subrow"><div class="seg sub">
+    <button data-act="sub" data-s="stats" class="${sb==='stats'?'on':''}">Summary</button>
+    <button data-act="sub" data-s="cases" class="${sb==='cases'?'on':''} ${caseDue().length?'alert':''}">Case notes${watch?` · ${watch}`:''}</button>
+    </div></div>`+(sb==='cases'?vCases():vStats());}
+
+/* เคสที่ถึงกำหนดรีวิวแล้ว */
+const caseDue=()=>DB.cases.filter(c=>(c.status||'watch')==='watch'&&c.review&&c.review<=TODAY);
+const CASE_TPL={vpt:'VPT / Pulp cap',gen:'General'};
+function caseChips(c){const o=[];
+  if(c.perc)o.push('Perc '+(c.perc==='+'?'+ve':'\u2212ve'));
+  if(c.mob)o.push('Mob '+c.mob);
+  if(c.pd)o.push('PD '+c.pd);
+  if((c.caries||[]).length)o.push('Caries '+c.caries.join(''));
+  if(c.expo)o.push('Exp '+c.expo);
+  if(c.hemo)o.push('Haemo '+(c.hemo==='Achieved'?'\u2713':'\u2717'));
+  if(c.cap)o.push(c.cap);
+  if((c.liner||[]).filter(x=>x!=='None').length)o.push(c.liner.filter(x=>x!=='None').join(' + '));
+  if(c.temp&&c.temp!=='None')o.push('Temp '+c.temp);
+  if(c.fin&&c.fin!=='None')o.push(c.fin);
+  return o}
+function vCases(){
+  const f=S.cfilter||'watch',q=(S.cq||'').trim().toLowerCase();
+  let list=DB.cases.slice().sort((a,b)=>{
+    const aw=(a.status||'watch')==='watch',bw=(b.status||'watch')==='watch';
+    if(aw!==bw)return aw?-1:1;
+    const ar=a.review||'9999',br=b.review||'9999';
+    return ar!==br?ar.localeCompare(br):(b.date||'').localeCompare(a.date||'')});
+  if(f!=='all')list=list.filter(c=>(c.status||'watch')===f);
+  if(q)list=list.filter(c=>{const p=pt(c.patientId)||{};
+    return ((p.name||'')+' '+(p.hn||'')+' '+(c.tooth||'')+' '+(c.note||'')+' '+(c.symNote||'')+' '+(c.cap||'')+' '+(c.fin||'')).toLowerCase().includes(q)});
+  const cnt=k=>DB.cases.filter(c=>k==='all'||(c.status||'watch')===k).length;
+  const head=`<div class="sthead"><div><div class="eyebrow">FOLLOW-UP</div>
+      <h1 class="ptitle2">Case notes</h1></div>
+    <button class="btn pri" data-act="addCase">\uff0b New case</button></div>
+    <div class="row subrow"><div class="seg sub">
+      ${[['watch','Watching'],['done','Closed'],['all','All']].map(([k,t])=>
+        `<button data-act="caseFilt" data-f="${k}" class="${f===k?'on':''}">${t} · ${cnt(k)}</button>`).join('')}</div>
+      <div class="asearch" style="flex:1 1 180px;max-width:260px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg>
+        <input id="cq" data-cq placeholder="ค้นหา ชื่อ / HN / ซี่ / วัสดุ" value="${esc(S.cq||'')}"></div></div>`;
+  if(!list.length)return head+`<div class="empty">${DB.cases.length?'ไม่พบเคสที่ตรงกับตัวกรอง':'ยังไม่มีเคสที่ติดตาม — กด \uff0b New case เพื่อเริ่ม'}</div>`;
+  return head+list.map(c=>{
+    const p=pt(c.patientId),due=(c.status||'watch')==='watch'&&c.review&&c.review<=TODAY;
+    const dd=c.review?Math.round((parseD(c.review)-parseD(TODAY))/864e5):null;
+    const chips=caseChips(c);
+    return `<div class="ccard ${due?'due':''} ${(c.status||'watch')==='done'?'cdone':''}">
+      <div class="chead">
+        <div style="min-width:0">
+          <div class="cname">${esc(p?p.name:'(ลบคนไข้แล้ว)')}${c.tooth?` <span class="ctooth">#${esc(c.tooth)}</span>`:''}</div>
+          <div class="cmeta">${esc(p&&p.hn?p.hn:'ไม่มี HN')} · ${esc(CASE_TPL[c.type]||c.type||'')} · ${thDate(c.date)}</div></div>
+        <div class="ac">
+          ${(c.status||'watch')==='watch'
+            ?`<button class="btn sm" data-act="caseDone" data-id="${c.id}">ปิดเคส</button>`
+            :`<button class="btn sm" data-act="caseOpen" data-id="${c.id}">ติดตามต่อ</button>`}
+          <button class="btn sm" data-act="editCase" data-id="${c.id}">แก้ไข</button>
+          <button class="btn sm dg" data-act="delCase" data-id="${c.id}">ลบ</button></div></div>
+      ${c.symNote||((c.sym||[]).length)?`<div class="csym">${(c.sym||[]).map(x=>`<span class="chip" style="border-color:var(--line2);color:var(--tx2)">${esc(x)}</span>`).join('')}${c.symNote?` <span class="muted">${esc(c.symNote)}</span>`:''}</div>`:''}
+      ${chips.length?`<div class="cchips">${chips.map(x=>`<span class="ck">${esc(x)}</span>`).join('')}</div>`:''}
+      ${c.note?`<div class="cnote">${esc(c.note)}</div>`:''}
+      ${c.review?`<div class="crev ${due?'on':''}">Review ${thDate(c.review)}${(c.status||'watch')==='watch'?` · ${dd<0?`เลยมา ${-dd} วัน`:dd===0?'วันนี้':`อีก ${dd} วัน`}`:''}</div>`:''}
+      </div>`}).join('');}
 function vStats(){
   const y=S.cur.getFullYear(),m=S.cur.getMonth(),s=monthStats(y,m);
   const ys=yearSeen(y),yTot=ys.reduce((a,b)=>a+b,0),yMax=Math.max(1,...ys);

@@ -27,8 +27,15 @@ const digits=s=>(s||'').replace(/\D/g,'');
 const telLink=(ph,label)=>{const d=digits(ph);return d.length>=9?`<a class="tel" href="tel:${d}" onclick="event.stopPropagation()">${esc(label||ph)}</a>`:esc(label||ph||'')};
 const ses4=t=>{const h=+(t||'13:00').split(':')[0];return h<12?'am':h<16?'pm':'ev'};
 
+/* เติมคีย์ที่ขาดให้ข้อมูลเก่า (ไฟล์สำรองเดิม / คลาวด์เดิม) */
+function fixDB(d){if(!d)return d;
+  if(!Array.isArray(d.trash))d.trash=[];
+  if(!Array.isArray(d.cases))d.cases=[];
+  if(!Array.isArray(d.workTypes)||!d.workTypes.length)d.workTypes=DEF_WT.slice();
+  if(!Array.isArray(d.visits))d.visits=[];
+  return d}
 let DB=loadLocal();
-function loadLocal(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.patients){if(!Array.isArray(r.trash))r.trash=[];return r}}catch(e){}return seed()}
+function loadLocal(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.patients)return fixDB(r)}catch(e){}return seed()}
 const TRASH_DAYS=30;
 function purgeOldTrash(){if(!DB.trash)DB.trash=[];const cut=Date.now()-TRASH_DAYS*864e5,n=DB.trash.length;
   DB.trash=DB.trash.filter(t=>t.at>cut);if(DB.trash.length!==n)localSave()}
@@ -40,7 +47,7 @@ const pt=id=>DB.patients.find(p=>p.id===id);
 const daySch=d=>DB.daySchedules[d]||null;
 const isOff=d=>{const s=daySch(d);return !!s&&s.typeId==='off'};
 function seed(){
-  const db={patients:[],appointments:[],visits:[],trash:[],daySchedules:{},workTypes:DEF_WT.slice(),
+  const db={patients:[],appointments:[],visits:[],cases:[],trash:[],daySchedules:{},workTypes:DEF_WT.slice(),
     categories:['Oral exam','RPD','TP','CD','ENDO','SUR','Stitch off','F/U','อื่นๆ'],
     categoryStyles:{'Oral exam':{bg:'#EDEAE0',text:'#5C6D68'},'RPD':{bg:'#EFE1EA',text:'#63405A'},
       'TP':{bg:'#EFE1EA',text:'#63405A'},'CD':{bg:'#EFE1EA',text:'#63405A'},'ENDO':{bg:'#F7E4DD',text:'#9C4530'},
@@ -56,12 +63,12 @@ function autoBackup(){const k=BK+TODAY;
     while(keys.length>7)localStorage.removeItem(keys.shift())}catch(e){}}
 const backupList=()=>Object.keys(localStorage).filter(x=>x.startsWith(BK)).sort().reverse();
 function restoreBackup(k){try{const j=JSON.parse(localStorage.getItem(k));
-  if(!j?.data?.patients)throw 0;DB=j.data;localSave();applyTheme(DB.theme||'cheesecake');render();
+  if(!j?.data?.patients)throw 0;DB=fixDB(j.data);localSave();applyTheme(DB.theme||'cheesecake');render();
   alert('กู้คืนข้อมูลวันที่ '+k.replace(BK,'')+' เรียบร้อย')}catch(e){alert('ไฟล์สำรองเสียหาย')}}
 
 /* ---------- STATE ---------- */
 const now=new Date();
-let S={view:'schedule',mode:'cal',cur:new Date(now.getFullYear(),now.getMonth(),1),q:'',sel:null,onlyBusy:true,filter:'all',
+let S={view:'schedule',mode:'cal',sub:'stats',cq:'',cfilter:'watch',cur:new Date(now.getFullYear(),now.getMonth(),1),q:'',sel:null,onlyBusy:true,filter:'all',
   plan:{sel:new Set(),mode:'room',typeId:DEF_WT[0].id,session:'am',note:'',dows:new Set(),every:'all'}};
 function applyTheme(id){const t=THEMES.find(x=>x.id===id)||THEMES.find(x=>x.id==='cheesecake')||THEMES[0];
   Object.entries(t.v).forEach(([k,v])=>document.documentElement.style.setProperty('--'+k,v));
