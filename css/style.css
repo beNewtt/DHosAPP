@@ -168,7 +168,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .seg button{padding:6px 13px;font-size:11px;color:var(--tx2);font-weight:700;border-radius:999px;white-space:nowrap}
 .seg button:hover{color:var(--ink)}
 .seg button:last-child{border-right:0}.seg button.on{background:var(--hl);color:var(--onhl)}
-.subrow{margin-bottom:12px;gap:8px;flex-wrap:wrap}
+.subrow{margin:16px 0 12px;gap:8px;flex-wrap:wrap}
 .seg.sub button{padding:5px 12px;font-size:10.5px}
 
 /* ---------- แผ่นสรุปรายวัน (กดจากช่องปฏิทิน) ---------- */
@@ -212,6 +212,52 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .cnote{margin-top:8px;font-size:12.5px;color:var(--tx);white-space:pre-wrap;overflow-wrap:anywhere}
 .crev{margin-top:9px;font-size:11.5px;font-weight:700;color:var(--tx2)}
 .crev.on{color:var(--dng)}
+.ctpl{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--tx2);
+  background:var(--soft);border:1px solid var(--line2);border-radius:5px;padding:1px 7px;margin-left:4px;vertical-align:2px}
+.cfoot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;
+  border-top:1px solid var(--line2);padding-top:11px}
+.cfoot .crev{margin-top:0;margin-left:auto}
+
+/* ---------- ไทม์ไลน์ของเคส ---------- */
+.tline{margin-top:11px;padding-left:4px}
+.ent{position:relative;padding:0 0 13px 19px;border-left:2px solid var(--line2)}
+.ent:last-child{padding-bottom:2px;border-left-color:transparent}
+.ent .edot{position:absolute;left:-6px;top:4px;width:9px;height:9px;border-radius:50%;
+  background:var(--hl);border:2px solid var(--surface)}
+.ent.fu .edot{background:var(--surface);border:2px solid var(--line2);box-shadow:inset 0 0 0 1px var(--tx2)}
+.ehead{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12.5px;color:var(--ink)}
+.ekind{font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--onhl);background:var(--hl);border-radius:4px;padding:1px 6px}
+.ekind.fu{color:var(--tx2);background:var(--soft);border:1px solid var(--line2)}
+.elast{font-size:9.5px;font-weight:800;color:var(--ok);letter-spacing:.05em}
+.eac{margin-left:auto}
+.ent .csym,.ent .cchips,.ent .cnote{margin-top:6px}
+
+/* ---------- ตาราง canal ---------- */
+.cnhead,.cnrow{display:grid;grid-template-columns:1fr 1.15fr 1fr 34px;gap:6px;align-items:center}
+.cnhead{font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--tx2);margin-bottom:5px}
+.cnrow{margin-bottom:6px}
+.cnrow .xin{max-width:none;width:100%}
+.pk.xdel{padding:6px 0;text-align:center;justify-content:center}
+
+/* ---------- กระดิ่งแจ้งเตือน ---------- */
+#bellBtn{position:relative}
+#bellBtn .bdot{position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;
+  background:var(--dng);display:none}
+#bellBtn.has .bdot{display:block}
+.ntitle{font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--tx2);margin:12px 0 7px}
+.ntitle:first-child{margin-top:0}
+.nrow{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border-radius:7px;
+  background:var(--soft);margin-bottom:5px;font-size:12px;width:100%;text-align:left;color:var(--tx)}
+.nrow:hover{background:var(--line2)}
+.nrow i{font-style:normal;font-size:11px;font-weight:800;color:var(--hl);
+  flex:0 0 auto;font-variant-numeric:tabular-nums}
+.nrow.warn2 i{color:var(--dng)}
+.nrow b{font-weight:700;overflow-wrap:anywhere}
+.nrow small{display:block;color:var(--tx2);font-size:11px;font-weight:500;margin-top:1px}
+.nempty{font-size:12px;color:var(--tx2);padding:14px 2px;text-align:center}
 .cal{border-top:1px solid var(--line);border-left:1px solid var(--line)}
 .grid{display:grid;grid-template-columns:repeat(7,1fr)}
 .gh{padding:clamp(5px,.7vw,8px) 0;text-align:center;font-size:clamp(9.5px,.85vw,11px);font-weight:700;color:var(--ink);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -367,4 +413,7 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
   .exrow{align-items:flex-start;gap:4px}
   .exrow>span{flex:1 1 100%}
   .chead .ac{margin-left:0;width:100%;justify-content:flex-start}
+  .cnhead{display:none}
+  .cnrow{grid-template-columns:1fr 1fr 1fr 30px;gap:5px}
+  .cfoot .crev{margin-left:0;width:100%}
 }
