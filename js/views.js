@@ -7,6 +7,7 @@ const app=document.getElementById('app'),$=x=>document.getElementById(x);
 function render(){
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.view));
   document.body.dataset.v=S.view==='stats'?'more':S.view;
+  syncBell();
   document.querySelectorAll('#nav button').forEach(b=>{if(b.dataset.v==='more')b.classList.toggle('on',S.view==='more'||S.view==='stats')});
   app.innerHTML=S.view==='schedule'?vSchedule():S.view==='planner'?vPlanner():(S.view==='more'||S.view==='stats')?vMore():S.view==='upcoming'?vUpcoming():S.view==='archive'?vArchive():vSettings();
 }
@@ -218,69 +219,137 @@ const MON_EN=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV',
 function yearSeen(y){return MON_EN.map((_,i)=>monthStats(y,i).done)}
 /* ---------- MORE: สรุป + เคสที่ต้องติดตาม ---------- */
 function vMore(){
-  const sb=S.sub==='cases'?'cases':'stats';
+  const sb=S.sub==='stats'?'stats':'cases';
   const watch=DB.cases.filter(c=>(c.status||'watch')==='watch').length;
   return `<div class="row subrow"><div class="seg sub">
-    <button data-act="sub" data-s="stats" class="${sb==='stats'?'on':''}">Summary</button>
     <button data-act="sub" data-s="cases" class="${sb==='cases'?'on':''} ${caseDue().length?'alert':''}">Case notes${watch?` · ${watch}`:''}</button>
+    <button data-act="sub" data-s="stats" class="${sb==='stats'?'on':''}">Summary</button>
     </div></div>`+(sb==='cases'?vCases():vStats());}
 
 /* เคสที่ถึงกำหนดรีวิวแล้ว */
 const caseDue=()=>DB.cases.filter(c=>(c.status||'watch')==='watch'&&c.review&&c.review<=TODAY);
-const CASE_TPL={vpt:'VPT / Pulp cap',gen:'General'};
-function caseChips(c){const o=[];
-  if(c.perc)o.push('Perc '+(c.perc==='+'?'+ve':'\u2212ve'));
-  if(c.mob)o.push('Mob '+c.mob);
-  if(c.pd)o.push('PD '+c.pd);
-  if((c.caries||[]).length)o.push('Caries '+c.caries.join(''));
-  if(c.expo)o.push('Exp '+c.expo);
-  if(c.hemo)o.push('Haemo '+(c.hemo==='Achieved'?'\u2713':'\u2717'));
-  if(c.cap)o.push(c.cap);
-  if((c.liner||[]).filter(x=>x!=='None').length)o.push(c.liner.filter(x=>x!=='None').join(' + '));
-  if(c.temp&&c.temp!=='None')o.push('Temp '+c.temp);
-  if(c.fin&&c.fin!=='None')o.push(c.fin);
+const CASE_TPL={vpt:'VPT / Pulp cap',rct:'RCT',gen:'General'};
+const KIND={tx:'Treatment',fu:'Follow-up'};
+const ents=c=>(c.entries||[]).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+const lastEnt=c=>ents(c).slice(-1)[0]||{};
+const caseDate=c=>(ents(c)[0]||{}).date||'';
+
+/* ย่อสิ่งที่ติ๊กไว้ใน 1 entry ให้เป็นชิปอ่านเร็ว */
+function entChips(e,type){const o=[];
+  if(type==='rct'){
+    if(e.dxP)o.push(e.dxP);
+    if(e.dxA)o.push(e.dxA);
+    if(e.cold)o.push('Cold '+({'+':'+ve','-':'\u2212ve','L':'Lingering'}[e.cold]||e.cold));
+    if(e.ept)o.push('EPT '+e.ept);
+  }
+  if(e.perc)o.push('Perc '+(e.perc==='+'?'+ve':'\u2212ve'));
+  if(e.palp)o.push('Palp '+(e.palp==='+'?'+ve':'\u2212ve'));
+  if(e.mob)o.push('Mob '+e.mob);
+  if(e.pd)o.push('PD '+e.pd);
+  if(e.sinus==='Yes')o.push('Sinus tract');
+  if((e.caries||[]).length)o.push('Caries '+e.caries.join(''));
+  if(type==='vpt'){
+    if(e.expo)o.push('Exp '+e.expo);
+    if(e.hemo)o.push('Haemo '+(e.hemo==='Achieved'?'\u2713':'\u2717'));
+    if(e.cap)o.push(e.cap);
+  }
+  if(type==='rct'){
+    const cn=(e.canals||[]).filter(x=>x.n||x.wl||x.maf);
+    if(cn.length)o.push(cn.length+' canal'+(cn.length>1?'s':''));
+    cn.forEach(x=>o.push([x.n,x.wl?x.wl+' mm':'',x.maf].filter(Boolean).join(' ')));
+    if((e.irrig||[]).length)o.push(e.irrig.join(' + '));
+    if(e.med&&e.med!=='None')o.push('Med '+e.med);
+    if(e.obt&&e.obt!=='Not yet')o.push('Obturated'+(e.obtTech?' \u00b7 '+e.obtTech:''));
+    if(e.sealer)o.push('Sealer '+e.sealer);
+    if((e.restPlan||[]).length)o.push('Final: '+e.restPlan.join(' + '));
+  }
+  if((e.liner||[]).filter(x=>x!=='None').length)o.push(e.liner.filter(x=>x!=='None').join(' + '));
+  if(e.interim&&e.interim!=='None')o.push('Interim '+e.interim);
+  if(e.temp&&e.temp!=='None')o.push('Temp '+e.temp);
+  if(e.fin&&e.fin!=='None')o.push(e.fin);
   return o}
+
+function entryHTML(c,e,i,total){
+  const chips=entChips(e,c.type);
+  return `<div class="ent ${e.kind==='fu'?'fu':''}">
+    <div class="edot"></div>
+    <div class="ebody">
+      <div class="ehead"><b>${thDate(e.date||TODAY)}</b>
+        <span class="ekind ${e.kind==='fu'?'fu':''}">${KIND[e.kind]||'Treatment'}</span>
+        ${i===total-1?'<span class="elast">ล่าสุด</span>':''}
+        <span class="eac"><button class="btn sm" data-act="editEnt" data-id="${c.id}" data-e="${e.id}">แก้ไข</button></span></div>
+      ${(e.sym||[]).length||e.symNote?`<div class="csym">${(e.sym||[]).map(x=>`<span class="chip" style="border-color:var(--line2);color:var(--tx2)">${esc(x)}</span>`).join('')}${e.symNote?` <span class="muted">${esc(e.symNote)}</span>`:''}</div>`:''}
+      ${chips.length?`<div class="cchips">${chips.map(x=>`<span class="ck">${esc(x)}</span>`).join('')}</div>`:''}
+      ${e.note?`<div class="cnote">${esc(e.note)}</div>`:''}
+    </div></div>`}
+
 function vCases(){
   const f=S.cfilter||'watch',q=(S.cq||'').trim().toLowerCase();
   let list=DB.cases.slice().sort((a,b)=>{
     const aw=(a.status||'watch')==='watch',bw=(b.status||'watch')==='watch';
     if(aw!==bw)return aw?-1:1;
     const ar=a.review||'9999',br=b.review||'9999';
-    return ar!==br?ar.localeCompare(br):(b.date||'').localeCompare(a.date||'')});
+    return ar!==br?ar.localeCompare(br):(lastEnt(b).date||'').localeCompare(lastEnt(a).date||'')});
   if(f!=='all')list=list.filter(c=>(c.status||'watch')===f);
   if(q)list=list.filter(c=>{const p=pt(c.patientId)||{};
-    return ((p.name||'')+' '+(p.hn||'')+' '+(c.tooth||'')+' '+(c.note||'')+' '+(c.symNote||'')+' '+(c.cap||'')+' '+(c.fin||'')).toLowerCase().includes(q)});
+    const txt=(p.name||'')+' '+(p.hn||'')+' '+(c.tooth||'')+' '+(CASE_TPL[c.type]||'')+' '
+      +ents(c).map(e=>[e.note,e.symNote,e.cap,e.fin,e.dxP,e.dxA,e.med,(e.restPlan||[]).join(' ')].join(' ')).join(' ');
+    return txt.toLowerCase().includes(q)});
   const cnt=k=>DB.cases.filter(c=>k==='all'||(c.status||'watch')===k).length;
   const head=`<div class="sthead"><div><div class="eyebrow">FOLLOW-UP</div>
       <h1 class="ptitle2">Case notes</h1></div>
     <button class="btn pri" data-act="addCase">\uff0b New case</button></div>
-    <div class="row subrow"><div class="seg sub">
+    <div class="row subrow" style="margin-top:0"><div class="seg sub">
       ${[['watch','Watching'],['done','Closed'],['all','All']].map(([k,t])=>
-        `<button data-act="caseFilt" data-f="${k}" class="${f===k?'on':''}">${t} · ${cnt(k)}</button>`).join('')}</div>
+        `<button data-act="caseFilt" data-f="${k}" class="${f===k?'on':''}">${t} \u00b7 ${cnt(k)}</button>`).join('')}</div>
       <div class="asearch" style="flex:1 1 180px;max-width:260px">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg>
         <input id="cq" data-cq placeholder="ค้นหา ชื่อ / HN / ซี่ / วัสดุ" value="${esc(S.cq||'')}"></div></div>`;
-  if(!list.length)return head+`<div class="empty">${DB.cases.length?'ไม่พบเคสที่ตรงกับตัวกรอง':'ยังไม่มีเคสที่ติดตาม — กด \uff0b New case เพื่อเริ่ม'}</div>`;
+  if(!list.length)return head+`<div class="empty">${DB.cases.length?'ไม่พบเคสที่ตรงกับตัวกรอง':'ยังไม่มีเคสที่ติดตาม \u2014 กด \uff0b New case เพื่อเริ่ม'}</div>`;
   return head+list.map(c=>{
     const p=pt(c.patientId),due=(c.status||'watch')==='watch'&&c.review&&c.review<=TODAY;
     const dd=c.review?Math.round((parseD(c.review)-parseD(TODAY))/864e5):null;
-    const chips=caseChips(c);
+    const es=ents(c);
     return `<div class="ccard ${due?'due':''} ${(c.status||'watch')==='done'?'cdone':''}">
       <div class="chead">
         <div style="min-width:0">
-          <div class="cname">${esc(p?p.name:'(ลบคนไข้แล้ว)')}${c.tooth?` <span class="ctooth">#${esc(c.tooth)}</span>`:''}</div>
-          <div class="cmeta">${esc(p&&p.hn?p.hn:'ไม่มี HN')} · ${esc(CASE_TPL[c.type]||c.type||'')} · ${thDate(c.date)}</div></div>
+          <div class="cname">${esc(p?p.name:'(ลบคนไข้แล้ว)')}${c.tooth?` <span class="ctooth">#${esc(c.tooth)}</span>`:''}
+            <span class="ctpl">${esc(CASE_TPL[c.type]||c.type||'')}</span></div>
+          <div class="cmeta">${esc(p&&p.hn?p.hn:'ไม่มี HN')} \u00b7 เริ่ม ${thDate(caseDate(c)||TODAY)} \u00b7 ${es.length} ครั้ง</div></div>
         <div class="ac">
           ${(c.status||'watch')==='watch'
             ?`<button class="btn sm" data-act="caseDone" data-id="${c.id}">ปิดเคส</button>`
             :`<button class="btn sm" data-act="caseOpen" data-id="${c.id}">ติดตามต่อ</button>`}
-          <button class="btn sm" data-act="editCase" data-id="${c.id}">แก้ไข</button>
-          <button class="btn sm dg" data-act="delCase" data-id="${c.id}">ลบ</button></div></div>
-      ${c.symNote||((c.sym||[]).length)?`<div class="csym">${(c.sym||[]).map(x=>`<span class="chip" style="border-color:var(--line2);color:var(--tx2)">${esc(x)}</span>`).join('')}${c.symNote?` <span class="muted">${esc(c.symNote)}</span>`:''}</div>`:''}
-      ${chips.length?`<div class="cchips">${chips.map(x=>`<span class="ck">${esc(x)}</span>`).join('')}</div>`:''}
-      ${c.note?`<div class="cnote">${esc(c.note)}</div>`:''}
-      ${c.review?`<div class="crev ${due?'on':''}">Review ${thDate(c.review)}${(c.status||'watch')==='watch'?` · ${dd<0?`เลยมา ${-dd} วัน`:dd===0?'วันนี้':`อีก ${dd} วัน`}`:''}</div>`:''}
-      </div>`}).join('');}
+          <button class="btn sm dg" data-act="delCase" data-id="${c.id}">ลบเคส</button></div></div>
+      <div class="tline">${es.map((e,i)=>entryHTML(c,e,i,es.length)).join('')}</div>
+      <div class="cfoot">
+        <button class="btn sm pri" data-act="addEnt" data-id="${c.id}">\uff0b บันทึกครั้งต่อไป</button>
+        ${c.review?`<span class="crev ${due?'on':''}">Review ${thDate(c.review)}${(c.status||'watch')==='watch'?` \u00b7 ${dd<0?`เลยมา ${-dd} วัน`:dd===0?'วันนี้':`อีก ${dd} วัน`}`:''}</span>`:'<span class="crev" style="font-weight:500;opacity:.7">ยังไม่ได้ตั้งวันรีวิว</span>'}
+      </div></div>`}).join('');}
+/* ---------- แจ้งเตือนเงียบ ๆ: พรุ่งนี้ / รีวิว / ค้างอัปเดต ---------- */
+function notis(){
+  const tmr=iso(new Date(Date.now()+864e5));
+  return{tomorrow:liveOn(tmr).filter(a=>a.status==='scheduled'),
+         today:liveOn(TODAY).filter(a=>a.status==='scheduled'),
+         due:caseDue(),
+         overdue:overdueAppts()}}
+const notiCount=()=>{const n=notis();return n.tomorrow.length+n.today.length+n.due.length+n.overdue.length};
+function renderNoti(){
+  const n=notis(),L=[];
+  const apRow=(a,cls)=>{const p=pt(a.patientId);
+    return `<button class="nrow ${cls||''}" data-act="goDay" data-d="${a.date}">
+      <i>${esc(a.time||'—')}</i><span><b>${esc(p?p.name:'—')}</b>
+      <small>${esc(a.proc||'ไม่ระบุ')}${a.tooth?' \u00b7 ซี่ '+esc(a.tooth):''}</small></span></button>`};
+  if(n.today.length)L.push(`<div class="ntitle">วันนี้ \u00b7 ${n.today.length} นัด</div>`+n.today.map(a=>apRow(a)).join(''));
+  if(n.tomorrow.length)L.push(`<div class="ntitle">พรุ่งนี้ \u00b7 ${n.tomorrow.length} นัด</div>`+n.tomorrow.map(a=>apRow(a)).join(''));
+  if(n.due.length)L.push(`<div class="ntitle">ถึงกำหนดรีวิว \u00b7 ${n.due.length} เคส</div>`+n.due.map(c=>{
+    const p=pt(c.patientId),dd=Math.round((parseD(c.review)-parseD(TODAY))/864e5);
+    return `<button class="nrow warn2" data-act="goCase" data-id="${c.id}">
+      <i>${dd<0?'เลย '+(-dd)+' วัน':'วันนี้'}</i><span><b>${esc(p?p.name:'—')}${c.tooth?' #'+esc(c.tooth):''}</b>
+      <small>${esc(CASE_TPL[c.type]||'')} \u00b7 ${thDate(c.review)}</small></span></button>`}).join(''));
+  if(n.overdue.length)L.push(`<div class="ntitle">ค้างอัปเดต \u00b7 ${n.overdue.length} นัด</div>`+n.overdue.slice(0,6).map(a=>apRow(a,'warn2')).join(''));
+  $('npanel').innerHTML=L.length?L.join(''):`<div class="nempty">ไม่มีอะไรต้องตามตอนนี้</div>`}
+function syncBell(){const b=$('bellBtn');if(b)b.classList.toggle('has',notiCount()>0)}
 function vStats(){
   const y=S.cur.getFullYear(),m=S.cur.getMonth(),s=monthStats(y,m);
   const ys=yearSeen(y),yTot=ys.reduce((a,b)=>a+b,0),yMax=Math.max(1,...ys);

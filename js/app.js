@@ -43,60 +43,150 @@ function mDay(d){
    <button class="btn pri" data-act="addAppt" data-d="${d}">\uff0b เพิ่มนัด</button></div>`;
   mask.classList.add('on')}
 
-/* ---------- บันทึกเคสที่ต้องติดตาม ---------- */
-function mCase(id,pre={}){
-  const c=id?DB.cases.find(x=>x.id===id)
-    :{id:'',patientId:pre.p||'',tooth:pre.tooth||'',type:'vpt',date:TODAY,sym:[],symNote:'',
-      perc:'',mob:'',pd:'',caries:[],expo:'',hemo:'',hemoMin:'',cap:'',liner:[],temp:'',fin:'',
-      review:'',status:'watch',note:''};
+/* ---------- บันทึกเคสที่ต้องติดตาม (1 เคส = หลาย entry) ---------- */
+const DX_PULP=['Normal pulp','Reversible pulpitis','Symptomatic irreversible pulpitis',
+  'Asymptomatic irreversible pulpitis','Pulp necrosis','Previously treated','Previously initiated'];
+const DX_APICAL=['Normal apical tissues','Symptomatic apical periodontitis','Asymptomatic apical periodontitis',
+  'Acute apical abscess','Chronic apical abscess','Condensing osteitis'];
+const SYMPTOMS=['Asymptomatic','Provoked','Lingering','Spontaneous','Night pain','Swelling','Bite pain'];
+function blankEnt(kind){return{id:uid('e_'),kind:kind||'tx',date:TODAY,sym:[],symNote:'',
+  dxP:'',dxA:'',cold:'',ept:'',perc:'',palp:'',mob:'',pd:'',sinus:'',caries:[],
+  expo:'',hemo:'',hemoMin:'',cap:'',liner:[],temp:'',fin:'',
+  canals:[],irrig:[],med:'',interim:'',obt:'',obtTech:'',sealer:'',restPlan:[],restDone:'',note:''}}
+function cnlRow(x){x=x||{n:'',wl:'',maf:''};
+  return `<div class="cnrow"><input class="xin" data-c="n" value="${esc(x.n)}" placeholder="MB">
+    <input class="xin" data-c="wl" value="${esc(x.wl)}" placeholder="20.5 mm">
+    <input class="xin" data-c="maf" value="${esc(x.maf)}" placeholder="30/.04">
+    <button type="button" class="pk xdel" data-act="cnlDel">\u2715</button></div>`}
+
+/* id = เคส, eid = entry (ไม่ใส่ = สร้างเคสใหม่) */
+function mCase(cid,eid,pre={}){
+  const isNew=!cid;
+  const c=cid?DB.cases.find(x=>x.id===cid)
+    :{id:'',patientId:pre.p||'',tooth:pre.tooth||'',type:'vpt',status:'watch',review:'',entries:[]};
   if(!c)return;
+  const e=eid?(c.entries||[]).find(x=>x.id===eid):blankEnt(isNew?'tx':'fu');
+  if(!e)return;
   const p=pt(c.patientId);
   const row=(lbl,inner)=>`<div class="exrow"><span>${lbl}</span><div>${inner}</div></div>`;
-  open(`<div class="mtitle">${id?'Edit case note':'New case note'}</div>
-   <div class="muted" style="margin-bottom:14px">Follow-up log for a case worth watching</div>
-   <div class="f ac-wrap"><label>Patient</label>
+  const title=isNew?'New case':(eid?'Edit entry':'New entry');
+  open(`<div class="mtitle">${title}</div>
+   <div class="muted" style="margin-bottom:14px">${isNew?'Follow-up log for a case worth watching'
+     :`${esc(p?p.name:'')}${c.tooth?' \u00b7 #'+esc(c.tooth):''} \u00b7 ${esc(CASE_TPL[c.type]||'')}`}</div>
+   ${isNew?`<div class="f ac-wrap"><label>Patient</label>
      <input id="cpq" autocomplete="off" placeholder="HN / name / phone" value="${p?esc((p.hn||'—')+' — '+p.name):''}">
      <input type="hidden" id="cpid" value="${esc(c.patientId)}"><div class="ac-list" id="cplist"></div></div>
    <div class="g3 tight"><div class="f"><label>Tooth</label><input id="cto" value="${esc(c.tooth)}" placeholder="36"></div>
-   <div class="f"><label>Date</label><input type="date" id="cdt" value="${c.date||TODAY}"></div>
-   <div class="f"><label>Template</label><select id="ctp">${Object.entries(CASE_TPL).map(([k,t])=>`<option value="${k}" ${c.type===k?'selected':''}>${t}</option>`).join('')}</select></div></div>
+   <div class="f"><label>Date</label><input type="date" id="cdt" value="${e.date||TODAY}"></div>
+   <div class="f"><label>Template</label><select id="ctp">${Object.entries(CASE_TPL).map(([k,t])=>`<option value="${k}" ${c.type===k?'selected':''}>${t}</option>`).join('')}</select></div></div>`
+   :`<input type="hidden" id="cpid" value="${esc(c.patientId)}">
+     <input type="hidden" id="cto" value="${esc(c.tooth)}">
+     <input type="hidden" id="ctp" value="${esc(c.type)}">
+     <div class="g2"><div class="f"><label>Date</label><input type="date" id="cdt" value="${e.date||TODAY}"></div>
+     <div class="f"><label>Visit</label><div style="padding-top:3px">${pickG('kind',[['tx','Treatment'],['fu','Follow-up']],e.kind||'fu')}</div></div></div>`}
+
+   <div id="dxBlk" style="display:${c.type==='rct'?'block':'none'}">
+     <div class="sec">Diagnosis (AAE)</div>
+     ${row('Pulpal',pickG('dxP',DX_PULP,e.dxP))}
+     ${row('Apical',pickG('dxA',DX_APICAL,e.dxA))}
+   </div>
 
    <div class="sec">Symptom</div>
-   ${pickG('sym',['Asymptomatic','Provoked','Lingering','Spontaneous','Night pain','Swelling'],c.sym,true)}
-   <div class="f" style="margin-top:9px"><label>Symptom note</label><input id="csn" value="${esc(c.symNote)}" placeholder="e.g. cold-provoked, settles in 5 s"></div>
+   ${pickG('sym',SYMPTOMS,e.sym,true)}
+   <div class="f" style="margin-top:9px"><label>Symptom note</label><input id="csn" value="${esc(e.symNote)}" placeholder="e.g. cold-provoked, settles in 5 s"></div>
 
-   <div id="vptBlk" style="display:${c.type==='gen'?'none':'block'}">
+   <div id="exBlk" style="display:${c.type==='gen'?'none':'block'}">
      <div class="sec">Examination (I/O)</div>
-     ${row('Percussion',pickG('perc',[['+','+ve'],['-','\u2212ve']],c.perc))}
-     ${row('Mobility',pickG('mob',['0','I','II','III'],c.mob))}
-     ${row('PD',`<input id="cpd" class="xin" value="${esc(c.pd)}" placeholder="WNL / 4 mm">`)}
-     ${row('Caries surface',pickG('caries',['O','M','D','B','L'],c.caries,true))}
+     <div id="pulpTest" style="display:${c.type==='rct'?'block':'none'}">
+       ${row('Cold',pickG('cold',[['+','+ve'],['-','\u2212ve'],['L','Lingering']],e.cold))}
+       ${row('EPT',`<input id="cept" class="xin" value="${esc(e.ept)}" placeholder="e.g. 32">`)}
+     </div>
+     ${row('Percussion',pickG('perc',[['+','+ve'],['-','\u2212ve']],e.perc))}
+     ${row('Palpation',pickG('palp',[['+','+ve'],['-','\u2212ve']],e.palp))}
+     ${row('Mobility',pickG('mob',['0','I','II','III'],e.mob))}
+     ${row('PD',`<input id="cpd" class="xin" value="${esc(e.pd)}" placeholder="WNL / 4 mm">`)}
+     ${row('Sinus tract',pickG('sinus',['Yes','No'],e.sinus))}
+     ${row('Caries surface',pickG('caries',['O','M','D','B','L'],e.caries,true))}
+   </div>
 
+   <div id="vptBlk" style="display:${c.type==='vpt'?'block':'none'}">
      <div class="sec">Pulp exposure</div>
-     ${row('Exposure',pickG('expo',['None','Pinpoint','<1 mm','>1 mm'],c.expo))}
-     ${row('Haemostasis',pickG('hemo',['Achieved','Not achieved'],c.hemo)
-        +`<input id="chm" class="xin sm" type="number" min="0" step="1" value="${esc(c.hemoMin)}" placeholder="min">`)}
-
+     ${row('Exposure',pickG('expo',['None','Pinpoint','<1 mm','>1 mm'],e.expo))}
+     ${row('Haemostasis',pickG('hemo',['Achieved','Not achieved'],e.hemo)
+        +`<input id="chm" class="xin sm" type="number" min="0" step="1" value="${esc(e.hemoMin)}" placeholder="min">`)}
      <div class="sec">Materials</div>
-     ${row('Pulp cap',pickG('cap',['Dycal','Ca(OH)\u2082','MTA','Biodentine'],c.cap))}
-     ${row('Liner / base',pickG('liner',['Vitrebond','GIC','None'],c.liner,true))}
-     ${row('Temporary',pickG('temp',['Cavit','IRM','None'],c.temp))}
-     ${row('Final',pickG('fin',['Bulkfill','Composite','Flowable','None'],c.fin))}
+     ${row('Pulp cap',pickG('cap',['Dycal','Ca(OH)\u2082','MTA','Biodentine'],e.cap))}
+   </div>
+
+   <div id="rctBlk" style="display:${c.type==='rct'?'block':'none'}">
+     <div class="sec">Canals</div>
+     <div class="cnhead"><span>Canal</span><span>Working length</span><span>MAF</span><span></span></div>
+     <div id="cnl">${(e.canals&&e.canals.length?e.canals:[{n:'',wl:'',maf:''}]).map(cnlRow).join('')}</div>
+     <button type="button" class="qbtn" data-act="cnlAdd" style="margin:6px 0 12px">\uff0b canal</button>
+     ${row('Irrigation',pickG('irrig',['NaOCl','EDTA','CHX','Saline'],e.irrig,true))}
+     ${row('Medicament',pickG('med',['Ca(OH)\u2082','Ledermix','CHX','None'],e.med))}
+     <div class="sec">Obturation</div>
+     ${row('Status',pickG('obt',['Not yet','Done'],e.obt))}
+     ${row('Technique',pickG('obtTech',['Lateral','Single cone','Warm vertical'],e.obtTech))}
+     ${row('Sealer',`<input id="cslr" class="xin" value="${esc(e.sealer)}" placeholder="e.g. AH Plus">`)}
+   </div>
+
+   <div id="restBlk" style="display:${c.type==='gen'?'none':'block'}">
+     <div class="sec">Restoration</div>
+     ${row('Interim',pickG('interim',['Cavit','IRM','GIC','None'],e.interim))}
+     ${row('Liner / base',pickG('liner',['Vitrebond','GIC','None'],e.liner,true))}
+     <div id="vptRest" style="display:${c.type==='vpt'?'block':'none'}">
+       ${row('Temporary',pickG('temp',['Cavit','IRM','None'],e.temp))}
+       ${row('Final',pickG('fin',['Bulkfill','Composite','Flowable','None'],e.fin))}
+     </div>
+     <div id="rctRest" style="display:${c.type==='rct'?'block':'none'}">
+       ${row('Final plan',pickG('restPlan',['Ref cusp','MI','TMC','Composite','Onlay','Crown','Post & core'],e.restPlan,true))}
+       ${row('Final done',pickG('restDone',['Not yet','Done'],e.restDone))}
+     </div>
    </div>
 
    <div class="sec">Follow-up</div>
    <div class="g2"><div class="f"><label>Next review</label><input type="date" id="crv" value="${esc(c.review)}"></div>
-   <div class="f"><label>Status</label><select id="cst">
+   <div class="f"><label>Case status</label><select id="cst">
      <option value="watch" ${(c.status||'watch')==='watch'?'selected':''}>Watching</option>
      <option value="done" ${c.status==='done'?'selected':''}>Closed</option></select></div></div>
    <div class="quick">Review in:${[['1 wk',7],['1 mo',30],['3 mo',90],['6 mo',180],['1 y',365]]
      .map(([t,k])=>`<button type="button" class="qbtn" data-act="rvplus" data-n="${k}">+${t}</button>`).join('')}</div>
-   <div class="f"><label>Note / outcome</label><textarea id="cnt" rows="3">${esc(c.note)}</textarea></div>
-   <div class="mfoot">${id?`<button class="btn dg" data-act="delCase" data-id="${id}">ลบ</button>`:''}
+   <div class="f"><label>Note / outcome</label><textarea id="cnt" rows="3">${esc(e.note)}</textarea></div>
+   <div class="mfoot">${eid&&(c.entries||[]).length>1?`<button class="btn dg" data-act="delEnt" data-id="${cid}" data-e="${eid}">ลบครั้งนี้</button>`:''}
    <button class="btn" data-act="close">Cancel</button>
-   <button class="btn pri" data-act="saveCase" data-id="${id||''}">Save</button></div>`);
-  $('ctp').addEventListener('change',e=>{$('vptBlk').style.display=e.target.value==='gen'?'none':'block'});
-  initCasePt()}
+   <button class="btn pri" data-act="saveCase" data-id="${cid||''}" data-e="${eid||''}">Save</button></div>`);
+  const tpl=$('ctp');
+  if(tpl&&tpl.tagName==='SELECT')tpl.addEventListener('change',ev=>{
+    const v=ev.target.value;
+    $('dxBlk').style.display=v==='rct'?'block':'none';
+    $('exBlk').style.display=v==='gen'?'none':'block';
+    $('pulpTest').style.display=v==='rct'?'block':'none';
+    $('vptBlk').style.display=v==='vpt'?'block':'none';
+    $('rctBlk').style.display=v==='rct'?'block':'none';
+    $('restBlk').style.display=v==='gen'?'none':'block';
+    $('vptRest').style.display=v==='vpt'?'block':'none';
+    $('rctRest').style.display=v==='rct'?'block':'none'});
+  if(isNew)initCasePt()}
+
+/* อ่านค่าทั้งหมดจากฟอร์มเป็น entry เดียว */
+function readEnt(id,kind){
+  const v=k=>{const el=$(k);return el?el.value.trim():''};
+  const canals=[...(($('cnl')||{querySelectorAll:()=>[]}).querySelectorAll('.cnrow'))]
+    .map(r=>({n:r.querySelector('[data-c=n]').value.trim(),
+              wl:r.querySelector('[data-c=wl]').value.trim(),
+              maf:r.querySelector('[data-c=maf]').value.trim()}))
+    .filter(x=>x.n||x.wl||x.maf);
+  return{id:id||uid('e_'),kind:kind||pickVal('kind')||'tx',date:v('cdt')||TODAY,
+    sym:pickVal('sym'),symNote:v('csn'),
+    dxP:pickVal('dxP'),dxA:pickVal('dxA'),cold:pickVal('cold'),ept:v('cept'),
+    perc:pickVal('perc'),palp:pickVal('palp'),mob:pickVal('mob'),pd:v('cpd'),sinus:pickVal('sinus'),
+    caries:pickVal('caries'),
+    expo:pickVal('expo'),hemo:pickVal('hemo'),hemoMin:v('chm'),cap:pickVal('cap'),
+    canals,irrig:pickVal('irrig'),med:pickVal('med'),
+    obt:pickVal('obt'),obtTech:pickVal('obtTech'),sealer:v('cslr'),
+    interim:pickVal('interim'),liner:pickVal('liner'),temp:pickVal('temp'),fin:pickVal('fin'),
+    restPlan:pickVal('restPlan'),restDone:pickVal('restDone'),note:v('cnt')}}
 function initCasePt(){
   const inp=$('cpq'),box=$('cplist'),hid=$('cpid');
   const draw=()=>{const q=inp.value.trim().toLowerCase();
@@ -253,9 +343,11 @@ function mVisit(id){const v=DB.visits.find(x=>x.id===id),p=pt(v.patientId);
 /* ---------- ACTIONS ---------- */
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-act]');
-  if(!t){if(!e.target.closest('#tpanel'))$('tpanel').classList.remove('on');return}
+  if(!t){if(!e.target.closest('#tpanel'))$('tpanel').classList.remove('on');
+    if(!e.target.closest('#npanel'))$('npanel').classList.remove('on');return}
   const a=t.dataset.act,id=t.dataset.id,d=t.dataset.d,P=S.plan;
   if(!['themeBtn','setTheme','export','import','logout'].includes(a))$('tpanel').classList.remove('on');
+  if(a!=='bell')$('npanel').classList.remove('on');
   switch(a){
     case'setTheme':applyTheme(id);save();render();break;
     case'export':{const b=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
@@ -270,24 +362,42 @@ document.addEventListener('click',e=>{
       location.hash=v;render();window.scrollTo(0,0);break}
     case'mode':S.mode=t.dataset.m;render();break;
     case'sub':S.sub=t.dataset.s;render();window.scrollTo(0,0);break;
+    case'bell':{const pn=$('npanel'),on=pn.classList.contains('on');
+      $('tpanel').classList.remove('on');
+      if(on){pn.classList.remove('on')}else{renderNoti();pn.classList.add('on')}break}
+    case'goDay':$('npanel').classList.remove('on');mDay(d);break;
+    case'goCase':{$('npanel').classList.remove('on');S.view='more';S.sub='cases';S.cfilter='watch';
+      render();window.scrollTo(0,0);
+      setTimeout(()=>{const el=document.querySelector('.ccard.due');el&&el.scrollIntoView({behavior:'smooth',block:'center'})},90);break}
     case'day':mDay(d);break;
     case'caseFilt':S.cfilter=t.dataset.f;render();break;
-    case'addCase':mCase(null,{p:t.dataset.p,tooth:t.dataset.tooth});break;
-    case'editCase':mCase(id);break;
+    case'addCase':mCase(null,null,{p:t.dataset.p,tooth:t.dataset.tooth});break;
+    case'addEnt':mCase(id,null);break;
+    case'editEnt':mCase(id,t.dataset.e);break;
+    case'editCase':mCase(id,((DB.cases.find(x=>x.id===id)||{}).entries||[])[0]?.id);break;
+    case'cnlAdd':{const box=$('cnl');if(box)box.insertAdjacentHTML('beforeend',cnlRow());break}
+    case'cnlDel':{const r=t.closest('.cnrow'),box=$('cnl');
+      if(r&&box&&box.querySelectorAll('.cnrow').length>1)r.remove();
+      else if(r)r.querySelectorAll('input').forEach(i=>i.value='');break}
+    case'delEnt':{const c=DB.cases.find(x=>x.id===id);if(!c)break;
+      if(c.entries.length<2){alert('เคสต้องมีอย่างน้อย 1 บันทึก');break}
+      if(!confirm('ลบบันทึกครั้งนี้?'))break;
+      c.entries=c.entries.filter(x=>x.id!==t.dataset.e);save();close();render();break}
     case'rvplus':{const f=$('crv');if(!f)break;const b=f.value?parseD(f.value):new Date();
       b.setDate(b.getDate()+ +t.dataset.n);f.value=iso(b);break}
     case'caseDone':{const c=DB.cases.find(x=>x.id===id);if(c){c.status='done';save();render()}break}
     case'caseOpen':{const c=DB.cases.find(x=>x.id===id);if(c){c.status='watch';save();render()}break}
     case'delCase':if(confirm('ลบบันทึกเคสนี้?')){DB.cases=DB.cases.filter(x=>x.id!==id);save();close();render()}break;
-    case'saveCase':{const pid=$('cpid').value;
+    case'saveCase':{const pid=$('cpid').value,eid=t.dataset.e;
       if(!pid){alert('Please select a patient first.');return}
-      const o={patientId:pid,tooth:$('cto').value.trim().replace(/^#/,''),date:$('cdt').value||TODAY,type:$('ctp').value,
-        sym:pickVal('sym'),symNote:$('csn').value.trim(),
-        perc:pickVal('perc'),mob:pickVal('mob'),pd:($('cpd')||{}).value?$('cpd').value.trim():'',
-        caries:pickVal('caries'),expo:pickVal('expo'),hemo:pickVal('hemo'),hemoMin:($('chm')||{}).value||'',
-        cap:pickVal('cap'),liner:pickVal('liner'),temp:pickVal('temp'),fin:pickVal('fin'),
-        review:$('crv').value,status:$('cst').value,note:$('cnt').value.trim()};
-      if(id)Object.assign(DB.cases.find(x=>x.id===id),o);else DB.cases.push({id:uid('c_'),...o});
+      const head={patientId:pid,tooth:$('cto').value.trim().replace(/^#/,''),type:$('ctp').value,
+        review:$('crv').value,status:$('cst').value};
+      if(id){const c=DB.cases.find(x=>x.id===id);if(!c)break;
+        Object.assign(c,head);
+        const en=readEnt(eid||null);
+        const at=eid?c.entries.findIndex(x=>x.id===eid):-1;
+        if(at>=0)c.entries[at]=en;else c.entries.push(en);
+      }else DB.cases.push({id:uid('c_'),...head,entries:[readEnt(null,'tx')]});
       save();close();S.view='more';S.sub='cases';render();break}
     case'filt':S.filter=t.dataset.f;render();break;
     case'busy':S.onlyBusy=t.dataset.v==='1';render();break;
@@ -460,7 +570,7 @@ document.addEventListener('touchend',e=>{
   S.mode=ord[j];render();window.scrollTo(0,0)},{passive:true});
 
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){$('tpanel').classList.remove('on');return}
+  if(e.key==='Escape'){$('tpanel').classList.remove('on');$('npanel').classList.remove('on');return}
   const t=e.target;
   if((e.key==='Enter'||e.key===' ')&&t.getAttribute&&t.getAttribute('role')==='button'&&t.dataset.act){e.preventDefault();t.click()}
 });

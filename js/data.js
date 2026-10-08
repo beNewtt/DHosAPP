@@ -31,6 +31,16 @@ const ses4=t=>{const h=+(t||'13:00').split(':')[0];return h<12?'am':h<16?'pm':'e
 function fixDB(d){if(!d)return d;
   if(!Array.isArray(d.trash))d.trash=[];
   if(!Array.isArray(d.cases))d.cases=[];
+  /* เคสรุ่นเก่า (1 เคส = 1 บันทึก) -> ย้ายเป็น entry แรกของไทม์ไลน์ */
+  d.cases.forEach(c=>{
+    if(Array.isArray(c.entries))return;
+    const e={id:'e_'+Math.random().toString(36).slice(2,9),kind:'tx',date:c.date||TODAY,
+      sym:c.sym||[],symNote:c.symNote||'',perc:c.perc||'',mob:c.mob||'',pd:c.pd||'',caries:c.caries||[],
+      expo:c.expo||'',hemo:c.hemo||'',hemoMin:c.hemoMin||'',cap:c.cap||'',liner:c.liner||[],
+      temp:c.temp||'',fin:c.fin||'',note:c.note||''};
+    c.entries=[e];
+    ['date','sym','symNote','perc','mob','pd','caries','expo','hemo','hemoMin','cap','liner','temp','fin','note']
+      .forEach(k=>delete c[k])});
   if(!Array.isArray(d.workTypes)||!d.workTypes.length)d.workTypes=DEF_WT.slice();
   if(!Array.isArray(d.visits))d.visits=[];
   return d}
@@ -68,7 +78,7 @@ function restoreBackup(k){try{const j=JSON.parse(localStorage.getItem(k));
 
 /* ---------- STATE ---------- */
 const now=new Date();
-let S={view:'schedule',mode:'cal',sub:'stats',cq:'',cfilter:'watch',cur:new Date(now.getFullYear(),now.getMonth(),1),q:'',sel:null,onlyBusy:true,filter:'all',
+let S={view:'schedule',mode:'cal',sub:'cases',cq:'',cfilter:'watch',cur:new Date(now.getFullYear(),now.getMonth(),1),q:'',sel:null,onlyBusy:true,filter:'all',
   plan:{sel:new Set(),mode:'room',typeId:DEF_WT[0].id,session:'am',note:'',dows:new Set(),every:'all'}};
 function applyTheme(id){const t=THEMES.find(x=>x.id===id)||THEMES.find(x=>x.id==='cheesecake')||THEMES[0];
   Object.entries(t.v).forEach(([k,v])=>document.documentElement.style.setProperty('--'+k,v));
