@@ -14,7 +14,7 @@ function render(){
 function vSchedule(){const y=S.cur.getFullYear(),m=S.cur.getMonth(),od=overdueAppts().length;
   const hero=S.mode==='up'?'':`<div class="hero"><div class="num mono">${String(m+1).padStart(2,'0')}</div>
     <div class="rt"><div class="mn">${TH_MF[m]}</div><div class="yr">${y+543}</div>
-    <div class="nav2"><button data-act="mv" data-n="-1" aria-label="เดือนก่อน"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button data-act="mv" data-n="1" aria-label="เดือนถัดไป"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div></div></div>`;
+    <div class="nav2"><button data-act="mv" data-n="-1" aria-label="เดือนก่อน">${SI('chevL')}</button><button data-act="mv" data-n="1" aria-label="เดือนถัดไป">${SI('chevR')}</button></div></div></div>`;
   const sub=S.mode==='cal'?'':`<div class="row subrow">
     <div class="seg sub"><button data-act="mode" data-m="up" class="${S.mode==='up'?'on':''}">All</button>
     <button data-act="mode" data-m="list" class="${S.mode==='list'?'on':''}">By day</button></div>
@@ -24,7 +24,7 @@ function vSchedule(){const y=S.cur.getFullYear(),m=S.cur.getMonth(),od=overdueAp
   return hero+`<div class="tools"><div class="seg">
     <button data-act="mode" data-m="cal" class="${S.mode==='cal'?'on':''}">Month</button>
     <button data-act="mode" data-m="${S.mode==='list'?'list':'up'}" class="${S.mode!=='cal'?'on':''} ${od?'alert':''}">Upcoming</button></div>
-    <div class="tright"><button class="ico-sm" data-act="today" title="วันนี้" aria-label="วันนี้"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none"/><path d="M12 1.6v2.6M12 19.8v2.6M22.4 12h-2.6M4.2 12H1.6"/></svg></button>
+    <div class="tright"><button class="ico-sm" data-act="today" title="วันนี้" aria-label="วันนี้">${SI('target')}</button>
     <button class="btn pri sm" data-act="addAppt" data-d="${TODAY}">＋ เพิ่มนัด</button></div></div>`
   +sub+(S.mode==='cal'?calendar(y,m):S.mode==='up'?vUpcoming():dayList(y,m))}
 function calendar(y,m){
@@ -288,7 +288,7 @@ function vUpcoming(){
       return `<div class="day"><div class="rail ${d===TODAY?'today':''}">
         <div class="dw">${DOWF[dt.getDay()]}</div><div class="dn">${dt.getDate()}</div><div class="dm">${TH_M[dt.getMonth()]} ${dt.getFullYear()+543}</div>
         ${w?`<span class="rl2" style="background:${w.color}22;color:${w.color};border:1px solid ${w.color}55">${esc(s.room||w.room)}</span>`:''}
-        <span class="rl2" style="background:var(--infBg);color:var(--inf)">${diff===0?'วันนี้':diff===1?'พรุ่งนี้':'อีก '+diff+' วัน'}</span></div>
+        ${diff===0?'':`<span class="rl2 rdiff">${diff===1?'พรุ่งนี้':'อีก '+diff+' วัน'}</span>`}</div>
         <div class="slots">${shown.map(se=>{const l=as.filter(a=>a.session===se.id);
           return `<div class="slot ${se.id}"><h4><i class="dot" style="background:${se.c}"></i> ${se.name}</h4>${l.map(ptRow).join('')}</div>`}).join('')}</div></div>`}).join('')+openCasesHTML()}
 function monthStats(y,m){
@@ -399,8 +399,7 @@ function vCases(){
     <div class="row subrow" style="margin-top:0"><div class="seg sub">
       ${[['watch','Watching'],['done','Closed'],['all','All']].map(([k,t])=>
         `<button data-act="caseFilt" data-f="${k}" class="${f===k?'on':''}">${t} \u00b7 ${cnt(k)}</button>`).join('')}</div>
-      <div class="asearch" style="flex:1 1 180px;max-width:260px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg>
+      <div class="asearch" style="flex:1 1 180px;max-width:260px">${SI('search')}
         <input id="cq" data-cq placeholder="ค้นหา ชื่อ / HN / ซี่ / วัสดุ" value="${esc(S.cq||'')}"></div></div>`;
   if(!list.length)return head+`<div class="empty">${DB.cases.length?'ไม่พบเคสที่ตรงกับตัวกรอง':'ยังไม่มีเคสที่ติดตาม \u2014 กด \uff0b New case เพื่อเริ่ม'}</div>`;
   return head+list.map(c=>{
@@ -507,7 +506,7 @@ function vArchive(){
   const res=DB.patients.filter(p=>match(p,S.q)&&(cf==='all'||p.cat===cf)).sort((a,b)=>(a.hn||'').localeCompare(b.hn||''));
   const left=`<div class="card"><div class="row sp"><h3 style="margin:0">คนไข้ (${res.length})</h3>
     <button class="btn sm pri" data-act="addPatient">＋ ใหม่</button></div>
-    <div class="asearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></svg>
+    <div class="asearch">${SI('search')}
     <input id="aq" data-q placeholder="ค้นหา HN / ชื่อ / เบอร์โทร" value="${esc(S.q)}"></div>
     <div class="cfil"><button class="cf ${cf==='all'?'on':''}" data-act="catFil" data-c="all">ทั้งหมด</button>
     ${(DB.categories||[]).map(c=>{const n=DB.patients.filter(p=>p.cat===c).length;if(!n)return '';
