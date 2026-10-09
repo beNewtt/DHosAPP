@@ -557,3 +557,10 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 [data-theme="fruitchew"] #nav button.on{background:color-mix(in srgb,var(--nc) 16%,transparent);color:var(--nc)}
 [data-theme="fruitchew"] #bellBtn .bdot{background:#661968;box-shadow:none}
 [data-theme="fruitchew"] #syncBadge{background:var(--bg);color:#661968}
+
+/* ---------- คิวรีวิวเคส + ลิงก์ visit -> เคส ---------- */
+.wtag.review{color:var(--ok);background:var(--okBg)}
+.wq.review{border-left:3px solid var(--ok)}
+.vlink{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--ok);background:var(--okBg);border-radius:7px;padding:8px 10px;margin:4px 0 12px}
+.cnhead,.cnrow{grid-template-columns:.8fr 1.1fr 1fr .9fr 34px}
+@media(max-width:640px){.cnrow{grid-template-columns:1fr 1fr 1fr 1fr 28px;gap:4px}.cnrow .xin{padding:6px 6px;font-size:11.5px}}
