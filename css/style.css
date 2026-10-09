@@ -33,31 +33,31 @@ header{border-bottom:1px solid var(--line);background:var(--surface);position:st
 .brand .ic{width:34px;height:34px;background:var(--hl);color:var(--onhl);display:grid;place-items:center;font-weight:800;font-size:13px;border-radius:8px}
 .brand h1{font-size:clamp(13px,1.3vw,16px);font-weight:800;color:var(--ink);line-height:1.15}
 .brand p{font-size:9.5px;color:var(--tx2);font-weight:500}
-nav{display:flex;gap:2px;background:var(--soft);border-radius:999px;padding:3px;overflow:auto}
-nav button{padding:7px clamp(10px,1.1vw,16px);border-radius:999px;color:var(--tx2);font-weight:700;font-size:12px;white-space:nowrap}
+nav{display:flex;gap:2px;background:var(--soft);border-radius:10px;padding:3px;overflow:auto}
+nav button{padding:7px clamp(10px,1.1vw,16px);border-radius:7px;color:var(--tx2);font-weight:700;font-size:12px;white-space:nowrap}
 nav button:hover{color:var(--ink)}
 nav button.on{background:var(--hl);color:var(--onhl);box-shadow:0 2px 6px rgba(0,0,0,.14)}
 .hright{margin-left:auto;display:flex;align-items:center;gap:6px}
-.ico{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;color:var(--ink);display:grid;place-items:center;background:var(--soft);flex:none}
+.ico{width:34px;height:34px;border:1px solid var(--line);border-radius:8px;color:var(--ink);display:grid;place-items:center;background:var(--soft);flex:none}
 .ico:hover{border-color:var(--hl);color:var(--hl)}
 .ico svg{width:16px;height:16px}
 .cfil{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
-.cf{border:0;background:var(--soft);color:var(--tx2);border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:700}
+.cf{border:0;background:var(--soft);color:var(--tx2);border-radius:6px;padding:4px 10px;font-size:10.5px;font-weight:700}
 .cf b{opacity:.55;font-weight:700}
 .cf:hover{color:var(--ink)}
 .cf.on{background:var(--hl);color:var(--onhl)}.cf.on b{opacity:.8}
 a.tel{color:inherit;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px}
 a.tel:hover{color:var(--hl);text-decoration-style:solid}
-.asearch{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:7px 13px;margin:10px 0;background:var(--soft)}
+.asearch{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:7px 13px;margin:10px 0;background:var(--soft)}
 .asearch svg{flex:none;width:16px;height:16px;color:var(--tx2)}
 .asearch input{background:none;border:0;outline:none;width:100%;font-size:12.5px;color:inherit}
-#syncBadge{font-size:10.5px;font-weight:700;white-space:nowrap;color:var(--tx2);background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:5px 11px;display:flex;align-items:center;gap:5px}
+#syncBadge{font-size:10.5px;font-weight:700;white-space:nowrap;color:var(--tx2);background:var(--soft);border:1px solid var(--line);border-radius:7px;padding:5px 11px;display:flex;align-items:center;gap:5px}
 #syncBadge b{width:6px;height:6px;border-radius:50%;background:var(--tx2);display:inline-block}
 #syncBadge.ok b{background:var(--ok)}#syncBadge.wrn b{background:var(--wrn)}#syncBadge.dng b{background:var(--dng)}
 .tpanel{position:fixed;top:64px;right:clamp(10px,2vw,26px);width:300px;max-height:78vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 22px 50px rgba(0,0,0,.3);padding:14px;z-index:50;display:none}
 .tpanel.on{display:block}
 .tpanel .lb{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:10px 0 8px}
-.thgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px}
+.thgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:7px}
 .wtlist{display:flex;flex-direction:column;gap:8px}
 .wt{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;background:var(--soft);border:0;border-radius:var(--r);padding:10px 12px}
 .swatch{width:20px;height:20px;border-radius:50%;background:var(--c);flex:none;cursor:pointer;position:relative;overflow:hidden;margin-bottom:7px}
@@ -83,7 +83,7 @@ a.tel:hover{color:var(--hl);text-decoration-style:solid}
 .stcell small{font-size:10px;color:var(--tx2);font-weight:500}
 .stcell.hi{background:var(--soft)}
 .sechead{display:flex;align-items:center;gap:9px;margin:34px 0 12px;flex-wrap:wrap}
-.pill{background:var(--hl);color:var(--onhl);border-radius:999px;padding:3px 10px;font-size:9px;font-weight:700;letter-spacing:.1em}
+.pill{background:var(--hl);color:var(--onhl);border-radius:5px;padding:3px 10px;font-size:9px;font-weight:700;letter-spacing:.1em}
 .sect{font-size:14px;font-weight:700;color:var(--ink)}
 .secr{margin-left:auto;font-size:11px;color:var(--tx2);font-weight:500}
 .secr b{color:var(--ink);font-weight:700}
@@ -112,23 +112,24 @@ table.dt td.muted{font-weight:500}
 .stn{font-size:13px;font-weight:800;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
 .thlab{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:14px 0 7px}
 .thlab:first-child{margin-top:0}
-.th{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 13px;border-radius:8px;border:0;box-shadow:none;font-weight:700;font-size:12px;width:100%;transition:transform .08s,box-shadow .12s;position:relative}
+.th{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 50px;border-radius:8px;border:0;box-shadow:none;font-weight:700;font-size:12px;width:100%;transition:transform .08s,box-shadow .12s;position:relative}
 .th:hover{transform:translateY(-1px)}
-.th.on{box-shadow:0 0 0 2px currentColor}
+.th.on{box-shadow:0 0 0 3px currentColor}
+.th .thn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .th .sw{box-shadow:0 0 0 1px rgba(128,128,128,.25)}
 .th[data-id=rgb] .sw:first-child{animation:swcycle 5s linear infinite}
 @keyframes swcycle{0%{background:hsl(120,39%,49%)}20%{background:hsl(192,48%,48%)}40%{background:hsl(264,90%,58%)}60%{background:hsl(357,89%,50%)}80%{background:hsl(46,100%,51%)}100%{background:hsl(120,39%,49%)}}
-.th .sws{position:absolute;right:11px;opacity:0;transition:opacity .12s}
+.th .sws{position:absolute;right:10px;top:50%;transform:translateY(-50%);opacity:0;transition:opacity .12s}
 .th:hover .sws,.th.on .sws{opacity:1}
 .th:hover{border-color:var(--line)}.th.on{border-color:var(--hl);color:var(--ink)}
-.th .sws{display:flex;gap:4px}
-.th .sw{width:11px;height:11px;border-radius:50%;border:0}
+.th .sws{display:flex;gap:3px}
+.th .sw{width:10px;height:10px;border-radius:50%;border:0}
 .hr{height:1px;background:var(--line);margin:12px 0}
 .row{display:flex;align-items:center;gap:10px}.sp{justify-content:space-between}
 h2{font-size:clamp(16px,1.8vw,19px);font-weight:800;color:var(--ink);margin:22px 0 13px}
 h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .card h2:first-child{margin-top:0}
-.btn{background:var(--surface);border:1px solid var(--line);padding:9px 16px;border-radius:999px;font-weight:600;color:var(--tx)}
+.btn{background:var(--surface);border:1px solid var(--line);padding:9px 16px;border-radius:8px;font-weight:600;color:var(--tx)}
 .btn:hover{border-color:var(--hl);color:var(--ink)}
 .btn.pri{background:var(--hl);border-color:var(--hl);color:var(--onhl)}
 .btn.pri:hover{filter:brightness(1.12);color:var(--onhl)}
@@ -153,7 +154,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .alert{position:relative}
 .alert:after{content:'';position:absolute;top:2px;right:4px;width:6px;height:6px;border-radius:50%;background:var(--dng)}
 .tright{margin-left:auto;display:flex;align-items:center;gap:6px}
-.ico-sm{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--soft);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;flex:none;padding:0;line-height:0}
+.ico-sm{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--soft);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;flex:none;padding:0;line-height:0}
 .ico-sm:hover{background:var(--hl);border-color:var(--hl);color:var(--onhl)}
 .hero{display:flex;align-items:flex-end;justify-content:space-between;padding:clamp(8px,1.4vw,18px) 0 clamp(8px,1vw,13px);gap:10px;flex-wrap:nowrap}
 .hero .num{font-size:clamp(46px,7vw,84px);font-weight:700;line-height:.82;color:transparent;-webkit-text-stroke:2px var(--ink)}
@@ -164,8 +165,8 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .nav2 button{width:30px;height:30px;border:1px solid var(--line);border-radius:50%;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:0}
 .tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:14px 0 12px}
 .tools .btn{font-size:11px;padding:6px 11px}
-.seg{display:flex;gap:2px;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:2px}
-.seg button{padding:6px 13px;font-size:11px;color:var(--tx2);font-weight:700;border-radius:999px;white-space:nowrap}
+.seg{display:flex;gap:2px;background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:2px}
+.seg button{padding:6px 13px;font-size:11px;color:var(--tx2);font-weight:700;border-radius:7px;white-space:nowrap}
 .seg button:hover{color:var(--ink)}
 .seg button:last-child{border-right:0}.seg button.on{background:var(--hl);color:var(--onhl)}
 .subrow{margin:16px 0 12px;gap:8px;flex-wrap:wrap}
@@ -182,7 +183,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
   margin:18px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--line2)}
 .pickg{display:flex;flex-wrap:wrap;gap:5px}
 .pk{padding:6px 11px;font-size:11.5px;font-weight:700;color:var(--tx2);background:var(--soft);
-  border:1.5px solid var(--line);border-radius:999px;white-space:nowrap}
+  border:1.5px solid var(--line);border-radius:6px;white-space:nowrap}
 .pk:hover{color:var(--ink);border-color:var(--line2)}
 .pk.on{background:var(--hl);border-color:var(--hl);color:var(--onhl)}
 .exrow{display:flex;align-items:center;gap:10px;margin-bottom:7px;flex-wrap:wrap}
@@ -278,7 +279,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .cnt i{font-weight:500;font-style:normal;color:var(--tx2);margin-left:1px}
 .cell.tdy .cnt i{color:var(--onhl);opacity:.85}
 .filters{display:flex;gap:5px;flex-wrap:wrap;margin-top:11px}
-.fl{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;background:var(--soft);border:1px solid var(--line);font-weight:600;font-size:10.5px;color:var(--tx)}
+.fl{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;background:var(--soft);border:1px solid var(--line);font-weight:600;font-size:10.5px;color:var(--tx)}
 .fl .dot{width:6px;height:6px;flex:0 0 6px}
 .fl.on{background:var(--hl);color:var(--onhl);border-color:var(--hl)}
 @media(max-width:1024px){.rl.sub{display:none}}
@@ -303,7 +304,7 @@ h3{font-size:11.5px;color:var(--tx2);margin:18px 0 8px;font-weight:700;letter-sp
 .rail .dm{font-size:10.5px;color:var(--tx2);margin-bottom:8px}
 .rail.today{background:var(--hl)}.rail.today .dw,.rail.today .dn,.rail.today .dm{color:var(--onhl)}
 .rail.today .btn{background:transparent;color:var(--onhl);border-color:rgba(255,255,255,.4)}
-.rl2{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;display:inline-block;max-width:100%;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rl2{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-block;max-width:100%;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .slots{flex:1;min-width:0;padding:12px;display:flex;flex-direction:column;gap:10px}
 .addrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:11.5px;color:var(--tx2);font-weight:600}
 .slot{border:0;border-left:2px solid;border-radius:0;padding:2px 0 2px 11px}
@@ -354,7 +355,7 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
   /* ฟอร์มเคส: ซี่ฟัน+วันที่ ยังอยู่บรรทัดเดียวกันบนมือถือ */
   .g3.tight{grid-template-columns:1fr 1fr}.g3.tight>:last-child{grid-column:1/-1}}
 .quick{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:-4px 0 12px;font-size:10.5px;color:var(--tx2);font-weight:700}
-.qbtn{border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:700;color:var(--tx)}
+.qbtn{border:1px solid var(--line);background:var(--soft);border-radius:6px;padding:4px 10px;font-size:10.5px;font-weight:700;color:var(--tx)}
 .qbtn:hover{border-color:var(--hl);color:var(--hl)}
 .mfoot{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;border-top:1px solid var(--line);margin-top:4px;padding-top:13px}
 .mfoot .btn{flex:1 1 auto;justify-content:center;text-align:center}
@@ -416,4 +417,30 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
   .cnhead{display:none}
   .cnrow{grid-template-columns:1fr 1fr 1fr 30px;gap:5px}
   .cfoot .crev{margin-left:0;width:100%}
+}
+
+
+/* ---------- ไอคอนติ๊กถูก / กากบาท ---------- */
+.ic{width:.95em;height:.95em;flex:none;vertical-align:-.13em;fill:none;stroke:currentColor;
+  stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.wtdel .ic,.xdel .ic,#pwaX .ic{width:13px;height:13px;vertical-align:middle}
+.ck .ic{stroke-width:2.8}
+
+/* ---------- Fruit Chew: ปุ่มเมนูเป็นเม็ดยาสีม่วง (ตาม monkeytype) ---------- */
+[data-theme="fruitchew"] nav{background:transparent;gap:6px;padding:0}
+[data-theme="fruitchew"] nav button{border-radius:10rem;color:var(--bg);background:var(--hl)}
+[data-theme="fruitchew"] nav button:hover{filter:brightness(1.25);color:var(--bg)}
+[data-theme="fruitchew"] nav button.on{background:#e34c6c;color:var(--bg)}
+[data-theme="fruitchew"] .hright .ico{border-radius:10rem;background:var(--hl);border-color:var(--hl);color:var(--bg)}
+[data-theme="fruitchew"] .hright .ico:hover{filter:brightness(1.25)}
+[data-theme="fruitchew"] #bellBtn .bdot{background:var(--bg);box-shadow:none}
+[data-theme="fruitchew"] #syncBadge{background:var(--bg);color:var(--hl);border-color:var(--bg)}
+
+/* มือถือ: 2 คอลัมน์ ชื่อเต็ม ๆ — โชว์จุดสีเฉพาะธีมที่เลือกอยู่ */
+@media(max-width:560px){
+  .thgrid{grid-template-columns:1fr 1fr}
+  .th{padding:10px 10px}
+  .th .sws{display:none}
+  .th.on{padding-right:46px}
+  .th.on .sws{display:flex}
 }
