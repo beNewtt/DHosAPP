@@ -426,15 +426,6 @@ tr.sel td{background:var(--soft);box-shadow:inset 3px 0 0 var(--hl)}
 .wtdel .ic,.xdel .ic,#pwaX .ic{width:13px;height:13px;vertical-align:middle}
 .ck .ic{stroke-width:2.8}
 
-/* ---------- Fruit Chew: ปุ่มเมนูเป็นเม็ดยาสีม่วง (ตาม monkeytype) ---------- */
-[data-theme="fruitchew"] nav{background:transparent;gap:6px;padding:0}
-[data-theme="fruitchew"] nav button{border-radius:10rem;color:var(--bg);background:var(--hl)}
-[data-theme="fruitchew"] nav button:hover{filter:brightness(1.25);color:var(--bg)}
-[data-theme="fruitchew"] nav button.on{background:#e34c6c;color:var(--bg)}
-[data-theme="fruitchew"] .hright .ico{border-radius:10rem;background:var(--hl);border-color:var(--hl);color:var(--bg)}
-[data-theme="fruitchew"] .hright .ico:hover{filter:brightness(1.25)}
-[data-theme="fruitchew"] #bellBtn .bdot{background:var(--bg);box-shadow:none}
-[data-theme="fruitchew"] #syncBadge{background:var(--bg);color:var(--hl);border-color:var(--bg)}
 
 /* มือถือ: 2 คอลัมน์ ชื่อเต็ม ๆ — โชว์จุดสีเฉพาะธีมที่เลือกอยู่ */
 @media(max-width:560px){
@@ -498,3 +489,71 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
   .fill .fq{order:1;position:static}
   .fill .fslots{order:2}
 }
+
+/* =====================================================================
+   ไม่มีเส้นขอบ (สไตล์ monkeytype): แยกส่วนด้วยสีพื้น ไม่ใช้กรอบ
+   ===================================================================== */
+/* สีพื้นปุ่ม = ตัวหนังสือจาง ๆ บนพื้นการ์ด ใช้ได้ทุกธีม */
+:root{--btnbg:color-mix(in srgb,var(--tx) 11%,var(--surface))}
+/* ปุ่ม: พื้นสีอ่อน (สีเส้นขอบเดิม) · ชี้แล้วเข้มขึ้นเป็นสีตัวหนังสือของธีม */
+.btn{background:var(--btnbg);border-color:transparent;color:var(--tx);transition:background .12s,color .12s}
+.btn:hover{background:var(--tx);color:var(--bg);border-color:transparent}
+.btn.pri{background:var(--hl);color:var(--onhl)}
+.btn.pri:hover{background:var(--tx);color:var(--bg)}
+.btn.dg{color:var(--dng)}
+.btn.dg:hover{background:var(--dng);color:#fff}
+.rail.today .btn{background:color-mix(in srgb,var(--onhl) 18%,transparent);color:var(--onhl)}
+.rail.today .btn:hover{background:var(--onhl);color:var(--hl)}
+
+/* ชิป / ป้ายเล็ก: มีแต่พื้น ไม่มีกรอบ */
+.chip,.st,.rl2,.fl,.cf,.qbtn,.pk,.fgap,.fwarn,.wtag,.ck,.ctpl,.ekind,.pill,.tag,#syncBadge,.asearch,.seg,.xin{border-color:transparent!important}
+.qbtn,.fl{background:var(--btnbg)}
+.qbtn:hover,.fl:hover{background:var(--tx);color:var(--bg)}
+.fl.on{background:var(--hl);color:var(--onhl)}
+.pk{background:var(--btnbg)}
+.pk:hover{background:var(--tx);color:var(--bg)}
+.pk.on,.pk.on:hover{background:var(--hl);color:var(--onhl)}
+.seg button:not(.on):hover{background:var(--btnbg);color:var(--tx)}
+.fgap:hover{background:var(--ok);color:var(--bg)}
+
+/* ช่องกรอก: พื้นอ่อน ไม่มีกรอบ · โฟกัสแล้วเป็นวงแสง */
+.f input,.f select,.f textarea,.xin{border-color:transparent!important;background:var(--soft)}
+.f input:focus,.f select:focus,.f textarea:focus,.xin:focus{box-shadow:0 0 0 2px var(--hl)}
+
+/* การ์ดเล็ก: ไม่มีเส้นรอบ (ใช้พื้นแยกแทน) */
+.pt,.ccard,.fday,.wq,.nrow{border-color:transparent!important}
+.fday,.wq{border-left-width:1px}
+.ccard{border-left-width:1px}
+.ccard.due{background:color-mix(in srgb,var(--dngBg) 70%,var(--surface))}
+.fday.nomain{background:color-mix(in srgb,var(--wrnBg) 60%,var(--surface))}
+.wq.resched{background:color-mix(in srgb,var(--wrnBg) 55%,var(--surface))}
+
+/* ป้ายในแถบวันที่: เรียงกลาง ต่อบรรทัด */
+.rail .rl2{display:block;width:fit-content;max-width:100%;margin:0 auto 6px}
+.rail .rdiff{background:var(--infBg);color:var(--inf)}
+.rail.today .rl2{background:color-mix(in srgb,var(--onhl) 18%,transparent)!important;color:var(--onhl)!important}
+
+/* ไอคอน: ทึบ ไม่มีกรอบ · ชี้แล้วจางลง */
+.ico,.ico-sm{background:transparent!important;border:0!important;color:var(--ink)}
+.ico .ics{width:19px;height:19px}
+.ico-sm .ics{width:17px;height:17px}
+.ico:hover,.ico-sm:hover{background:transparent!important;color:color-mix(in srgb,var(--ink) 72%,white 28%)}
+.nav2 button{border:0!important;background:transparent!important;color:var(--ink)}
+.nav2 button:hover{color:color-mix(in srgb,var(--ink) 72%,white 28%)}
+.nav2 .ics{width:18px;height:18px}
+#nav .ics{width:15px;height:15px;vertical-align:-3px}
+.asearch>.ics{width:15px;height:15px;color:var(--tx2)}
+
+/* ---------- Fruit Chew: ไอคอนแต่ละเมนูมีสีของตัวเอง (ตาม monkeytype) ---------- */
+[data-theme="fruitchew"] nav{background:transparent}
+[data-theme="fruitchew"] #nav button[data-v="schedule"]{--nc:#a6bf50}
+[data-theme="fruitchew"] #nav button[data-v="planner"]{--nc:#c3921a}
+[data-theme="fruitchew"] #nav button[data-v="more"]{--nc:#b92221}
+[data-theme="fruitchew"] #nav button[data-v="archive"]{--nc:#661968}
+[data-theme="fruitchew"] .hright [data-v="settings"]{--nc:#88b6ce}
+[data-theme="fruitchew"] #bellBtn{--nc:#661968}
+[data-theme="fruitchew"] #nav button,[data-theme="fruitchew"] .hright .ico{color:var(--nc);background:transparent}
+[data-theme="fruitchew"] #nav button:hover,[data-theme="fruitchew"] .hright .ico:hover{color:color-mix(in srgb,var(--nc) 75%,white 25%);background:transparent}
+[data-theme="fruitchew"] #nav button.on{background:color-mix(in srgb,var(--nc) 16%,transparent);color:var(--nc)}
+[data-theme="fruitchew"] #bellBtn .bdot{background:#661968;box-shadow:none}
+[data-theme="fruitchew"] #syncBadge{background:var(--bg);color:#661968}
