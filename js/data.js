@@ -28,6 +28,27 @@ const digits=s=>(s||'').replace(/\D/g,'');
 const IC={
   x:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>',
   ok:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.8l4.4 4.4L19 7.6"/></svg>'};
+/* ไอคอนทึบ (แทนอีโมจิ) */
+const SIP={
+  warn:'M12 2.6c.5 0 .9.3 1.2.7l9.4 16.4c.5.9-.1 2-1.2 2H2.6c-1 0-1.7-1.1-1.2-2L10.8 3.3c.3-.4.7-.7 1.2-.7zM11 9v6h2V9h-2zm0 8v2h2v-2h-2z',
+  clock:'M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm-1 5v6.6l4.9 2.9 1-1.7-3.9-2.3V7h-2z',
+  pin:'M8 2h8v2l-1 1v5l3 3v2h-5v6l-1 2-1-2v-6H6v-2l3-3V5L8 4V2z',
+  ban:'M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm0 2.8a7.2 7.2 0 0 0-5.8 11.5L16.3 6.2A7.2 7.2 0 0 0 12 4.8zm5.8 2.9L7.7 17.8A7.2 7.2 0 0 0 17.8 7.7z',
+  room:'M4 3h16v18h-6v-4h-4v4H4V3zm7 3v2H9v2h2v2h2v-2h2V8h-2V6h-2z',
+  caloff:'M7 2h2v2h6V2h2v2h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3V2zM5 9v10h14V9H5zm4.2 2.5l1.4-1.4L12 11.6l1.4-1.5 1.4 1.4-1.4 1.5 1.4 1.4-1.4 1.4-1.4-1.4-1.4 1.4-1.4-1.4 1.4-1.4z',
+  eraser:'M15.6 3.4l5 5c.8.8.8 2 0 2.8L12.8 19H20v2H8.2l-4.8-4.8c-.8-.8-.8-2 0-2.8L12.8 3.4c.8-.8 2-.8 2.8 0zM9 11.2l-3.6 3.6 4.2 4.2h.4l2.6-2.6L9 11.2z',
+  note:'M4 4h9v2H6v12h12v-7h2v9H4V4zm14.6-1.4l2.8 2.8-8.6 8.6H10v-2.8l8.6-8.6z',
+  down:'M11 3h2v9.2l3.3-3.3 1.4 1.4L12 16l-5.7-5.7 1.4-1.4 3.3 3.3V3zM4 18h16v3H4v-3z',
+  up:'M12 3l5.7 5.7-1.4 1.4L13 6.8V16h-2V6.8L7.7 10.1 6.3 8.7 12 3zM4 18h16v3H4v-3z',
+  save:'M4 3h13l4 4v14H4V3zm3 2v5h9V5H7zm5 8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  trash:'M9 2h6l1 2h4v2H4V4h4l1-2zM5 8h14l-1 13H6L5 8z',
+  sun:'M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM1 11h3v2H1v-2zm19 0h3v2h-3v-2zM4.2 5.6l1.4-1.4 2.1 2.1-1.4 1.4-2.1-2.1zm12.1 12.1l1.4-1.4 2.1 2.1-1.4 1.4-2.1-2.1zM4.2 18.4l2.1-2.1 1.4 1.4-2.1 2.1-1.4-1.4zM16.3 6.3l2.1-2.1 1.4 1.4-2.1 2.1-1.4-1.4z',
+  moon:'M14.5 2.5a9.5 9.5 0 1 0 7 15.6 8 8 0 0 1-7-15.6z',
+  cloud:'M7 19a5 5 0 0 1-.6-10A6.5 6.5 0 0 1 19 9.6 4.8 4.8 0 0 1 18 19H7z',
+  phone:'M6.5 3h3l1.5 4.5L9 9.3a12.5 12.5 0 0 0 5.7 5.7l1.8-2 4.5 1.5v3c0 1.1-.9 2-2 2C10.5 19.5 4.5 13.5 4.5 5c0-1.1.9-2 2-2z',
+  list:'M3 5h3v3H3V5zm5 .5h13v2H8v-2zM3 10.5h3v3H3v-3zm5 .5h13v2H8v-2zM3 16h3v3H3v-3zm5 .5h13v2H8v-2z',
+  slot:'M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm0 2.5a7.5 7.5 0 0 0 0 15V12V4.5z'};
+const SI=n=>`<svg class="ics" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="${SIP[n]}"/></svg>`;
 const telLink=(ph,label)=>{const d=digits(ph);return d.length>=9?`<a class="tel" href="tel:${d}" onclick="event.stopPropagation()">${esc(label||ph)}</a>`:esc(label||ph||'')};
 const ses4=t=>{const h=+(t||'13:00').split(':')[0];return h<12?'am':h<16?'pm':'ev'};
 
@@ -47,6 +68,8 @@ function fixDB(d){if(!d)return d;
       .forEach(k=>delete c[k])});
   if(!Array.isArray(d.workTypes)||!d.workTypes.length)d.workTypes=DEF_WT.slice();
   if(!Array.isArray(d.visits))d.visits=[];
+  if(!Array.isArray(d.waitlist))d.waitlist=[];
+  if(!d.pmWin||!d.pmWin.from||!d.pmWin.to)d.pmWin={from:'13:00',to:'15:30'};
   return d}
 let DB=loadLocal();
 function loadLocal(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.patients)return fixDB(r)}catch(e){}return seed()}
@@ -61,7 +84,7 @@ const pt=id=>DB.patients.find(p=>p.id===id);
 const daySch=d=>DB.daySchedules[d]||null;
 const isOff=d=>{const s=daySch(d);return !!s&&s.typeId==='off'};
 function seed(){
-  const db={patients:[],appointments:[],visits:[],cases:[],trash:[],daySchedules:{},workTypes:DEF_WT.slice(),
+  const db={patients:[],appointments:[],visits:[],cases:[],waitlist:[],pmWin:{from:'13:00',to:'15:30'},trash:[],daySchedules:{},workTypes:DEF_WT.slice(),
     categories:['Oral exam','RPD','TP','CD','ENDO','SUR','Stitch off','F/U','อื่นๆ'],
     categoryStyles:{'Oral exam':{bg:'#EDEAE0',text:'#5C6D68'},'RPD':{bg:'#EFE1EA',text:'#63405A'},
       'TP':{bg:'#EFE1EA',text:'#63405A'},'CD':{bg:'#EFE1EA',text:'#63405A'},'ENDO':{bg:'#F7E4DD',text:'#9C4530'},
@@ -82,7 +105,7 @@ function restoreBackup(k){try{const j=JSON.parse(localStorage.getItem(k));
 
 /* ---------- STATE ---------- */
 const now=new Date();
-let S={view:'schedule',mode:'cal',sub:'cases',cq:'',cfilter:'watch',cur:new Date(now.getFullYear(),now.getMonth(),1),q:'',sel:null,onlyBusy:true,filter:'all',
+let S={view:'schedule',mode:'cal',sub:'cases',psub:'slots',srange:14,cq:'',cfilter:'watch',cur:new Date(now.getFullYear(),now.getMonth(),1),q:'',sel:null,onlyBusy:true,filter:'all',
   plan:{sel:new Set(),mode:'room',typeId:DEF_WT[0].id,session:'am',note:'',dows:new Set(),every:'all'}};
 function applyTheme(id){const t=THEMES.find(x=>x.id===id)||THEMES.find(x=>x.id==='cheesecake')||THEMES[0];
   Object.entries(t.v).forEach(([k,v])=>document.documentElement.style.setProperty('--'+k,v));
