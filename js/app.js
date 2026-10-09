@@ -57,7 +57,7 @@ function cnlRow(x){x=x||{n:'',wl:'',maf:''};
   return `<div class="cnrow"><input class="xin" data-c="n" value="${esc(x.n)}" placeholder="MB">
     <input class="xin" data-c="wl" value="${esc(x.wl)}" placeholder="20.5 mm">
     <input class="xin" data-c="maf" value="${esc(x.maf)}" placeholder="30/.04">
-    <button type="button" class="pk xdel" data-act="cnlDel">\u2715</button></div>`}
+    <button type="button" class="pk xdel" data-act="cnlDel" aria-label="ลบ canal">${IC.x}</button></div>`}
 
 /* id = เคส, eid = entry (ไม่ใส่ = สร้างเคสใหม่) */
 function mCase(cid,eid,pre={}){

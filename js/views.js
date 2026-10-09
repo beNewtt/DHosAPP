@@ -250,7 +250,7 @@ function entChips(e,type){const o=[];
   if((e.caries||[]).length)o.push('Caries '+e.caries.join(''));
   if(type==='vpt'){
     if(e.expo)o.push('Exp '+e.expo);
-    if(e.hemo)o.push('Haemo '+(e.hemo==='Achieved'?'\u2713':'\u2717'));
+    if(e.hemo)o.push('Haemo '+(e.hemo==='Achieved'?'{ok}':'{x}'));
     if(e.cap)o.push(e.cap);
   }
   if(type==='rct'){
@@ -279,7 +279,7 @@ function entryHTML(c,e,i,total){
         ${i===total-1?'<span class="elast">ล่าสุด</span>':''}
         <span class="eac"><button class="btn sm" data-act="editEnt" data-id="${c.id}" data-e="${e.id}">แก้ไข</button></span></div>
       ${(e.sym||[]).length||e.symNote?`<div class="csym">${(e.sym||[]).map(x=>`<span class="chip" style="border-color:var(--line2);color:var(--tx2)">${esc(x)}</span>`).join('')}${e.symNote?` <span class="muted">${esc(e.symNote)}</span>`:''}</div>`:''}
-      ${chips.length?`<div class="cchips">${chips.map(x=>`<span class="ck">${esc(x)}</span>`).join('')}</div>`:''}
+      ${chips.length?`<div class="cchips">${chips.map(x=>`<span class="ck">${esc(x).replace('{ok}',IC.ok).replace('{x}',IC.x)}</span>`).join('')}</div>`:''}
       ${e.note?`<div class="cnote">${esc(e.note)}</div>`:''}
     </div></div>`}
 
@@ -419,7 +419,7 @@ function vArchive(){
       <div class="avatar" style="width:46px;height:46px;flex:0 0 46px;font-size:16px">${esc(initials(p.name))}</div>
       <div><div style="font-size:18px;font-weight:800;color:var(--ink)">${esc(p.name)} ${catChip(p.cat)}</div>
       <div class="muted">${esc(p.hn||'ไม่มี HN')} · ${esc(p.sex||'-')} · ${p.age||'-'} ปี · ${p.phone?telLink(p.phone):'ไม่มีเบอร์'}</div></div></div>
-      <div class="row">${p.caseSt?`<button class="btn sm" data-act="caseSt" data-id="${p.id}" data-s="${p.caseSt}" title="กดเพื่อเปิดเคสอีกครั้ง">${CASE_ST[p.caseSt]} ✕</button>`:''}
+      <div class="row">${p.caseSt?`<button class="btn sm" data-act="caseSt" data-id="${p.id}" data-s="${p.caseSt}" title="กดเพื่อเปิดเคสอีกครั้ง">${CASE_ST[p.caseSt]} ${IC.x}</button>`:''}
       <button class="btn sm dg" data-act="delPatient" data-id="${p.id}">ลบ</button>
       <button class="btn sm" data-act="editPatient" data-id="${p.id}">แก้ไข</button>
       <button class="btn sm pri" data-act="addAppt" data-p="${p.id}" data-d="${TODAY}">＋ นัดใหม่</button></div></div>
@@ -446,7 +446,7 @@ function vSettings(){
   <div class="card">${[[false,'สว่าง'],[true,'มืด']].map(([dk,lbl])=>`
     <div class="thlab">${lbl}</div>
     <div class="thgrid">${THEMES.filter(x=>x.dark===dk).map(x=>`<button class="th ${DB.theme===x.id?'on':''}" data-act="setTheme" data-id="${x.id}"
-      style="background:${x.v.bg};color:${x.v.hl}">${x.name}
+      style="background:${x.v.bg};color:${x.v.ink||x.v.hl}"><span class="thn">${x.name}</span>
       <span class="sws">${x.sw.map(c=>`<i class="sw" style="background:${c}"></i>`).join('')}</span></button>`).join('')}</div>`).join('')}
   <div class="row" style="gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn sm" data-act="export">⬇ สำรองข้อมูล</button>
   <button class="btn sm" data-act="import">⬆ นำเข้าไฟล์</button>
@@ -464,7 +464,7 @@ function vSettings(){
     <div class="wtf sm"><span>ย่อ</span><input value="${esc(w.short)}" data-wt="${w.id}" data-f="short"></div>
     <div class="wtf"><span>ห้อง</span><input value="${esc(w.room)}" data-wt="${w.id}" data-f="room"></div>
     <div class="wtf"><span>กลุ่ม</span><input value="${esc(w.group)}" data-wt="${w.id}" data-f="group"></div>
-    <button class="wtdel" data-act="delWT" data-id="${w.id}" title="ลบห้องนี้" aria-label="ลบ">✕</button></div>`).join('')}</div>
+    <button class="wtdel" data-act="delWT" data-id="${w.id}" title="ลบห้องนี้" aria-label="ลบ">${IC.x}</button></div>`).join('')}</div>
   <div class="row" style="margin-top:14px"><button class="btn pri sm" data-act="addWT">＋ เพิ่มห้อง</button>
   <button class="btn dg sm" data-act="reset" style="margin-left:auto">ล้างข้อมูลทั้งหมด</button></div></div>
   <h2>ข้อมูลสำรองบนคลาวด์ <span class="muted" style="font-size:12px;font-weight:600">· เก็บวันละ 1 ชุด ย้อนหลัง 60 วัน</span></h2>
@@ -488,7 +488,7 @@ function vSettings(){
       <div class="ac"><button class="btn sm pri" data-act="restoreTrash" data-id="${t.tid}">กู้คืน</button>
       <button class="btn sm dg" data-act="dropTrash" data-id="${t.tid}">ลบถาวร</button></div></div>`}).join('')}
     <div class="row" style="margin-top:12px"><button class="btn sm dg" data-act="emptyTrash">ล้างถังขยะทั้งหมด</button></div>`
-    :`<div class="ok">✓ ถังขยะว่าง</div>`}</div>
+    :`<div class="ok">${IC.ok} ถังขยะว่าง</div>`}</div>
 
   <h2>SQL สำหรับตารางสำรองบนคลาวด์</h2>
   <div class="card"><div class="muted" style="margin-bottom:8px">รันครั้งเดียวใน Supabase → SQL Editor</div>
@@ -512,12 +512,12 @@ create policy "auth users only" on clinic_backups
       <div><div class="nm">${esc(p.name)}</div><div class="hn">${esc(p.hn)} · ${DB.appointments.filter(a=>a.patientId===p.id).length} นัด / ${DB.visits.filter(v=>v.patientId===p.id).length} visit</div></div>
       <div class="ac"><button class="btn sm" data-act="editPatient" data-id="${p.id}">แก้ไข</button>
       <button class="btn sm dg" data-act="delPatient" data-id="${p.id}">ลบ</button></div></div>`).join('')}</div>`).join('')
-    :`<div class="ok">✓ ไม่พบคนไข้ซ้ำในระบบ</div>`}</div>`}
+    :`<div class="ok">${IC.ok} ไม่พบคนไข้ซ้ำในระบบ</div>`}</div>`}
 
 /* ---------- THEME PANEL ---------- */
 function renderThemePanel(){
   const grp=(dk,lbl)=>`<div class="lb">${lbl}</div>`+THEMES.filter(x=>x.dark===dk).map(x=>
-    `<button class="th ${DB.theme===x.id?'on':''}" data-act="setTheme" data-id="${x.id}">${x.name}
+    `<button class="th ${DB.theme===x.id?'on':''}" data-act="setTheme" data-id="${x.id}"><span class="thn">${x.name}</span>
      <span class="sws">${x.sw.map(c=>`<i class="sw" style="background:${c}"></i>`).join('')}</span></button>`).join('');
   $('tpanel').innerHTML=grp(false,'☀ ธีมสว่าง')+`<div class="hr"></div>`+grp(true,'🌙 ธีมมืด')
    +`<div class="hr"></div><div class="lb">ข้อมูล</div>

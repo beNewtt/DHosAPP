@@ -24,6 +24,10 @@ const thDate=s=>{const d=parseD(s);return `${d.getDate()} ${TH_M[d.getMonth()]} 
 const TODAY=iso(new Date());
 const esc=s=>(s??'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const digits=s=>(s||'').replace(/\D/g,'');
+/* ไอคอนติ๊กถูก / กากบาท เส้นเดียวกันทั้งเว็บ (แทน ✓ ✕ ที่หน้าตาไม่เท่ากันแต่ละฟอนต์) */
+const IC={
+  x:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>',
+  ok:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.8l4.4 4.4L19 7.6"/></svg>'};
 const telLink=(ph,label)=>{const d=digits(ph);return d.length>=9?`<a class="tel" href="tel:${d}" onclick="event.stopPropagation()">${esc(label||ph)}</a>`:esc(label||ph||'')};
 const ses4=t=>{const h=+(t||'13:00').split(':')[0];return h<12?'am':h<16?'pm':'ev'};
 
@@ -83,6 +87,7 @@ let S={view:'schedule',mode:'cal',sub:'cases',cq:'',cfilter:'watch',cur:new Date
 function applyTheme(id){const t=THEMES.find(x=>x.id===id)||THEMES.find(x=>x.id==='cheesecake')||THEMES[0];
   Object.entries(t.v).forEach(([k,v])=>document.documentElement.style.setProperty('--'+k,v));
   document.documentElement.toggleAttribute('data-rgb',t.id==='rgb');
+  document.documentElement.dataset.theme=t.id;
   const m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute('content',t.v.hl);
   DB.theme=t.id;localSave()}
 applyTheme(DB.theme||'cheesecake');
