@@ -72,6 +72,12 @@ function fixDB(d){if(!d)return d;
     c.entries=[e];
     ['date','sym','symNote','perc','mob','pd','caries','expo','hemo','hemoMin','cap','liner','temp','fin','note']
       .forEach(k=>delete c[k])});
+  /* RCT: MI / TMC เป็นขั้นตอน ไม่ใช่งานบูรณะ, Ref cusp ย้ายไปอยู่ในตาราง canal */
+  d.cases.forEach(c=>(c.entries||[]).forEach(e=>{
+    const rp=Array.isArray(e.restPlan)?e.restPlan:[],st=Array.isArray(e.steps)?e.steps.slice():[];
+    rp.filter(x=>x==='MI'||x==='TMC').forEach(x=>{if(!st.includes(x))st.push(x)});
+    if(e.obt==='Done'&&!st.includes('Obturation'))st.push('Obturation');
+    e.steps=st;e.restPlan=rp.filter(x=>!['MI','TMC','Ref cusp'].includes(x))}));
   if(!Array.isArray(d.workTypes)||!d.workTypes.length)d.workTypes=DEF_WT.slice();
   if(!Array.isArray(d.visits))d.visits=[];
   if(!Array.isArray(d.waitlist))d.waitlist=[];

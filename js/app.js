@@ -7,7 +7,8 @@ const mask=$('mask'),modal=$('modal');
 const open=h=>{modal.innerHTML=h;mask.classList.add('on')};
 let SH_DAY=null;                       /* วันที่ของแผ่นสรุปวันที่เปิดค้างอยู่ */
 let SH_WL=null;                        /* คิวที่กำลังจะถูกนัด */
-const close=()=>{mask.classList.remove('on');modal.innerHTML='';SH_DAY=null;SH_WL=null};
+let SH_VIS=null,SH_AFTER=null;         /* visit ที่ส่งต่อเข้าเคส / นัดที่จะเปิดต่อ */
+const close=()=>{mask.classList.remove('on');modal.innerHTML='';SH_DAY=null;SH_WL=null;SH_VIS=null};
 mask.addEventListener('click',e=>{if(e.target===mask)close()});
 
 /* ---------- ปุ่มติ๊ก/เลือก ใช้ในฟอร์มเคส ---------- */
@@ -36,11 +37,11 @@ function mWait(id,pre={}){
   const p=pt(x.patientId),ap=x.apptId?DB.appointments.find(a=>a.id===x.apptId):null;
   const row=(lbl,inner)=>`<div class="exrow"><span>${lbl}</span><div>${inner}</div></div>`;
   open(`<div class="mtitle">${id?'Edit queue item':'Add to queue'}</div>
-   <div class="muted" style="margin-bottom:14px">${x.kind==='resched'&&ap
+   <div class="muted" style="margin-bottom:14px">${x.kind==='review'?`Case review due ${thDate(x.reviewFor)}`:x.kind==='resched'&&ap
      ?`Call to reschedule \u00b7 นัดเดิม ${thDate(ap.date)}${ap.time?' '+esc(ap.time):''}`
      :'Patients to call in when an afternoon slot opens'}</div>
    <div class="f ac-wrap"><label>Patient</label>
-     <input id="cpq" autocomplete="off" placeholder="HN / name / phone" value="${p?esc((p.hn||'—')+' — '+p.name):''}" ${x.kind==='resched'?'disabled':''}>
+     <input id="cpq" autocomplete="off" placeholder="HN / name / phone" value="${p?esc((p.hn||'—')+' — '+p.name):''}" ${x.kind!=='invite'?'disabled':''}>
      <input type="hidden" id="cpid" value="${esc(x.patientId)}"><div class="ac-list" id="cplist"></div></div>
    <div class="g2"><div class="f"><label>Procedure</label><input id="wpr" list="procListW" value="${esc(x.proc)}" placeholder="e.g. Scaling, RCT #46 visit 2">
      <datalist id="procListW">${PROCS.map(v=>`<option>${v}</option>`).join('')}</datalist></div>
@@ -52,13 +53,13 @@ function mWait(id,pre={}){
    <div class="mfoot">${id?`<button class="btn dg" data-act="wlDrop" data-id="${id}">ไม่ต้องแล้ว</button>`:''}
    <button class="btn" data-act="close">Cancel</button>
    <button class="btn pri" data-act="wlSave" data-id="${id||''}">Save</button></div>`);
-  if(x.kind!=='resched')initCasePt(pp=>{const df=nextDefaults(pp.id);if(df.proc&&!$('wpr').value.trim())$('wpr').value=df.proc})}
+  if(x.kind==='invite')initCasePt(pp=>{const df=nextDefaults(pp.id);if(df.proc&&!$('wpr').value.trim())$('wpr').value=df.proc})}
 
 /* กดช่องว่าง -> เสนอคนในคิวที่ใส่ช่องนี้ได้ */
 function mFill(d,s0,e0){
   const len=e0-s0,k=dayKind(d),dt=parseD(d);
-  const fit=wlWait().filter(x=>x.kind==='invite'&&(+x.dur||30)<=len);
-  const other=wlWait().filter(x=>x.kind==='invite'&&(+x.dur||30)>len);
+  const fit=wlWait().filter(x=>x.kind!=='resched'&&(+x.dur||30)<=len);
+  const other=wlWait().filter(x=>x.kind!=='resched'&&(+x.dur||30)>len);
   const row=x=>{const p=pt(x.patientId);if(!p)return'';const ph=digits(p.phone);
     return `<div class="wq slim"><div style="min-width:0;flex:1">
       <div class="nm">${esc(p.name)}${x.prio==='urgent'?' <span class="wtag urg">ด่วน</span>':''}</div>
@@ -99,13 +100,16 @@ const DX_PULP=['Normal pulp','Reversible pulpitis','Symptomatic irreversible pul
   'Asymptomatic irreversible pulpitis','Pulp necrosis','Previously treated','Previously initiated'];
 const DX_APICAL=['Normal apical tissues','Symptomatic apical periodontitis','Asymptomatic apical periodontitis',
   'Acute apical abscess','Chronic apical abscess','Condensing osteitis'];
+/* ขั้นตอน RCT: MI = Mechanical Instrumentation, TMC = Trying Main gutta-percha Cone */
+const RCT_STEPS=[['Access','Access opening'],['WL','WL'],['MI','MI'],['Dressing','Dressing'],['TMC','TMC'],['Obturation','Obturation']];
 const SYMPTOMS=['Asymptomatic','Provoked','Lingering','Spontaneous','Night pain','Swelling','Bite pain'];
 function blankEnt(kind){return{id:uid('e_'),kind:kind||'tx',date:TODAY,sym:[],symNote:'',
   dxP:'',dxA:'',cold:'',ept:'',perc:'',palp:'',mob:'',pd:'',sinus:'',caries:[],
   expo:'',hemo:'',hemoMin:'',cap:'',liner:[],temp:'',fin:'',
   canals:[],irrig:[],med:'',interim:'',obt:'',obtTech:'',sealer:'',restPlan:[],restDone:'',note:''}}
-function cnlRow(x){x=x||{n:'',wl:'',maf:''};
+function cnlRow(x){x=x||{n:'',ref:'',wl:'',maf:''};
   return `<div class="cnrow"><input class="xin" data-c="n" value="${esc(x.n)}" placeholder="MB">
+    <input class="xin" data-c="ref" value="${esc(x.ref||'')}" placeholder="MB cusp">
     <input class="xin" data-c="wl" value="${esc(x.wl)}" placeholder="20.5 mm">
     <input class="xin" data-c="maf" value="${esc(x.maf)}" placeholder="30/.04">
     <button type="button" class="pk xdel" data-act="cnlDel" aria-label="ลบ canal">${IC.x}</button></div>`}
@@ -116,8 +120,10 @@ function mCase(cid,eid,pre={}){
   const c=cid?DB.cases.find(x=>x.id===cid)
     :{id:'',patientId:pre.p||'',tooth:pre.tooth||'',type:'vpt',status:'watch',review:'',entries:[]};
   if(!c)return;
-  const e=eid?(c.entries||[]).find(x=>x.id===eid):blankEnt(isNew?'tx':'fu');
+  const e=eid?(c.entries||[]).find(x=>x.id===eid):blankEnt(pre.kind||(isNew?'tx':'fu'));
   if(!e)return;
+  if(!eid){if(pre.date)e.date=pre.date;if(pre.note)e.note=pre.note}
+  SH_VIS=pre.visitId||null;
   const p=pt(c.patientId);
   const row=(lbl,inner)=>`<div class="exrow"><span>${lbl}</span><div>${inner}</div></div>`;
   const title=isNew?'New case':(eid?'Edit entry':'New entry');
@@ -170,14 +176,15 @@ function mCase(cid,eid,pre={}){
    </div>
 
    <div id="rctBlk" style="display:${c.type==='rct'?'block':'none'}">
+     <div class="sec">This visit</div>
+     ${row('Steps done',pickG('steps',RCT_STEPS,(e.steps&&e.steps.length)?e.steps:(e.obt==='Done'?['Obturation']:[]),true))}
      <div class="sec">Canals</div>
-     <div class="cnhead"><span>Canal</span><span>Working length</span><span>MAF</span><span></span></div>
-     <div id="cnl">${(e.canals&&e.canals.length?e.canals:[{n:'',wl:'',maf:''}]).map(cnlRow).join('')}</div>
+     <div class="cnhead"><span>Canal</span><span>Ref cusp / point</span><span>Working length</span><span>MAF</span><span></span></div>
+     <div id="cnl">${(e.canals&&e.canals.length?e.canals:[{n:'',ref:'',wl:'',maf:''}]).map(cnlRow).join('')}</div>
      <button type="button" class="qbtn" data-act="cnlAdd" style="margin:6px 0 12px">\uff0b canal</button>
      ${row('Irrigation',pickG('irrig',['NaOCl','EDTA','CHX','Saline'],e.irrig,true))}
      ${row('Medicament',pickG('med',['Ca(OH)\u2082','Ledermix','CHX','None'],e.med))}
      <div class="sec">Obturation</div>
-     ${row('Status',pickG('obt',['Not yet','Done'],e.obt))}
      ${row('Technique',pickG('obtTech',['Lateral','Single cone','Warm vertical'],e.obtTech))}
      ${row('Sealer',`<input id="cslr" class="xin" value="${esc(e.sealer)}" placeholder="e.g. AH Plus">`)}
    </div>
@@ -191,7 +198,7 @@ function mCase(cid,eid,pre={}){
        ${row('Final',pickG('fin',['Bulkfill','Composite','Flowable','None'],e.fin))}
      </div>
      <div id="rctRest" style="display:${c.type==='rct'?'block':'none'}">
-       ${row('Final plan',pickG('restPlan',['Ref cusp','MI','TMC','Composite','Onlay','Crown','Post & core'],e.restPlan,true))}
+       ${row('Final plan',pickG('restPlan',['Composite','Onlay','Crown','Post & core'],e.restPlan,true))}
        ${row('Final done',pickG('restDone',['Not yet','Done'],e.restDone))}
      </div>
    </div>
@@ -225,9 +232,11 @@ function readEnt(id,kind){
   const v=k=>{const el=$(k);return el?el.value.trim():''};
   const canals=[...(($('cnl')||{querySelectorAll:()=>[]}).querySelectorAll('.cnrow'))]
     .map(r=>({n:r.querySelector('[data-c=n]').value.trim(),
+              ref:r.querySelector('[data-c=ref]').value.trim(),
               wl:r.querySelector('[data-c=wl]').value.trim(),
               maf:r.querySelector('[data-c=maf]').value.trim()}))
-    .filter(x=>x.n||x.wl||x.maf);
+    .filter(x=>x.n||x.ref||x.wl||x.maf);
+  const steps=pickVal('steps')||[];
   return{id:id||uid('e_'),kind:kind||pickVal('kind')||'tx',date:v('cdt')||TODAY,
     sym:pickVal('sym'),symNote:v('csn'),
     dxP:pickVal('dxP'),dxA:pickVal('dxA'),cold:pickVal('cold'),ept:v('cept'),
@@ -235,7 +244,7 @@ function readEnt(id,kind){
     caries:pickVal('caries'),
     expo:pickVal('expo'),hemo:pickVal('hemo'),hemoMin:v('chm'),cap:pickVal('cap'),
     canals,irrig:pickVal('irrig'),med:pickVal('med'),
-    obt:pickVal('obt'),obtTech:pickVal('obtTech'),sealer:v('cslr'),
+    steps,obt:steps.includes('Obturation')?'Done':'',obtTech:pickVal('obtTech'),sealer:v('cslr'),
     interim:pickVal('interim'),liner:pickVal('liner'),temp:pickVal('temp'),fin:pickVal('fin'),
     restPlan:pickVal('restPlan'),restDone:pickVal('restDone'),note:v('cnt')}}
 function initCasePt(onPick){
@@ -380,6 +389,24 @@ function mPatient(id){const p=id?pt(id):{id:'',hn:'',name:'',age:'',sex:'',phone
    <div class="f"><label>หมายเหตุทางคลินิก</label><textarea id="pnt" rows="3">${esc(p.note)}</textarea></div>
    <div class="row sp"><button class="btn" data-act="close">ยกเลิก</button>
    <button class="btn pri" data-act="savePatient" data-id="${id||''}">บันทึก</button></div>`)}
+/* เคสที่ติดตามอยู่ของคนไข้คนนี้ -> ปุ่มเลือกให้บันทึกนี้ต่อเข้าเคส */
+const normT=t=>(t||'').toString().replace(/^#/,'').trim();
+function visitCaseHTML(v){
+  const linked=DB.cases.find(c=>(c.entries||[]).some(e=>e.visitId===v.id));
+  if(linked)return `<div class="vlink">${SI('note')} บันทึกนี้อยู่ในเคส ${esc(CASE_TPL[linked.type]||'')}${linked.tooth?' #'+esc(linked.tooth):''} แล้ว</div>`;
+  const oc=DB.cases.filter(c=>c.patientId===v.patientId&&(c.status||'watch')==='watch');
+  const hit=oc.find(c=>normT(c.tooth)&&normT(c.tooth)===normT(v.tooth));
+  return `<div class="sec">Case notes</div>
+   ${pickG('vcase',[...oc.map(c=>[c.id,`ต่อในเคส ${CASE_TPL[c.type]||''}${c.tooth?' #'+c.tooth:''}`]),['__new','\uff0b เปิดเคสใหม่']],hit?hit.id:'')}
+   <div class="muted" style="font-size:11px;margin:6px 0 10px">${oc.length?(hit?'เลือกเคสที่ซี่ตรงกันไว้ให้แล้ว \u2014 ':'')+'กดบันทึกแล้วจะเปิดหน้าติ๊กรายละเอียดของเคสต่อ':'เคสน่าสนใจ? เปิดเคสใหม่จากบันทึกนี้ได้เลย'}</div>`}
+/* บันทึก visit แล้วส่งต่อเข้าเคสที่เลือก (คืน true ถ้าเปิดหน้าเคส) */
+function visitToCase(v,sel,next){
+  if(!sel)return false;
+  const note=[v.proc,v.dx&&('Dx: '+v.dx),v.tx&&('Plan: '+v.tx),v.note].filter(x=>x&&x.trim()).join(' \u00b7 ');
+  if(sel==='__new')mCase(null,null,{p:v.patientId,tooth:normT(v.tooth),date:v.date,note,visitId:v.id});
+  else mCase(sel,null,{date:v.date,note,visitId:v.id,kind:'tx'});
+  SH_AFTER=next||null;
+  return true}
 function mVisit(id){const v=DB.visits.find(x=>x.id===id),p=pt(v.patientId);
   open(`<div class="mtitle">บันทึกการรักษา</div>
    <div class="muted" style="margin-bottom:13px">${esc(p.hn||'—')} — ${esc(p.name)} · ${thDate(v.date)}</div>
@@ -390,6 +417,7 @@ function mVisit(id){const v=DB.visits.find(x=>x.id===id),p=pt(v.patientId);
    <div class="f"><label>Diagnosis</label><input id="vd" value="${esc(v.dx)}"></div>
    <div class="f"><label>แผนการรักษา / สิ่งที่ต้องทำครั้งหน้า</label><input id="vt" value="${esc(v.tx)}"></div>
    <div class="f"><label>บันทึกเพิ่มเติม</label><textarea id="vn" rows="4">${esc(v.note)}</textarea></div>
+   ${visitCaseHTML(v)}
    <div class="mfoot"><button class="btn dg" data-act="delVisit" data-id="${id}">ลบบันทึก</button>
    <button class="btn" data-act="saveVisit" data-id="${id}">บันทึก</button>
    <button class="btn pri" data-act="saveVisitNext" data-id="${id}">บันทึก + นัดต่อ →</button></div>`)}
@@ -478,13 +506,20 @@ document.addEventListener('click',e=>{
       if(!pid){alert('Please select a patient first.');return}
       const head={patientId:pid,tooth:$('cto').value.trim().replace(/^#/,''),type:$('ctp').value,
         review:$('crv').value,status:$('cst').value};
+      const fromVisit=SH_VIS,after=SH_AFTER;SH_AFTER=null;
       if(id){const c=DB.cases.find(x=>x.id===id);if(!c)break;
         Object.assign(c,head);
         const en=readEnt(eid||null);
         const at=eid?c.entries.findIndex(x=>x.id===eid):-1;
-        if(at>=0)c.entries[at]=en;else c.entries.push(en);
-      }else DB.cases.push({id:uid('c_'),...head,entries:[readEnt(null,'tx')]});
-      save();close();S.view='more';S.sub='cases';render();break}
+        if(at>=0){en.visitId=c.entries[at].visitId||null;c.entries[at]=en}
+        else{if(fromVisit)en.visitId=fromVisit;c.entries.push(en)}
+      }else{const en=readEnt(null,'tx');if(fromVisit)en.visitId=fromVisit;
+        DB.cases.push({id:uid('c_'),...head,entries:[en]})}
+      save();close();
+      if(!fromVisit){S.view='more';S.sub='cases'}
+      render();
+      if(after)mAppt(null,after);
+      break}
     case'filt':S.filter=t.dataset.f;render();break;
     case'busy':S.onlyBusy=t.dataset.v==='1';render();break;
     case'mv':S.cur=new Date(S.cur.getFullYear(),S.cur.getMonth()+ +t.dataset.n,1);render();break;
@@ -561,12 +596,15 @@ document.addEventListener('click',e=>{
         proc:ap.proc||'',tooth:ap.tooth||'',dx:'',tx:'',note:ap.note||''};
       DB.visits.push(v);ap.visitId=v.id;ap.status='done';save();close();mVisit(v.id);break}
     case'editVisit':mVisit(id);break;
-    case'saveVisit':{const v=DB.visits.find(x=>x.id===id);
+    case'saveVisit':{const v=DB.visits.find(x=>x.id===id);const sel=pickVal('vcase');
       v.proc=$('vpr').value;v.tooth=$('vto').value.trim();v.dx=$('vd').value;v.tx=$('vt').value;v.note=$('vn').value;
-      save();close();render();break}
+      save();close();render();visitToCase(v,sel,null);break}
     case'saveVisitNext':{const v=DB.visits.find(x=>x.id===id);if(!v)break;
+      const sel=pickVal('vcase');
       v.proc=$('vpr').value;v.tooth=$('vto').value.trim();v.dx=$('vd').value;v.tx=$('vt').value;v.note=$('vn').value;
-      save();close();mAppt(null,{p:v.patientId,proc:(v.tx||v.proc||'').trim(),tooth:(v.tooth||'').trim()});break}
+      save();close();
+      const nx={p:v.patientId,proc:(v.tx||v.proc||'').trim(),tooth:(v.tooth||'').trim()};
+      if(!visitToCase(v,sel,nx))mAppt(null,nx);break}
     case'delVisit':if(confirm('ลบ Visit นี้?')){const ap=DB.appointments.find(x=>x.visitId===id);
       if(ap){ap.visitId=null;ap.status='scheduled'}
       DB.visits=DB.visits.filter(x=>x.id!==id);save();close();render()}break;

@@ -6,6 +6,7 @@
 const app=document.getElementById('app'),$=x=>document.getElementById(x);
 function render(){
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.view));
+  if(syncReviewQueue()){localSave();try{if(SYNC.on)queuePush()}catch(_){}}
   document.body.dataset.v=S.view==='stats'?'more':S.view;
   syncBell();
   document.querySelectorAll('#nav button').forEach(b=>{if(b.dataset.v==='more')b.classList.toggle('on',S.view==='more'||S.view==='stats')});
@@ -115,6 +116,23 @@ function vPlanner(){
    +(sb==='slots'?vSlots():vRooms())}
 
 const MIN_GAP=30;
+/* เคสที่ใกล้/ถึงกำหนดรีวิว (ภายใน 7 วัน) และคนไข้ยังไม่มีนัด -> เข้าคิว "ต้องโทร" ให้เอง */
+function syncReviewQueue(){
+  if(!Array.isArray(DB.waitlist))DB.waitlist=[];
+  const soon=iso(new Date(Date.now()+7*864e5));let ch=false;
+  const booked=pid=>DB.appointments.some(a=>a.patientId===pid&&a.status==='scheduled'&&a.date>=TODAY);
+  DB.waitlist.forEach(w=>{if(w.kind!=='review'||w.status!=='wait')return;
+    const c=DB.cases.find(x=>x.id===w.caseId);
+    if(!c||(c.status||'watch')!=='watch'||c.review!==w.reviewFor||booked(w.patientId)){
+      w.status='drop';w.auto=true;w.doneAt=TODAY;ch=true}});
+  (DB.cases||[]).forEach(c=>{
+    if((c.status||'watch')!=='watch'||!c.review||c.review>soon||!pt(c.patientId))return;
+    if(DB.waitlist.some(w=>w.kind==='review'&&w.caseId===c.id&&w.reviewFor===c.review))return;
+    if(booked(c.patientId))return;
+    DB.waitlist.push({id:uid('w_'),kind:'review',status:'wait',patientId:c.patientId,caseId:c.id,reviewFor:c.review,
+      proc:'F/U '+(CASE_TPL[c.type]||'case').split(' ')[0]+(c.tooth?' #'+c.tooth:''),tooth:c.tooth||'',
+      dur:30,prio:c.review<TODAY?'urgent':'normal',note:'',calls:[],created:TODAY});ch=true});
+  return ch}
 const pmWin=()=>DB.pmWin||{from:'13:00',to:'15:30'};
 const isMainRoom=tid=>{if(!tid)return false;const w=DB.workTypes.find(x=>x.id===tid);return tid==='fung'||!!(w&&/ฟุ้ง/.test(w.name))};
 /* วันนี้เป็นวันแบบไหน: ข้าม OFF / เสาร์-อาทิตย์ที่ไม่ได้ตั้งห้อง, เตือนถ้าไม่ใช่วันฟุ้ง */
@@ -144,9 +162,10 @@ function firstFit(dur){
     if(k.skip||!k.main)continue;
     const g=gapsOn(d).find(x=>gapLen(x)>=dur);if(g)return{d,t:fmtMin(g[0])}}
   return null}
-const WL_KIND={invite:'เรียกมาเติม',resched:'โทรเลื่อน'};
+const WL_KIND={invite:'เรียกมาเติม',resched:'โทรเลื่อน',review:'รีวิวเคส'};
+const WL_ORD={resched:0,review:1,invite:2};
 const wlWait=()=>(DB.waitlist||[]).filter(w=>w.status==='wait')
-  .sort((a,b)=>(a.kind==='resched'?0:1)-(b.kind==='resched'?0:1)||(b.prio==='urgent')-(a.prio==='urgent')||(a.created||'').localeCompare(b.created||''));
+  .sort((a,b)=>(WL_ORD[a.kind]??3)-(WL_ORD[b.kind]??3)||(b.prio==='urgent')-(a.prio==='urgent')||(a.created||'').localeCompare(b.created||''));
 
 function pmBar(d){const w=pmWin(),f=toMin(w.from),t=toMin(w.to),span=t-f;
   return `<div class="fbar">${pmBusy(d).map(x=>{const s=Math.max(x.s,f),e=Math.min(x.e,t);
@@ -161,7 +180,7 @@ function wlRow(x){const p=pt(x.patientId);if(!p)return'';
     <div class="wqt"><span class="wtag ${x.kind}">${WL_KIND[x.kind]||''}</span>${x.prio==='urgent'?'<span class="wtag urg">ด่วน</span>':''}
       ${calls?`<span class="wcalls">โทรแล้ว ${calls} ครั้ง \u00b7 ล่าสุด ${thDate(x.calls[calls-1].at)}</span>`:''}</div>
     <div class="nm">${esc(p.name)} <span class="muted" style="font-weight:500">${esc(p.hn||'')}</span></div>
-    <div class="hn">${x.kind==='resched'&&ap?`นัดเดิม ${thDate(ap.date)}${ap.time?' '+esc(ap.time):''} \u00b7 `:''}${esc(x.proc||(ap&&ap.proc)||'ไม่ระบุ')}${x.tooth?' \u00b7 ซี่ '+esc(x.tooth):''} \u00b7 ${x.dur||30} น.</div>
+    <div class="hn">${x.kind==='resched'&&ap?`นัดเดิม ${thDate(ap.date)}${ap.time?' '+esc(ap.time):''} \u00b7 `:''}${x.kind==='review'&&x.reviewFor?`ครบรีวิว ${thDate(x.reviewFor)} \u00b7 `:''}${esc(x.proc||(ap&&ap.proc)||'ไม่ระบุ')}${x.tooth?' \u00b7 ซี่ '+esc(x.tooth):''} \u00b7 ${x.dur||30} น.</div>
     ${x.note?`<div class="wnote">${esc(x.note)}</div>`:''}
     <div class="ac">
       ${ph.length>=9?`<a class="btn sm" href="tel:${ph}">${SI('phone')} โทร</a>`:''}
@@ -351,12 +370,14 @@ function entChips(e,type){const o=[];
     if(e.cap)o.push(e.cap);
   }
   if(type==='rct'){
-    const cn=(e.canals||[]).filter(x=>x.n||x.wl||x.maf);
+    const stp=(e.steps||[]).filter(x=>x!=='Obturation');
+    if(stp.length)o.push(stp.join(' \u2192 '));
+    const cn=(e.canals||[]).filter(x=>x.n||x.ref||x.wl||x.maf);
     if(cn.length)o.push(cn.length+' canal'+(cn.length>1?'s':''));
-    cn.forEach(x=>o.push([x.n,x.wl?x.wl+' mm':'',x.maf].filter(Boolean).join(' ')));
+    cn.forEach(x=>o.push([x.n,x.wl?x.wl+' mm':'',x.ref?'@ '+x.ref:'',x.maf].filter(Boolean).join(' ')));
     if((e.irrig||[]).length)o.push(e.irrig.join(' + '));
     if(e.med&&e.med!=='None')o.push('Med '+e.med);
-    if(e.obt&&e.obt!=='Not yet')o.push('Obturated'+(e.obtTech?' \u00b7 '+e.obtTech:''));
+    if(e.obt==='Done'||(e.steps||[]).includes('Obturation'))o.push('Obturated'+(e.obtTech?' \u00b7 '+e.obtTech:''));
     if(e.sealer)o.push('Sealer '+e.sealer);
     if((e.restPlan||[]).length)o.push('Final: '+e.restPlan.join(' + '));
   }
