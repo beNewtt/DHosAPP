@@ -564,3 +564,65 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 .vlink{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--ok);background:var(--okBg);border-radius:7px;padding:8px 10px;margin:4px 0 12px}
 .cnhead,.cnrow{grid-template-columns:.8fr 1.1fr 1fr .9fr 34px}
 @media(max-width:640px){.cnrow{grid-template-columns:1fr 1fr 1fr 1fr 28px;gap:4px}.cnrow .xin{padding:6px 6px;font-size:11.5px}}
+
+/* =====================================================================
+   หน้าปฏิทิน (Month) รอบ 2
+   ===================================================================== */
+/* หัวเดือนบรรทัดเดียว: 10 ตุลาคม 2569  ‹ › */
+.hero2{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 0 10px}
+.hero2 .hl{display:flex;align-items:baseline;gap:9px;min-width:0}
+.hero2 .num{font-size:clamp(30px,4.2vw,44px);font-weight:700;line-height:.9;color:transparent;-webkit-text-stroke:1.6px var(--ink)}
+.hero2 .mn{font-size:clamp(18px,2.2vw,24px);font-weight:800;color:var(--ink);line-height:1}
+.hero2 .yr{font-size:13px;font-weight:700;color:var(--pm)}
+.hero2 .nav2{margin:0;gap:4px}
+
+/* จุดห้อง: ทึบ / กลวง */
+.rdot{background:var(--c,var(--line))}
+.rdot.ring{background:transparent!important;box-shadow:inset 0 0 0 2px var(--c)}
+.fl .rdot{width:8px;height:8px}
+
+/* ตัวกรองห้อง: แถวเดียว เลื่อนแนวนอน */
+.filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px;
+  -webkit-mask-image:linear-gradient(90deg,#000 90%,transparent);mask-image:linear-gradient(90deg,#000 90%,transparent)}
+.filters::-webkit-scrollbar{display:none}
+.filters .fl{flex:none;white-space:nowrap}
+
+/* OFF = ลายเส้นทแยง (ไม่ปนกับวันนอกเดือนที่เป็นพื้นเรียบ) */
+.cell.offd{background:repeating-linear-gradient(135deg,transparent 0 6px,color-mix(in srgb,var(--tx2) 20%,transparent) 6px 7.5px)}
+.cell.offd .cn{color:var(--tx2)}
+/* วันที่แตะเลือก */
+.cell.sel{box-shadow:inset 0 0 0 2px var(--hl)!important}
+.cell.tdy.sel{box-shadow:inset 0 0 0 3px var(--onhl),inset 0 0 0 5px var(--hl)!important}
+
+/* แผงสั้นใต้ปฏิทิน: นัดถัดไป / นัดของวันที่เลือก */
+.mini{margin-top:14px;background:var(--surface);border-radius:10px;padding:10px 12px 8px}
+.mph{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12.5px;color:var(--ink);margin-bottom:4px}
+.mph b{font-weight:800}
+.mrm{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--tx2)}
+.mpa{margin-left:auto;display:flex;gap:5px}
+.mpa .btn.sm{padding:5px 10px}
+.mday{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--tx2);margin:9px 0 2px}
+.mrow{display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding:7px 4px;border-radius:7px;color:var(--tx);min-width:0}
+.mrow:hover{background:var(--btnbg)}
+.mrow+.mrow{border-top:1px solid var(--line2)}
+.mrow .rdot{width:8px;height:8px}
+.mtm{font-size:12px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;flex:0 0 40px}
+.mnm{font-size:12.5px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:0 1 auto}
+.mjb{display:flex;gap:4px;align-items:center;margin-left:auto;flex:none}
+.mjb .chip{font-size:9.5px;padding:1px 6px}
+.mto{font-size:11px;font-weight:700;color:var(--tx2)}
+.mrow.mdone{opacity:.55}
+.mempty{font-size:12px;color:var(--tx2);padding:10px 4px;display:flex;align-items:center;gap:6px}
+
+/* ตั้งค่า: สวิตช์ห้อง + ประเภทงาน */
+.wtcks{display:flex;gap:12px;flex-wrap:wrap;flex-basis:100%;padding-left:2px}
+.wtck{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--tx2);cursor:pointer}
+.catlist{display:flex;flex-direction:column;gap:7px}
+.catrow{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.catrow .xin{max-width:170px}
+.catprev{min-width:70px}
+.catn{font-size:11px}
+.catrow .wtdel{margin-left:auto}
+/* วันนี้ที่ตรงกับ OFF: คงพื้นสีวันนี้ + ลายเส้นสีอ่อนทับ */
+.cell.tdy.offd{background:repeating-linear-gradient(135deg,transparent 0 6px,color-mix(in srgb,var(--onhl) 26%,transparent) 6px 7.5px),var(--hl)}
+.cell.tdy.offd .cn{color:var(--onhl)}
