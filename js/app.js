@@ -283,7 +283,7 @@ function nextDefaults(pid){const v=lastVisit(pid);
   return v?{proc:(v.tx||v.proc||'').trim(),tooth:(v.tooth||'').trim()}:{proc:'',tooth:''}}
 function mAppt(id,pre={}){
   const a=id?DB.appointments.find(x=>x.id===id):{id:'',patientId:pre.p||'',date:pre.d||TODAY,session:pre.s||'pm',
-    typeId:'',room:'',proc:'',tooth:'',time:pre.t||'',duration:pre.dur||30,status:'scheduled',note:''};
+    typeId:'',room:'',proc:'',tooth:'',time:pre.t||'',duration:pre.dur||30,status:'scheduled',note:'',jobs:(pre.jobs||[]).slice()};
   if(!id&&a.patientId){const df=nextDefaults(a.patientId);
     a.proc=pre.proc!==undefined?pre.proc:df.proc;
     a.tooth=pre.tooth!==undefined?pre.tooth:df.tooth}
@@ -311,6 +311,7 @@ function mAppt(id,pre={}){
    <div class="g2m"><div class="f"><label>Area</label><input id="fto" value="${esc(a.tooth)}" placeholder="#36"></div>
    <div class="f"><label>Status</label><select id="fst">
      ${[['scheduled','Scheduled'],['done','Done'],['cancelled','Cancelled'],['noshow','No show']].map(([v,t])=>`<option value="${v}" ${a.status===v?'selected':''}>${t}</option>`).join('')}</select></div></div>
+   <div class="exrow" style="margin-bottom:10px"><span>Type</span><div>${pickG('jobs',DB.categories||[],a.jobs||[],true)}</div></div>
    <div class="f"><label>Procedure — next visit</label>
      <input id="fpr" list="procList" value="${esc(a.proc)}" placeholder="e.g. Insert UTP, F/U 3 mo, Recheck RPD">
      <datalist id="procList">${PROCS.map(x=>`<option>${x}</option>`).join('')}</datalist></div>
@@ -363,8 +364,9 @@ function clashMsg(c){const p=pt(c.patientId);
   return `${p?p.name:'another appointment'} ${c.time}–${fmtMin(toMin(c.time)+(+c.duration||30))}`}
 function checkClash(){const box=$('ftwarn');if(!box)return;
   const c=clashAt($('fd').value,$('ftm').value,$('fdu').value,SH_APPT);
-  const off=isOff($('fd').value);
+  const off=isOff($('fd').value),ds=daySch($('fd').value),opd=!!ds&&wt(ds.typeId).pmOpd&&($('ftm').value||'')>='12:00';
   box.innerHTML=(off?`<span style="color:var(--dng);font-weight:700">${SI('ban')} OFF day \u2014 cannot book</span> `:'')
+    +(opd?`<span style="color:var(--wrn);font-weight:700">${SI('warn')} Afternoon is OPD on this day</span> `:'')
     +(c?`<span style="color:var(--wrn);font-weight:700">${SI('warn')} Overlaps ${esc(clashMsg(c))}</span>`:'')}
 let SH_APPT=null;
 function checkDup(){const hid=$('fpid'),msg=$('fpmsg');if(!hid||!msg)return;
@@ -411,6 +413,7 @@ function mVisit(id){const v=DB.visits.find(x=>x.id===id),p=pt(v.patientId);
   open(`<div class="mtitle">บันทึกการรักษา</div>
    <div class="muted" style="margin-bottom:13px">${esc(p.hn||'—')} — ${esc(p.name)} · ${thDate(v.date)}</div>
    ${(p.tags||[]).length?`<div class="warn">${SI('warn')} ${esc(p.tags.join(' · '))}</div>`:''}
+   <div class="exrow" style="margin-bottom:10px"><span>ประเภทงาน</span><div>${pickG('vjobs',DB.categories||[],v.jobs||[],true)}</div></div>
    <div class="g2"><div class="f"><label>หัตถการ</label><input id="vpr" list="procList2" value="${esc(v.proc)}">
      <datalist id="procList2">${PROCS.map(x=>`<option>${x}</option>`).join('')}</datalist></div>
    <div class="f"><label>ซี่ฟัน</label><input id="vto" value="${esc(v.tooth)}"></div></div>
@@ -483,7 +486,8 @@ document.addEventListener('click',e=>{
     case'goCase':{$('npanel').classList.remove('on');S.view='more';S.sub='cases';S.cfilter='watch';
       render();window.scrollTo(0,0);
       setTimeout(()=>{const el=document.querySelector('.ccard.due');el&&el.scrollIntoView({behavior:'smooth',block:'center'})},90);break}
-    case'day':mDay(d);break;
+    case'day':{if(t.dataset.src==='cal'&&S.selDay!==d){S.selDay=d;render();break}mDay(d);break}
+    case'selClear':S.selDay=null;render();break;
     case'caseFilt':S.cfilter=t.dataset.f;render();break;
     case'addCase':mCase(null,null,{p:t.dataset.p,tooth:t.dataset.tooth});break;
     case'addEnt':mCase(id,null);break;
@@ -522,7 +526,7 @@ document.addEventListener('click',e=>{
       break}
     case'filt':S.filter=t.dataset.f;render();break;
     case'busy':S.onlyBusy=t.dataset.v==='1';render();break;
-    case'mv':S.cur=new Date(S.cur.getFullYear(),S.cur.getMonth()+ +t.dataset.n,1);render();break;
+    case'mv':S.cur=new Date(S.cur.getFullYear(),S.cur.getMonth()+ +t.dataset.n,1);S.selDay=null;render();break;
     case'today':{
       S.cur=new Date(now.getFullYear(),now.getMonth(),1);S.view='schedule';S.filter='all';
       if(S.mode==='up')S.mode='cal';render();
@@ -586,6 +590,7 @@ document.addEventListener('click',e=>{
       DB.appointments.filter(x=>x.date===date).forEach(x=>{x.typeId=ty;x.room=room});
       const o={patientId:pid,date,session:sesId,typeId:ty,room,proc:$('fpr').value,
         time:tm,duration:+$('fdu').value||30,tooth:$('fto').value.trim(),status:$('fst').value,note:$('fnt').value};
+      {const j=pickVal('jobs')||[];o.jobs=j.length?j:guessJobs(o.proc,DB.categories)}
       if(id)Object.assign(DB.appointments.find(x=>x.id===id),o);
       else{const nid=uid('a_');DB.appointments.push({id:nid,visitId:null,...o});
         if(SH_WL){const q=(DB.waitlist||[]).find(x=>x.id===SH_WL);if(q){q.status='done';q.apptId=nid;q.doneAt=TODAY}}}
@@ -593,17 +598,17 @@ document.addEventListener('click',e=>{
     case'checkin':{const ap=DB.appointments.find(x=>x.id===id);
       if(ap.visitId){close();mVisit(ap.visitId);break}
       const v={id:uid('v_'),patientId:ap.patientId,apptId:ap.id,date:ap.date,session:ap.session,typeId:ap.typeId,
-        proc:ap.proc||'',tooth:ap.tooth||'',dx:'',tx:'',note:ap.note||''};
+        proc:ap.proc||'',tooth:ap.tooth||'',dx:'',tx:'',note:ap.note||'',jobs:(ap.jobs||[]).slice()};
       DB.visits.push(v);ap.visitId=v.id;ap.status='done';save();close();mVisit(v.id);break}
     case'editVisit':mVisit(id);break;
     case'saveVisit':{const v=DB.visits.find(x=>x.id===id);const sel=pickVal('vcase');
-      v.proc=$('vpr').value;v.tooth=$('vto').value.trim();v.dx=$('vd').value;v.tx=$('vt').value;v.note=$('vn').value;
+      v.proc=$('vpr').value;v.tooth=$('vto').value.trim();v.dx=$('vd').value;v.tx=$('vt').value;v.note=$('vn').value;v.jobs=pickVal('vjobs')||[];
       save();close();render();visitToCase(v,sel,null);break}
     case'saveVisitNext':{const v=DB.visits.find(x=>x.id===id);if(!v)break;
       const sel=pickVal('vcase');
-      v.proc=$('vpr').value;v.tooth=$('vto').value.trim();v.dx=$('vd').value;v.tx=$('vt').value;v.note=$('vn').value;
+      v.proc=$('vpr').value;v.tooth=$('vto').value.trim();v.dx=$('vd').value;v.tx=$('vt').value;v.note=$('vn').value;v.jobs=pickVal('vjobs')||[];
       save();close();
-      const nx={p:v.patientId,proc:(v.tx||v.proc||'').trim(),tooth:(v.tooth||'').trim()};
+      const nx={p:v.patientId,proc:(v.tx||v.proc||'').trim(),tooth:(v.tooth||'').trim(),jobs:(v.jobs||[]).slice()};
       if(!visitToCase(v,sel,nx))mAppt(null,nx);break}
     case'delVisit':if(confirm('ลบ Visit นี้?')){const ap=DB.appointments.find(x=>x.visitId===id);
       if(ap){ap.visitId=null;ap.status='scheduled'}
@@ -665,12 +670,29 @@ document.addEventListener('click',e=>{
       if(id)Object.assign(pt(id),o);else{const np={id:uid('p_'),createdAt:TODAY,...o};DB.patients.push(np);S.sel=np.id;S.view='archive'}
       save();close();render();break}
     case'addWT':DB.workTypes.push({id:uid('w_'),name:'ห้องใหม่',short:'NEW',room:'ห้องใหม่',color:'#0f9b8e',group:'อื่น ๆ'});save();render();break;
+    case'addCat':{DB.categories=DB.categories||[];let nm='ใหม่',k=1;while(DB.categories.includes(nm))nm='ใหม่ '+(++k);
+      DB.categories.push(nm);DB.categoryStyles=DB.categoryStyles||{};DB.categoryStyles[nm]={text:'#5C6D68',bg:'#EDEAE0'};save();render();break}
+    case'delCat':{const k=+t.dataset.i,c=DB.categories[k];if(c===undefined)break;
+      const used=DB.appointments.filter(a=>(a.jobs||[]).includes(c)).length;
+      if(!confirm(`ลบประเภท "${c}"?`+(used?`\nจะเอาออกจาก ${used} นัดที่ติ๊กไว้`:'')))break;
+      DB.categories.splice(k,1);const rm=o=>{if(Array.isArray(o.jobs))o.jobs=o.jobs.filter(x=>x!==c)};
+      DB.appointments.forEach(rm);DB.visits.forEach(rm);save();render();break}
     case'delWT':if(confirm('ลบประเภทงานนี้?')){DB.workTypes=DB.workTypes.filter(w=>w.id!==id);save();render()}break;
     case'reset':if(confirm('ล้างข้อมูลทั้งหมดและเริ่มใหม่?')){const th=DB.theme;localStorage.removeItem(KEY);DB=seed();DB.theme=th;save();S.sel=null;render()}break;
     case'close':close();break;
   }});
 document.addEventListener('change',e=>{const i=e.target;
-  if(i.dataset.wt){const w=wt(i.dataset.wt);w[i.dataset.f]=i.value;save();if(i.dataset.f!=='name')render();return}
+  if(i.dataset.wt){const w=wt(i.dataset.wt);w[i.dataset.f]=i.type==='checkbox'?i.checked:i.value;save();if(i.dataset.f!=='name')render();return}
+  if(i.dataset.cat!==undefined){const k=+i.dataset.cat,old=DB.categories[k];if(old===undefined)return;
+    DB.categoryStyles=DB.categoryStyles||{};
+    if(i.dataset.f==='color'){DB.categoryStyles[old]={text:i.value,bg:mixc(i.value,'#ffffff',.84)}}
+    else{const nv=i.value.trim();if(!nv||nv===old){i.value=old;return}
+      if(DB.categories.includes(nv)){alert('มีชื่อนี้แล้ว');i.value=old;return}
+      DB.categories[k]=nv;if(DB.categoryStyles[old]){DB.categoryStyles[nv]=DB.categoryStyles[old];delete DB.categoryStyles[old]}
+      const rn=o=>{if(Array.isArray(o.jobs))o.jobs=o.jobs.map(x=>x===old?nv:x)};
+      DB.appointments.forEach(rn);DB.visits.forEach(rn);
+      DB.patients.forEach(p=>{if(p.cat===old)p.cat=nv})}
+    save();render();return}
   if(i.dataset.plan){S.plan[i.dataset.plan]=i.value;refreshPlan()}});
 document.addEventListener('input',e=>{if(e.target.dataset.plan==='note')S.plan.note=e.target.value});
 $('fileIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;

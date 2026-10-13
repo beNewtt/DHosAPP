@@ -58,6 +58,20 @@ const SI=n=>`<svg class="ics" viewBox="0 0 24 24" aria-hidden="true"><path fill-
 const telLink=(ph,label)=>{const d=digits(ph);return d.length>=9?`<a class="tel" href="tel:${d}" onclick="event.stopPropagation()">${esc(label||ph)}</a>`:esc(label||ph||'')};
 const ses4=t=>{const h=+(t||'13:00').split(':')[0];return h<12?'am':h<16?'pm':'ev'};
 
+/* เดาประเภทงานจากข้อความหัตถการ (ใช้เฉพาะชื่อที่มีอยู่ในรายการ) */
+const JOB_KW=[['ENDO',/rct|endo|รักษาราก|รากฟัน|pulp|dressing|obtu|\btmc\b|\bmi\b|access/i],
+  ['Oper',/อุด|fill|composite|amalgam|\bgi\b|resin|class\s?[ivx1-5]|oper/i],
+  ['Perio',/ขูด|หินปูน|scal|srp|perio|root\s?plan/i],
+  ['Stitch off',/stitch|ตัดไหม/i],
+  ['SUR',/ถอน|ผ่า|ฟันคุด|\bext|surg|impact/i],
+  ['RPD',/rpd/i],['CD',/\b[ul]?cd\b|complete denture/i],['TP',/\b[ul]?tp\b/i],
+  ['Oral exam',/ตรวจ|ปรึกษา|exam|consult|\boe\b/i],
+  ['F\/U',/f\/u|follow|recheck|ติดตาม/i]];
+function guessJobs(txt,cats){const L=(cats||[]).map(c=>c.toLowerCase()),out=[];
+  if(!txt)return out;
+  JOB_KW.forEach(([c,re])=>{const i=L.indexOf(c.replace('\\','').toLowerCase());
+    if(i>=0&&re.test(txt)&&!out.includes(cats[i]))out.push(cats[i])});
+  return out}
 /* เติมคีย์ที่ขาดให้ข้อมูลเก่า (ไฟล์สำรองเดิม / คลาวด์เดิม) */
 function fixDB(d){if(!d)return d;
   if(!Array.isArray(d.trash))d.trash=[];
@@ -82,6 +96,20 @@ function fixDB(d){if(!d)return d;
   if(!Array.isArray(d.visits))d.visits=[];
   if(!Array.isArray(d.waitlist))d.waitlist=[];
   if(!d.pmWin||!d.pmWin.from||!d.pmWin.to)d.pmWin={from:'13:00',to:'15:30'};
+  if(!Array.isArray(d.categories))d.categories=[];
+  if(!d.categoryStyles)d.categoryStyles={};
+  /* ครั้งเดียว: ประเภทงานต่อนัด + ปรับห้อง OPD บ่าย / สี DM */
+  if(!d.mig2){d.mig2=1;
+    [['Oper',{bg:'#DCEFE3',text:'#2E6B4A'}],['Perio',{bg:'#DDEAF5',text:'#2F5C82'}]].forEach(([c,st])=>{
+      if(!d.categories.some(x=>x.toLowerCase()===c.toLowerCase())){d.categories.push(c);d.categoryStyles[c]=st}});
+    const byId=id=>(d.patients||[]).find(x=>x.id===id);
+    const fill=o=>{if(Array.isArray(o.jobs))return;let j=guessJobs(o.proc,d.categories);
+      if(!j.length){const pp=byId(o.patientId);if(pp&&pp.cat&&d.categories.includes(pp.cat))j=[pp.cat]}o.jobs=j};
+    (d.appointments||[]).forEach(fill);(d.visits||[]).forEach(fill);
+    (d.workTypes||[]).forEach(w=>{if(/opd/i.test(w.name||'')){w.ring=true;w.pmOpd=true;
+      const base=d.workTypes.find(x=>x!==w&&(x.name||'').trim()===(w.name||'').replace(/\(.*?\)/g,'').trim());
+      if(base)w.color=base.color}});
+    const dm=(d.workTypes||[]).find(w=>w.id==='dm'||/^dm$/i.test((w.name||'').trim()));if(dm)dm.color='#E8833A'}
   return d}
 let DB=loadLocal();
 function loadLocal(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.patients)return fixDB(r)}catch(e){}return seed()}
@@ -97,11 +125,11 @@ const daySch=d=>DB.daySchedules[d]||null;
 const isOff=d=>{const s=daySch(d);return !!s&&s.typeId==='off'};
 function seed(){
   const db={patients:[],appointments:[],visits:[],cases:[],waitlist:[],pmWin:{from:'13:00',to:'15:30'},trash:[],daySchedules:{},workTypes:DEF_WT.slice(),
-    categories:['Oral exam','RPD','TP','CD','ENDO','SUR','Stitch off','F/U','อื่นๆ'],
+    categories:['Oral exam','Oper','Perio','ENDO','SUR','RPD','TP','CD','Stitch off','F/U','อื่นๆ'],mig2:1,
     categoryStyles:{'Oral exam':{bg:'#EDEAE0',text:'#5C6D68'},'RPD':{bg:'#EFE1EA',text:'#63405A'},
       'TP':{bg:'#EFE1EA',text:'#63405A'},'CD':{bg:'#EFE1EA',text:'#63405A'},'ENDO':{bg:'#F7E4DD',text:'#9C4530'},
       'SUR':{bg:'#FBDADA',text:'#A33636'},'Stitch off':{bg:'#FBDADA',text:'#A33636'},
-      'F/U':{bg:'#E3E7F3',text:'#3C4A75'},'อื่นๆ':{bg:'#F0EBDD',text:'#8A7F63'}},theme:'cheesecake'};
+      'F/U':{bg:'#E3E7F3',text:'#3C4A75'},'Oper':{bg:'#DCEFE3',text:'#2E6B4A'},'Perio':{bg:'#DDEAF5',text:'#2F5C82'},'อื่นๆ':{bg:'#F0EBDD',text:'#8A7F63'}},theme:'cheesecake'};
   localStorage.setItem(KEY,JSON.stringify(db));return db;
 }
 /* ---------- AUTO BACKUP ---------- */

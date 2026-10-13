@@ -13,9 +13,9 @@ function render(){
   app.innerHTML=S.view==='schedule'?vSchedule():S.view==='planner'?vPlanner():(S.view==='more'||S.view==='stats')?vMore():S.view==='upcoming'?vUpcoming():S.view==='archive'?vArchive():vSettings();
 }
 function vSchedule(){const y=S.cur.getFullYear(),m=S.cur.getMonth(),od=overdueAppts().length;
-  const hero=S.mode==='up'?'':`<div class="hero"><div class="num mono">${String(m+1).padStart(2,'0')}</div>
-    <div class="rt"><div class="mn">${TH_MF[m]}</div><div class="yr">${y+543}</div>
-    <div class="nav2"><button data-act="mv" data-n="-1" aria-label="เดือนก่อน">${SI('chevL')}</button><button data-act="mv" data-n="1" aria-label="เดือนถัดไป">${SI('chevR')}</button></div></div></div>`;
+  const hero=S.mode==='up'?'':`<div class="hero2"><div class="hl"><span class="num mono">${String(m+1).padStart(2,'0')}</span>
+    <span class="mn">${TH_MF[m]}</span><span class="yr">${y+543}</span></div>
+    <div class="nav2"><button data-act="mv" data-n="-1" aria-label="เดือนก่อน">${SI('chevL')}</button><button data-act="mv" data-n="1" aria-label="เดือนถัดไป">${SI('chevR')}</button></div></div>`;
   const sub=S.mode==='cal'?'':`<div class="row subrow">
     <div class="seg sub"><button data-act="mode" data-m="up" class="${S.mode==='up'?'on':''}">All</button>
     <button data-act="mode" data-m="list" class="${S.mode==='list'?'on':''}">By day</button></div>
@@ -27,7 +27,40 @@ function vSchedule(){const y=S.cur.getFullYear(),m=S.cur.getMonth(),od=overdueAp
     <button data-act="mode" data-m="${S.mode==='list'?'list':'up'}" class="${S.mode!=='cal'?'on':''} ${od?'alert':''}">Upcoming</button></div>
     <div class="tright"><button class="ico-sm" data-act="today" title="วันนี้" aria-label="วันนี้">${SI('target')}</button>
     <button class="btn pri sm" data-act="addAppt" data-d="${TODAY}">＋ เพิ่มนัด</button></div></div>`
-  +sub+(S.mode==='cal'?calendar(y,m):S.mode==='up'?vUpcoming():dayList(y,m))}
+  +sub+(S.mode==='cal'?calendar(y,m)+miniPanel():S.mode==='up'?vUpcoming():dayList(y,m))}
+/* จุดห้อง: ทึบ หรือกลวง (เช่น OPD บ่าย) */
+const rdot=w=>`<i class="rdot ${w&&w.ring?'ring':''}" style="--c:${w?w.color:'var(--line)'}"></i>`;
+const jobChips=(a,p)=>(a.jobs&&a.jobs.length)?a.jobs.map(catChip).join(' '):(p?catChip(p.cat):'');
+const DOWS=['อา','จ','อ','พ','พฤ','ศ','ส'];
+const dayLabel=d=>{const dt=parseD(d),diff=Math.round((dt-parseD(TODAY))/864e5);
+  return (diff===0?'วันนี้ \u00b7 ':diff===1?'พรุ่งนี้ \u00b7 ':'')+`${DOWS[dt.getDay()]} ${dt.getDate()} ${TH_M[dt.getMonth()]}`};
+function miniRow(a){const p=pt(a.patientId);if(!p)return'';
+  const s=daySch(a.date),w=s?wt(s.typeId):(a.typeId?wt(a.typeId):null);
+  const ses=(SESSIONS.find(x=>x.id===a.session)||{}).name||'';
+  return `<button class="mrow ${a.status!=='scheduled'?'mdone':''}" data-act="day" data-d="${a.date}">
+    ${rdot(w)}<span class="mtm">${a.time?esc(a.time):ses}</span>
+    <span class="mnm">${esc(p.name)}</span>
+    <span class="mjb">${(a.jobs||[]).map(catChip).join('')}${a.tooth?`<span class="mto">#${esc(normTooth(a.tooth))}</span>`:''}</span></button>`}
+const normTooth=t=>(t||'').toString().replace(/^#/,'').trim();
+function miniPanel(){
+  const sel=S.selDay;
+  if(sel){const s=daySch(sel),w=s?wt(s.typeId):null,off=!!s&&s.typeId==='off';
+    const list=apptsOn(sel).filter(a=>a.status!=='cancelled');
+    return `<div class="mini"><div class="mph"><b>${dayLabel(sel)}</b>
+      ${w&&!off?`<span class="mrm">${rdot(w)}${esc(s.room||w.room)}</span>`:''}
+      <span class="muted">\u00b7 ${list.length} คน</span>
+      <span class="mpa"><button class="btn sm" data-act="day" data-d="${sel}">เปิด</button>
+      ${off?'':`<button class="btn sm pri" data-act="addAppt" data-d="${sel}">\uff0b</button>`}
+      <button class="btn sm" data-act="selClear" aria-label="ปิด">${IC.x}</button></span></div>
+      ${off?`<div class="mempty">${SI('ban')} วันหยุด</div>`:list.length?list.map(miniRow).join(''):'<div class="mempty">ยังไม่มีนัด</div>'}</div>`}
+  const n=new Date(),now=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+  const next=DB.appointments.filter(a=>a.status==='scheduled'&&(a.date>TODAY||(a.date===TODAY&&(!a.time||a.time>=now))))
+    .sort((a,b)=>a.date.localeCompare(b.date)||(a.time||'99').localeCompare(b.time||'99')).slice(0,4);
+  let last='',rows='';
+  next.forEach(a=>{if(a.date!==last){rows+=`<div class="mday">${dayLabel(a.date)}</div>`;last=a.date}rows+=miniRow(a)});
+  return `<div class="mini"><div class="mph"><b>ถัดไป</b>
+    <span class="mpa"><button class="btn sm" data-act="mode" data-m="up">ดูทั้งหมด \u203a</button></span></div>
+    ${rows||'<div class="mempty">ไม่มีนัดล่วงหน้า</div>'}</div>`}
 function calendar(y,m){
   const start=new Date(y,m,1-new Date(y,m,1).getDay());
   let cells='';
@@ -35,15 +68,15 @@ function calendar(y,m){
     const dt=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),k=iso(dt);
     const out=dt.getMonth()!==m,s=daySch(k),w=s?wt(s.typeId):null;
     if(S.filter!=='all'&&(!w||w.id!==S.filter)){cells+=`<div class="cell ${out?'out':''}" style="opacity:.3"><div class="ctop"><span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div></div>`;continue}
-    const n=liveOn(k).length,tdy=k===TODAY,mk=w&&(w.id==='off'||w.id==='scr');
-    cells+=`<div class="cell ${out?'out':''} ${tdy?'tdy':''} ${mk&&!tdy?'mark':''}" ${mk?`style="--mk:${w.color}"`:''} role="button" tabindex="0" data-act="day" data-d="${k}" title="ดูนัดของวันนี้">
+    const n=liveOn(k).length,tdy=k===TODAY,off=!!w&&w.id==='off',mk=!!w&&w.id==='scr';
+    cells+=`<div class="cell ${out?'out':''} ${tdy?'tdy':''} ${off?'offd':''} ${S.selDay===k?'sel':''} ${mk&&!tdy?'mark':''}" ${mk?`style="--mk:${w.color}"`:''} role="button" tabindex="0" data-act="day" data-src="cal" data-d="${k}" title="แตะเพื่อดูนัด · แตะซ้ำเพื่อเปิด">
       <div class="ctop"><span class="cn ${dt.getDay()===0?'sun':''}">${dt.getDate()}</span></div>
-      <div class="cmid">${w?`<div class="rline"><i class="rdot" style="background:${w.color}"></i><span class="rl" style="color:${tdy?'var(--onhl)':w.color}">${esc(s.room||w.room)}</span></div>`:''}
+      <div class="cmid">${w&&!off?`<div class="rline">${rdot(w)}<span class="rl" style="color:${tdy?'var(--onhl)':w.color}">${esc(s.room||w.room)}</span></div>`:''}
       ${s&&s.note?`<div class="rl sub" style="color:var(--tx2);font-weight:500">${esc(s.note)}</div>`:''}</div>
       <div class="cbot">${n?`<span class="cnt">${n}<i> คน</i></span>`:''}</div></div>`}
   return `<div class="cal"><div class="grid">${DOW.map(d=>`<div class="gh">${d}</div>`).join('')}</div><div class="grid">${cells}</div></div>
     <div class="filters"><button class="fl ${S.filter==='all'?'on':''}" data-act="filt" data-f="all">ทั้งหมด</button>
-    ${DB.workTypes.map(w=>`<button class="fl ${S.filter===w.id?'on':''}" data-act="filt" data-f="${w.id}"><i class="dot" style="background:${w.color}"></i>${esc(w.name)}</button>`).join('')}</div>`}
+    ${DB.workTypes.map(w=>`<button class="fl ${S.filter===w.id?'on':''}" data-act="filt" data-f="${w.id}">${rdot(w)}${esc(w.name)}</button>`).join('')}</div>`}
 function dayList(y,m){
   const last=new Date(y,m+1,0).getDate();let out='',any=false;
   for(let i=1;i<=last;i++){
@@ -80,7 +113,7 @@ function ptRow(a){
       <div class="ptop">${a.time?`<span class="ptime">${esc(a.time)}<i>${a.duration||30} น.</i></span>`:''}
         <span class="st ${a.status}">${ST[a.status]}</span>
         ${(a.moves||[]).length?`<span class="mv">เลื่อน ${a.moves.length}×</span>`:''}${(DB.waitlist||[]).some(w=>w.kind==='resched'&&w.apptId===a.id&&w.status==='wait')?`<span class="mv">${SI('phone')} รอโทรเลื่อน</span>`:''}</div>
-      <div class="nm">${esc(p.name)} ${catChip(p.cat)} ${al}</div>
+      <div class="nm">${esc(p.name)} ${jobChips(a,p)} ${al}</div>
       <div class="hn">${esc(p.hn||'ไม่มี HN')}${p.phone?' · '+telLink(p.phone):''} · ${esc(a.proc||'ไม่ระบุ')}${a.tooth?' · ซี่ '+esc(a.tooth):''}</div>
     </div>
     <div class="ac">
@@ -138,7 +171,7 @@ const isMainRoom=tid=>{if(!tid)return false;const w=DB.workTypes.find(x=>x.id===
 /* วันนี้เป็นวันแบบไหน: ข้าม OFF / เสาร์-อาทิตย์ที่ไม่ได้ตั้งห้อง, เตือนถ้าไม่ใช่วันฟุ้ง */
 function dayKind(d){const s=daySch(d),dow=parseD(d).getDay();
   if(s&&s.typeId==='off')return{skip:true,off:true};
-  if(s){const w=wt(s.typeId);return{main:isMainRoom(s.typeId),room:s.room||w.room,color:w.color}}
+  if(s){const w=wt(s.typeId);if(w.pmOpd)return{skip:true,opd:true};return{main:isMainRoom(s.typeId),room:s.room||w.room,color:w.color}}
   if(dow===0||dow===6)return{skip:true};
   return{main:false,none:true,room:'ยังไม่ตั้งห้อง',color:'var(--tx2)'}}
 /* นัดที่กินเวลาในช่วงบ่าย (ตัดยกเลิกออก) */
@@ -149,7 +182,7 @@ function pmBusy(d){const w=pmWin(),f=toMin(w.from),t=toMin(w.to);
 /* ช่องว่างอย่างน้อย 30 นาที ภายในช่วงบ่าย — คืนเป็น [เริ่ม, จบ] หน่วยนาที */
 function gapsOn(d){
   const w=pmWin(),f=toMin(w.from),t=toMin(w.to);let cur=f;
-  if(d<TODAY)return[];
+  if(d<TODAY||dayKind(d).opd)return[];
   if(d===TODAY){const n=new Date();cur=Math.max(f,Math.ceil((n.getHours()*60+n.getMinutes())/15)*15)}
   const out=[];
   pmBusy(d).forEach(x=>{const end=Math.min(x.s,t);if(end-cur>=MIN_GAP)out.push([cur,end]);cur=Math.max(cur,x.e)});
@@ -588,9 +621,20 @@ function vSettings(){
     <div class="wtf sm"><span>ย่อ</span><input value="${esc(w.short)}" data-wt="${w.id}" data-f="short"></div>
     <div class="wtf"><span>ห้อง</span><input value="${esc(w.room)}" data-wt="${w.id}" data-f="room"></div>
     <div class="wtf"><span>กลุ่ม</span><input value="${esc(w.group)}" data-wt="${w.id}" data-f="group"></div>
+    <div class="wtcks"><label class="wtck"><input type="checkbox" data-wt="${w.id}" data-f="ring" ${w.ring?'checked':''}> จุดกลวง</label>
+    <label class="wtck"><input type="checkbox" data-wt="${w.id}" data-f="pmOpd" ${w.pmOpd?'checked':''}> บ่ายรับ OPD (ไม่นัดเพิ่ม)</label></div>
     <button class="wtdel" data-act="delWT" data-id="${w.id}" title="ลบห้องนี้" aria-label="ลบ">${IC.x}</button></div>`).join('')}</div>
   <div class="row" style="margin-top:14px"><button class="btn pri sm" data-act="addWT">＋ เพิ่มห้อง</button>
   <button class="btn dg sm" data-act="reset" style="margin-left:auto">ล้างข้อมูลทั้งหมด</button></div></div>
+  <h2>ประเภทงาน</h2>
+  <div class="card"><div class="muted" style="margin-bottom:12px">ชิปที่กดเลือกตอนเพิ่มนัด / บันทึกการรักษา (เลือกได้หลายอัน) \u2014 แตะสีเพื่อเปลี่ยน</div>
+  <div class="catlist">${(DB.categories||[]).map((c,i)=>{const st=(DB.categoryStyles||{})[c]||{text:'#6b6b6b'};
+    return `<div class="catrow"><label class="swatch" style="--c:${st.text}" title="เลือกสี"><input type="color" value="${st.text}" data-cat="${i}" data-f="color"></label>
+    <input class="xin" value="${esc(c)}" data-cat="${i}" data-f="name">
+    <span class="catprev">${catChip(c)}</span>
+    <span class="muted catn">${DB.appointments.filter(a=>(a.jobs||[]).includes(c)).length} นัด</span>
+    <button class="wtdel" data-act="delCat" data-i="${i}" title="ลบ" aria-label="ลบ">${IC.x}</button></div>`}).join('')}</div>
+  <div class="row" style="margin-top:12px"><button class="btn pri sm" data-act="addCat">\uff0b เพิ่มประเภทงาน</button></div></div>
   <h2>ข้อมูลสำรองบนคลาวด์ <span class="muted" style="font-size:12px;font-weight:600">· เก็บวันละ 1 ชุด ย้อนหลัง 60 วัน</span></h2>
   <div class="card"><div class="muted" style="margin-bottom:10px">กันกรณีข้อมูลหลักเสียหายหรือเผลอนำเข้าไฟล์ผิด — ต้องสร้างตาราง <b>clinic_backups</b> ใน Supabase ก่อน (ดู SQL ที่ท้ายหน้านี้)</div>
   <div class="row" style="margin-bottom:10px"><button class="btn sm" data-act="loadSnaps">โหลดรายการสำรอง</button></div>
